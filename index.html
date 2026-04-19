@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="forge">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rinkimirikata — Michal Veltruský</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=DM+Serif+Display:ital@0;1&family=Syne:wght@400;700;800&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+ 
+/* ═══════════════════════════════════════════
+   THEME VARIABLES
+═══════════════════════════════════════════ */
+ 
+/* FORGE — dark craft workshop */
+[data-theme="forge"] {
+  --bg: #0c0c0c;
+  --bg2: #141414;
+  --bg3: #1c1c1c;
+  --border: #2a2a2a;
+  --text: #e0e0e0;
+  --text2: #999;
+  --text3: #555;
+  --accent: #c8960a;
+  --accent2: #e0aa10;
+  --accent-bg: #1a1200;
+  --card-bg: #141414;
+  --card-border: #2a2a2a;
+  --tag-bg: #1c1c1c;
+  --switcher-bg: #141414;
+  --font-display: 'Space Mono', monospace;
+  --font-body: 'Space Mono', monospace;
+  --font-weight-display: 700;
+  --radius: 0px;
+  --card-shadow: none;
+  --hero-size: clamp(2.2rem, 6vw, 5rem);
+  --nav-style: uppercase;
+  --letter-spacing: 0.08em;
+}
+ 
+/* STUDIO — clean editorial light */
+[data-theme="studio"] {
+  --bg: #f7f5f0;
+  --bg2: #eeeae2;
+  --bg3: #e5e0d6;
+  --border: #d8d2c6;
+  --text: #1a1612;
+  --text2: #6b6355;
+  --text3: #a8a098;
+  --accent: #c0392b;
+  --accent2: #e74c3c;
+  --accent-bg: #fdf0ef;
+  --card-bg: #ffffff;
+  --card-border: #e0dbd3;
+  --tag-bg: #eeeae2;
+  --switcher-bg: #ffffff;
+  --font-display: 'Playfair Display', serif;
+  --font-body: 'Crimson Pro', serif;
+  --font-weight-display: 900;
+  --radius: 2px;
+  --card-shadow: 0 1px 12px rgba(0,0,0,0.06);
+  --hero-size: clamp(2.8rem, 7vw, 6rem);
+  --nav-style: normal;
+  --letter-spacing: 0.01em;
+}
+ 
+/* WARM — earthy human */
+[data-theme="warm"] {
+  --bg: #2c1f14;
+  --bg2: #3a2a1c;
+  --bg3: #4a3526;
+  --border: #5a4030;
+  --text: #f0e6d6;
+  --text2: #c4a882;
+  --text3: #7a5c40;
+  --accent: #e8a838;
+  --accent2: #f0c060;
+  --accent-bg: #3a2a10;
+  --card-bg: #3a2a1c;
+  --card-border: #5a4030;
+  --tag-bg: #4a3526;
+  --switcher-bg: #3a2a1c;
+  --font-display: 'DM Serif Display', serif;
+  --font-body: 'Crimson Pro', serif;
+  --font-weight-display: 400;
+  --radius: 4px;
+  --card-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  --hero-size: clamp(2.6rem, 6.5vw, 5.5rem);
+  --nav-style: normal;
+  --letter-spacing: 0.02em;
+}
+ 
+/* BOLD — high contrast graphic */
+[data-theme="bold"] {
+  --bg: #ffffff;
+  --bg2: #f0f0f0;
+  --bg3: #e0e0e0;
+  --border: #000000;
+  --text: #000000;
+  --text2: #444444;
+  --text3: #888888;
+  --accent: #0000ff;
+  --accent2: #4444ff;
+  --accent-bg: #eeeeff;
+  --card-bg: #ffffff;
+  --card-border: #000000;
+  --tag-bg: #000000;
+  --switcher-bg: #f0f0f0;
+  --font-display: 'Syne', sans-serif;
+  --font-body: 'Syne', sans-serif;
+  --font-weight-display: 800;
+  --radius: 0px;
+  --card-shadow: 4px 4px 0 #000;
+  --hero-size: clamp(3rem, 8vw, 7rem);
+  --nav-style: uppercase;
+  --letter-spacing: -0.02em;
+}
+ 
+/* ═══════════════════════════════════════════
+   RESET & BASE
+═══════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.6;
+  transition: background 0.3s, color 0.3s;
+  min-height: 100vh;
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { color: var(--accent2); }
+ 
+/* ═══════════════════════════════════════════
+   THEME SWITCHER
+═══════════════════════════════════════════ */
+.theme-bar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  background: var(--switcher-bg);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  height: 44px;
+  transition: background 0.3s;
+}
+.theme-bar-left {
+  font-family: var(--font-display);
+  font-size: 10px;
+  color: var(--text3);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+.theme-options {
+  display: flex;
+  gap: 4px;
+}
+.theme-opt {
+  border: 1px solid var(--border);
+  background: none;
+  cursor: pointer;
+  font-family: 'Space Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  padding: 4px 12px;
+  color: var(--text2);
+  transition: all 0.15s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.theme-opt:hover { color: var(--text); border-color: var(--accent); }
+.theme-opt.active { background: var(--accent); color: var(--bg); border-color: var(--accent); }
+.theme-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+.dot-forge { background: #c8960a; }
+.dot-studio { background: #c0392b; }
+.dot-warm { background: #e8a838; }
+.dot-bold { background: #0000ff; }
+.theme-label { font-size: 9px; color: var(--text3); font-family: 'Space Mono', monospace; }
+ 
+/* ═══════════════════════════════════════════
+   PAGE WRAPPER
+═══════════════════════════════════════════ */
+.page { max-width: 960px; margin: 0 auto; padding: 80px 32px 64px; }
+ 
+/* ═══════════════════════════════════════════
+   HERO
+═══════════════════════════════════════════ */
+.hero {
+  padding: 64px 0 56px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 56px;
+}
+.hero-eyebrow {
+  font-family: 'Space Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.hero-eyebrow::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+  max-width: 120px;
+}
+.hero-name {
+  font-family: var(--font-display);
+  font-size: var(--hero-size);
+  font-weight: var(--font-weight-display);
+  line-height: 1.05;
+  letter-spacing: var(--letter-spacing);
+  color: var(--text);
+  margin-bottom: 8px;
+  transition: font-family 0.2s;
+}
+[data-theme="forge"] .hero-name { color: var(--accent); }
+[data-theme="bold"] .hero-name { -webkit-text-stroke: 2px var(--text); color: transparent; }
+ 
+.hero-cipher {
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  color: var(--text3);
+  letter-spacing: 0.15em;
+  margin-bottom: 28px;
+}
+[data-theme="studio"] .hero-cipher { font-family: 'Crimson Pro', serif; font-style: italic; font-size: 14px; letter-spacing: 0; }
+[data-theme="warm"] .hero-cipher { font-family: 'Crimson Pro', serif; font-style: italic; }
+ 
+.hero-bio {
+  font-size: clamp(1rem, 2vw, 1.2rem);
+  line-height: 1.75;
+  color: var(--text2);
+  max-width: 640px;
+  margin-bottom: 32px;
+}
+[data-theme="studio"] .hero-bio { font-size: 1.3rem; font-family: 'Crimson Pro', serif; }
+[data-theme="warm"] .hero-bio { font-family: 'Crimson Pro', serif; font-size: 1.25rem; }
+ 
+.hero-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.tag {
+  font-family: 'Space Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  background: var(--tag-bg);
+  border: 1px solid var(--border);
+  color: var(--text2);
+}
+[data-theme="bold"] .tag { background: #000; color: #fff; border-color: #000; }
+ 
+/* ═══════════════════════════════════════════
+   SECTION
+═══════════════════════════════════════════ */
+.section { margin-bottom: 56px; }
+.section-header {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+.section-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.1rem, 3vw, 1.6rem);
+  font-weight: var(--font-weight-display);
+  color: var(--text);
+  letter-spacing: var(--letter-spacing);
+}
+.section-rule {
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+[data-theme="bold"] .section-rule { height: 2px; background: #000; }
+ 
+/* ═══════════════════════════════════════════
+   PROJECT CARDS
+═══════════════════════════════════════════ */
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+.project-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  box-shadow: var(--card-shadow);
+  padding: 22px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: all 0.15s;
+  text-decoration: none;
+  color: var(--text);
+  position: relative;
+  overflow: hidden;
+}
+.project-card:hover {
+  border-color: var(--accent);
+  color: var(--text);
+  transform: translateY(-2px);
+}
+[data-theme="bold"] .project-card:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 #000; }
+ 
+.project-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.2s;
+}
+.project-card:hover::before { transform: scaleX(1); }
+[data-theme="bold"] .project-card::before { display: none; }
+ 
+.pc-type {
+  font-family: 'Space Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.pc-name {
+  font-family: var(--font-display);
+  font-size: clamp(1rem, 2.5vw, 1.25rem);
+  font-weight: var(--font-weight-display);
+  line-height: 1.2;
+  letter-spacing: var(--letter-spacing);
+  color: var(--text);
+}
+[data-theme="bold"] .pc-name { font-size: 1.4rem; }
+.pc-desc {
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: var(--text2);
+  flex: 1;
+}
+[data-theme="studio"] .pc-desc, [data-theme="warm"] .pc-desc { font-family: 'Crimson Pro', serif; font-size: 1rem; }
+.pc-link {
+  font-family: 'Space Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+}
+.pc-link::after { content: '→'; transition: transform 0.15s; }
+.project-card:hover .pc-link::after { transform: translateX(4px); }
+ 
+/* featured card */
+.project-card.featured {
+  grid-column: span 2;
+  background: var(--accent-bg);
+  border-color: var(--accent);
+}
+@media (max-width: 640px) { .project-card.featured { grid-column: span 1; } }
+ 
+/* ═══════════════════════════════════════════
+   STYLE LAB CALLOUT
+═══════════════════════════════════════════ */
+.style-lab {
+  border: 1px solid var(--border);
+  padding: 28px 32px;
+  background: var(--bg2);
+  border-radius: var(--radius);
+  margin-bottom: 56px;
+  display: flex;
+  gap: 32px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+[data-theme="bold"] .style-lab { border: 2px solid #000; }
+.sl-text { flex: 1; min-width: 240px; }
+.sl-title {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: var(--font-weight-display);
+  color: var(--text);
+  margin-bottom: 8px;
+  letter-spacing: var(--letter-spacing);
+}
+.sl-body { font-size: 0.9rem; color: var(--text2); line-height: 1.7; }
+[data-theme="studio"] .sl-body, [data-theme="warm"] .sl-body { font-family: 'Crimson Pro', serif; font-size: 1rem; }
+.sl-swatches { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.swatch {
+  width: 36px; height: 36px;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: all 0.15s;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px;
+  color: transparent;
+}
+.swatch:hover { transform: scale(1.15); }
+.swatch.active { border-color: var(--text); color: var(--text); transform: scale(1.1); }
+.swatch.active::after { content: '✓'; font-size: 12px; }
+.sw-forge { background: #0c0c0c; }
+.sw-studio { background: #f7f5f0; border: 2px solid #d8d2c6; }
+.sw-warm { background: #2c1f14; }
+.sw-bold { background: #0000ff; }
+.swatch-label { font-family: 'Space Mono', monospace; font-size: 8px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text3); }
+ 
+/* ═══════════════════════════════════════════
+   MUSIC SECTION
+═══════════════════════════════════════════ */
+.music-card {
+  border: 1px solid var(--border);
+  background: var(--bg2);
+  padding: 24px;
+  border-radius: var(--radius);
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+.music-icon {
+  font-size: 48px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+.music-text { flex: 1; min-width: 200px; }
+.music-name {
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  font-weight: var(--font-weight-display);
+  letter-spacing: var(--letter-spacing);
+  color: var(--text);
+  margin-bottom: 4px;
+}
+.music-desc { font-size: 0.9rem; color: var(--text2); margin-bottom: 12px; }
+[data-theme="studio"] .music-desc, [data-theme="warm"] .music-desc { font-family: 'Crimson Pro', serif; font-size: 1rem; }
+.music-genres { display: flex; gap: 6px; flex-wrap: wrap; }
+.genre-tag {
+  font-family: 'Space Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  border-radius: var(--radius);
+}
+ 
+/* ═══════════════════════════════════════════
+   FOOTER
+═══════════════════════════════════════════ */
+footer {
+  border-top: 1px solid var(--border);
+  padding: 32px 0 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+.footer-name {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: var(--font-weight-display);
+  letter-spacing: var(--letter-spacing);
+  color: var(--text);
+  margin-bottom: 4px;
+}
+.footer-sub { font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text3); }
+.footer-links { display: flex; gap: 16px; align-items: center; }
+.footer-link {
+  font-family: 'Space Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--text2);
+  text-decoration: none;
+}
+.footer-link:hover { color: var(--accent); }
+ 
+/* ═══════════════════════════════════════════
+   ANIMATIONS
+═══════════════════════════════════════════ */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.hero { animation: fadeUp 0.5s ease both; }
+.section { animation: fadeUp 0.5s ease both; }
+.section:nth-child(2) { animation-delay: 0.1s; }
+.section:nth-child(3) { animation-delay: 0.15s; }
+.section:nth-child(4) { animation-delay: 0.2s; }
+.style-lab { animation: fadeUp 0.5s ease 0.25s both; }
+ 
+/* ═══════════════════════════════════════════
+   RESPONSIVE
+═══════════════════════════════════════════ */
+@media (max-width: 600px) {
+  .page { padding: 72px 20px 48px; }
+  .theme-bar { padding: 0 14px; }
+  .theme-opt .theme-label { display: none; }
+  .hero { padding: 48px 0 40px; }
+  .style-lab { flex-direction: column; gap: 20px; }
+  footer { flex-direction: column; }
+}
+ 
+/* forge-specific decoration */
+[data-theme="forge"] .project-card.featured::after {
+  content: '⬡';
+  position: absolute;
+  right: 16px; top: 16px;
+  font-size: 32px;
+  color: var(--border);
+  line-height: 1;
+}
+ 
+/* bold-specific decoration */
+[data-theme="bold"] .section-title {
+  -webkit-text-stroke: 1.5px var(--text);
+}
+[data-theme="bold"] .project-card.featured {
+  background: #000;
+  color: #fff;
+}
+[data-theme="bold"] .project-card.featured .pc-name { color: #fff; }
+[data-theme="bold"] .project-card.featured .pc-desc { color: #ccc; }
+[data-theme="bold"] .project-card.featured .pc-link { color: var(--accent); }
+</style>
+</head>
+<body>
+ 
+<!-- THEME SWITCHER -->
+<div class="theme-bar">
+  <div class="theme-bar-left">Style Lab / rinkimirikata.com</div>
+  <div class="theme-options">
+    <button class="theme-opt active" data-t="forge" onclick="setTheme('forge')">
+      <div class="theme-dot dot-forge"></div>
+      <span class="theme-label">Forge</span>
+    </button>
+    <button class="theme-opt" data-t="studio" onclick="setTheme('studio')">
+      <div class="theme-dot dot-studio"></div>
+      <span class="theme-label">Studio</span>
+    </button>
+    <button class="theme-opt" data-t="warm" onclick="setTheme('warm')">
+      <div class="theme-dot dot-warm"></div>
+      <span class="theme-label">Warm</span>
+    </button>
+    <button class="theme-opt" data-t="bold" onclick="setTheme('bold')">
+      <div class="theme-dot dot-bold"></div>
+      <span class="theme-label">Bold</span>
+    </button>
+  </div>
+</div>
+ 
+<div class="page">
+ 
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-eyebrow">Michal Veltruský — Czech Mike</div>
+    <div class="hero-name">Rinki&shy;miri&shy;kata</div>
+    <div class="hero-cipher">RI-N-KI · MI-RI · KA-TA &nbsp;/&nbsp; personal cipher for Michal &nbsp;/&nbsp; UK via Czech Republic</div>
+    <div class="hero-bio">
+      Independent creator working across music, learning systems, generative art, and cooperative economics frameworks. Started making music at 46 using AI tools. Builds things that should exist but don't.
+    </div>
+    <div class="hero-tags">
+      <span class="tag">Music</span>
+      <span class="tag">Learning Systems</span>
+      <span class="tag">Generative Art</span>
+      <span class="tag">Cooperative Economics</span>
+      <span class="tag">HerGotSystems</span>
+      <span class="tag">EMVY CHECK</span>
+    </div>
+  </div>
+ 
+  <!-- STYLE LAB CALLOUT -->
+  <div class="style-lab">
+    <div class="sl-text">
+      <div class="sl-title">You are in the Style Lab</div>
+      <div class="sl-body">Same content, four completely different visual styles. Switch between them above and tell me which one you actually want to use. This is how the learning engine and other tools will look — your preference shapes what gets built next.</div>
+    </div>
+    <div>
+      <div style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:0.15em;text-transform:uppercase;color:var(--text3);margin-bottom:10px;">Current Style</div>
+      <div class="sl-swatches">
+        <div>
+          <div class="swatch sw-forge active" id="sw-forge" onclick="setTheme('forge')"></div>
+          <div class="swatch-label" style="text-align:center;margin-top:4px">Forge</div>
+        </div>
+        <div>
+          <div class="swatch sw-studio" id="sw-studio" onclick="setTheme('studio')"></div>
+          <div class="swatch-label" style="text-align:center;margin-top:4px">Studio</div>
+        </div>
+        <div>
+          <div class="swatch sw-warm" id="sw-warm" onclick="setTheme('warm')"></div>
+          <div class="swatch-label" style="text-align:center;margin-top:4px">Warm</div>
+        </div>
+        <div>
+          <div class="swatch sw-bold" id="sw-bold" onclick="setTheme('bold')"></div>
+          <div class="swatch-label" style="text-align:center;margin-top:4px">Bold</div>
+        </div>
+      </div>
+    </div>
+  </div>
+ 
+  <!-- LEARNING ENGINE -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">Learning Engine</div>
+      <div class="section-rule"></div>
+    </div>
+    <div class="projects-grid">
+      <a class="project-card featured" href="https://25-100-engine.workers.dev" target="_blank">
+        <div class="pc-type">Live Tool</div>
+        <div class="pc-name">25/100 Learning Engine</div>
+        <div class="pc-desc">A self-improvement platform built around skill mastery. 25 skills, each with lessons, exercises, and a quiz. Progress tracks through a pyramid mechanic from foundation to mastery. Teacher mode lets you build and lock curriculum. Learner mode tracks your journey.</div>
+        <div class="pc-link">Open Engine</div>
+      </a>
+      <a class="project-card" href="https://25-100-engine.workers.dev/builder.html" target="_blank">
+        <div class="pc-type">Workflow Tool</div>
+        <div class="pc-name">Skill Builder</div>
+        <div class="pc-desc">Generate curriculum via ChatGPT using structured prompts. Paste responses, validate JSON, bank skills, export ready-to-import files. Covers 120+ skills across 25 batches.</div>
+        <div class="pc-link">Open Builder</div>
+      </a>
+      <a class="project-card" href="https://25-100-engine.workers.dev/creator.html" target="_blank">
+        <div class="pc-type">AI Tool</div>
+        <div class="pc-name">Skill Creator</div>
+        <div class="pc-desc">Generate skills directly using AI. Enter a topic or paste curriculum content — lessons, exercises, and a scored quiz are built automatically in the right format.</div>
+        <div class="pc-link">Open Creator</div>
+      </a>
+    </div>
+  </div>
+ 
+  <!-- MUSIC -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">Music</div>
+      <div class="section-rule"></div>
+    </div>
+    <div class="music-card">
+      <div class="music-icon">◉</div>
+      <div class="music-text">
+        <div class="music-name">EMVY CHECK</div>
+        <div class="music-desc">303 tracks across 30+ albums. Drum and bass, Czech folk-influenced protest music, experimental electronic. Started at 46. Every track made with AI tools as creative partner, not replacement.</div>
+        <div class="music-genres">
+          <span class="genre-tag">Drum &amp; Bass</span>
+          <span class="genre-tag">Protest</span>
+          <span class="genre-tag">Experimental</span>
+          <span class="genre-tag">Czech Folk</span>
+          <span class="genre-tag">Electronic</span>
+        </div>
+      </div>
+      <a href="https://emvycheck.com" target="_blank" class="btn-link" style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:0.15em;text-transform:uppercase;color:var(--accent);border:1px solid var(--accent);padding:8px 16px;display:inline-block;white-space:nowrap;">Visit Site →</a>
+    </div>
+  </div>
+ 
+  <!-- OTHER PROJECTS -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">Systems &amp; Tools</div>
+      <div class="section-rule"></div>
+    </div>
+    <div class="projects-grid">
+      <a class="project-card" href="https://omniforge-systemforge.com" target="_blank">
+        <div class="pc-type">Live Tool</div>
+        <div class="pc-name">Omniforge System Forge</div>
+        <div class="pc-desc">Six forge types for structured system design. Live forge counter, contact integration. For builders who think in systems.</div>
+        <div class="pc-link">Open Omniforge</div>
+      </a>
+      <div class="project-card" style="cursor:default;">
+        <div class="pc-type">Framework</div>
+        <div class="pc-name">Omnunity</div>
+        <div class="pc-desc">Cooperative community economics with Contribution Credit System and three-layer governance. Functional web apps built. The economic alternative under construction.</div>
+        <div style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--text3);margin-top:4px;">In Progress</div>
+      </div>
+      <div class="project-card" style="cursor:default;">
+        <div class="pc-type">Framework</div>
+        <div class="pc-name">NLDS</div>
+        <div class="pc-desc">Natural Learning Discovery System — 91,000+ word play-based assessment framework for ages 3–12. Observer training curricula, ILP templates. ~95% complete.</div>
+        <div style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--text3);margin-top:4px;">In Progress</div>
+      </div>
+      <a class="project-card" href="https://25-100-engine.workers.dev" target="_blank">
+        <div class="pc-type">Cipher</div>
+        <div class="pc-name">Rinkimirikata</div>
+        <div class="pc-desc">Personal cipher platform — Czech name Michal encoded through Japanese syllables. Expanded into a protest lyric encoder for EMVY CHECK. This site is named after it.</div>
+        <div class="pc-link">You are here</div>
+      </a>
+    </div>
+  </div>
+ 
+  <!-- FOOTER -->
+  <footer>
+    <div>
+      <div class="footer-name">Michal Veltruský</div>
+      <div class="footer-sub">Czech Mike &nbsp;·&nbsp; HerGotSystems &nbsp;·&nbsp; UK</div>
+    </div>
+    <div class="footer-links">
+      <a href="https://emvycheck.com" class="footer-link">EMVY CHECK</a>
+      <a href="https://omniforge-systemforge.com" class="footer-link">Omniforge</a>
+      <a href="https://25-100-engine.workers.dev" class="footer-link">25/100</a>
+      <a href="https://github.com/HerGotSystems" class="footer-link">GitHub</a>
+    </div>
+  </footer>
+ 
+</div>
+ 
+<script>
+function setTheme(t) {
+  document.documentElement.setAttribute('data-theme', t);
+  document.querySelectorAll('.theme-opt').forEach(el => el.classList.toggle('active', el.dataset.t === t));
+  document.querySelectorAll('.swatch').forEach(el => el.classList.toggle('active', el.id === 'sw-' + t));
+  localStorage.setItem('rinki-theme', t);
+}
+ 
+// Load saved preference
+const saved = localStorage.getItem('rinki-theme');
+if (saved && ['forge','studio','warm','bold'].includes(saved)) setTheme(saved);
+</script>
+</body>
+</html>
+ 
