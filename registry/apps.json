@@ -1,0 +1,61 @@
+{
+  "version": 1,
+  "updated": "2026-05-17",
+  "note": "Central app registry for RINKIMIRIKATA. Add new HTML tools here to make them visible in the hub loader.",
+  "items": [
+    {
+      "id": "visual-instruments",
+      "title": "Visual Instruments",
+      "type": "visual system",
+      "status": "prototype",
+      "url": "/apps/visual-instruments/",
+      "description": "Music-reactive visual experiments, signal toys, spinning number systems, text-reactive modes and attention machines.",
+      "tags": ["audio", "visualizer", "html", "experimental"]
+    },
+    {
+      "id": "kineostroke",
+      "title": "KINEOSTROKE",
+      "type": "motion system",
+      "status": "prototype",
+      "url": "/apps/kineostroke/",
+      "description": "Motion-comic language, sprite experiments, flipbook engine ideas, pose libraries and performance animation systems.",
+      "tags": ["animation", "sprite", "flipbook", "motion"]
+    },
+    {
+      "id": "canvas-grid",
+      "title": "Canvas Grid",
+      "type": "generative art tool",
+      "status": "stable-ish",
+      "url": "/apps/canvas-grid/",
+      "description": "Printable composition helpers and generative grid tools for artists who need a starting structure instead of a blank canvas.",
+      "tags": ["art", "print", "grid", "gumroad"]
+    },
+    {
+      "id": "omniforge",
+      "title": "Omniforge System Forge",
+      "type": "AI system",
+      "status": "live external",
+      "url": "https://omniforge-systemforge.com",
+      "description": "System forge concepts, AI task protocols, structured implementation packs and AI-agnostic software workflows.",
+      "tags": ["ai", "systems", "protocol", "forge"]
+    },
+    {
+      "id": "25-100-engine",
+      "title": "25/100 Learning Engine",
+      "type": "learning system",
+      "status": "live external",
+      "url": "https://25-100-engine.workers.dev",
+      "description": "Skill mastery platform with lessons, exercises, quizzes, pyramid progress and curriculum building tools.",
+      "tags": ["learning", "skills", "curriculum", "engine"]
+    },
+    {
+      "id": "lab-dropzone",
+      "title": "Lab Dropzone",
+      "type": "experimental area",
+      "status": "rough",
+      "url": "/lab/",
+      "description": "Unfinished demos, rough HTML files, strange machines, broken-but-interesting builds and public test surfaces.",
+      "tags": ["lab", "prototype", "dropzone", "testing"]
+    }
+  ]
+}
