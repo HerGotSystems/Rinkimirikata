@@ -1,1 +1,705 @@
-<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Tessellation Generator Placeholder</title><style>body{margin:0;background:#050505;color:#f0f0f0;font-family:monospace;display:grid;place-items:center;height:100vh}.b{max-width:760px;padding:30px;border:1px solid #2c2c2c;background:#111}code{color:#8cff8c}</style></head><body><div class="b"><h1>TESSELLATION GENERATOR</h1><p>Replace with:</p><code>tessellation-generator.html</code><p>Destination:</p><code>/apps/tessellation-generator/index.html</code></div></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Tessellation Generator v1.0 — EMVY CHECK</title>
+<style>
+:root{--accent:#4dc9e6;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;overflow:hidden;}
+body{background:#040c10;color:#a0b8c0;font-family:'Courier New',monospace;display:flex;height:100vh;}
+#sidebar{width:286px;min-width:286px;background:#050e12;border-right:1px solid #0e2028;display:flex;flex-direction:column;overflow:hidden;}
+#app-header{padding:14px 16px 11px;border-bottom:1px solid #0e2028;flex-shrink:0;}
+.suite-label{font-size:6.5px;letter-spacing:.35em;text-transform:uppercase;color:#1a3040;margin-bottom:4px;}
+#app-header h1{font-size:11.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--accent);font-weight:normal;}
+.ver-tag{font-size:6.5px;color:#1a3040;letter-spacing:.18em;margin-top:3px;}
+#tab-nav{display:flex;border-bottom:1px solid #0e2028;flex-shrink:0;}
+.tab-btn{flex:1;background:transparent;border:none;border-bottom:2px solid transparent;color:#253a44;font-family:inherit;font-size:7.5px;letter-spacing:.22em;text-transform:uppercase;padding:9px 3px 7px;cursor:pointer;transition:all .15s;}
+.tab-btn:hover{color:#4a7a8a;}.tab-btn.on{color:var(--accent);border-bottom-color:var(--accent);}
+#tab-content{flex:1;overflow-y:auto;overflow-x:hidden;}
+#tab-content::-webkit-scrollbar{width:2px;}
+#tab-content::-webkit-scrollbar-thumb{background:#0e2028;}
+.tab-panel{display:none;}.tab-panel.on{display:block;}
+.ctrl-section{padding:10px 15px;border-bottom:1px solid #0a1c24;}
+.ctrl-label{font-size:6.5px;letter-spacing:.28em;text-transform:uppercase;color:#253a44;margin-bottom:7px;display:flex;justify-content:space-between;align-items:center;}
+.ctrl-note{font-size:6.5px;color:var(--accent);letter-spacing:.1em;}
+.btn-group{display:flex;flex-wrap:wrap;gap:3px;}
+.tgl-btn{background:transparent;border:1px solid #0e2028;color:#2a4a58;font-family:inherit;font-size:8.5px;padding:3px 8px;cursor:pointer;letter-spacing:.05em;transition:all .12s;line-height:1;}
+.tgl-btn:hover{border-color:var(--accent);color:var(--accent);}
+.tgl-btn.on{background:var(--accent);border-color:var(--accent);color:#040c10;font-weight:bold;}
+input[type=range]{width:100%;-webkit-appearance:none;height:2px;background:#0e2028;outline:none;cursor:pointer;margin-top:2px;}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:10px;height:10px;background:var(--accent);cursor:pointer;}
+.seed-row{display:flex;gap:4px;}
+.seed-inp{flex:1;background:transparent;border:1px solid #0e2028;color:#a0b8c0;font-family:inherit;font-size:9.5px;padding:5px 8px;outline:none;letter-spacing:.12em;text-transform:uppercase;}
+.seed-inp:focus{border-color:var(--accent);}
+.seed-rand{background:transparent;border:1px solid #0e2028;color:#253a44;font-size:13px;padding:0 7px;cursor:pointer;transition:all .12s;}
+.seed-rand:hover{color:var(--accent);border-color:var(--accent);}
+.motif-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:3px;padding:10px 15px 6px;}
+.motif-btn{background:#040e14;border:1px solid #0e2028;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:5px 2px 4px;transition:border-color .12s;}
+.motif-btn:hover{border-color:#2a5a6a;}.motif-btn.on{border-color:var(--accent);}
+.motif-btn canvas{display:block;opacity:.5;}.motif-btn.on canvas{opacity:1;}
+.mlabel{font-size:5.5px;letter-spacing:.1em;text-transform:uppercase;color:#1e3a48;text-align:center;line-height:1;white-space:nowrap;}
+.motif-btn.on .mlabel{color:var(--accent);}
+#pal-section{padding:10px 15px;border-top:1px solid #0e2028;flex-shrink:0;}
+.pal-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:3px;margin-top:7px;}
+.pal-btn{height:30px;border:1px solid #0e2028;cursor:pointer;font-family:inherit;font-size:6.5px;letter-spacing:.14em;text-transform:uppercase;transition:border-color .12s;}
+.pal-btn.on{border-width:2px;}
+#actions{padding:10px 15px;display:flex;flex-direction:column;gap:4px;flex-shrink:0;}
+#gen-btn{background:var(--accent);border:none;color:#040c10;font-family:inherit;font-size:8.5px;letter-spacing:.26em;text-transform:uppercase;padding:10px;cursor:pointer;transition:opacity .12s;}
+#gen-btn:hover{opacity:.82;}
+#exp-btn{background:transparent;border:1px solid #0e2028;color:#253a44;font-family:inherit;font-size:8px;letter-spacing:.18em;text-transform:uppercase;padding:8px;cursor:pointer;transition:all .12s;}
+#exp-btn:hover{border-color:#888;color:#888;}
+#main{flex:1;display:flex;align-items:center;justify-content:center;padding:20px;position:relative;overflow:hidden;}
+#canvas-frame{position:relative;display:flex;align-items:center;justify-content:center;width:100%;height:100%;}
+#cnv{display:block;max-width:100%;max-height:100%;}
+#hud{position:absolute;bottom:0;left:0;right:0;display:flex;justify-content:space-between;padding:3px 6px;pointer-events:none;}
+.hud-txt{font-size:6.5px;letter-spacing:.18em;text-transform:uppercase;color:#0e2028;}
+</style>
+</head>
+<body>
+<div id="sidebar">
+  <div id="app-header">
+    <div class="suite-label">EMVY CHECK · Generative Art Suite</div>
+    <h1>Tessellation Generator</h1>
+    <div class="ver-tag">v1.0 · 6 Grids · 14 Motifs</div>
+  </div>
+  <div id="tab-nav">
+    <button class="tab-btn on" data-tab="grid">Grid</button>
+    <button class="tab-btn" data-tab="motif">Motif</button>
+    <button class="tab-btn" data-tab="style">Style</button>
+  </div>
+  <div id="tab-content">
+    <div class="tab-panel on" id="panel-grid">
+      <div class="ctrl-section">
+        <div class="ctrl-label">Seed</div>
+        <div class="seed-row"><input class="seed-inp" id="seed" value="TESS" maxlength="24" autocomplete="off"><button class="seed-rand" id="rand-seed">&#x27F3;</button></div>
+      </div>
+      <div class="ctrl-section">
+        <div class="ctrl-label">Grid Type</div>
+        <div class="btn-group" id="grid-type">
+          <button class="tgl-btn on" data-v="square">Square</button>
+          <button class="tgl-btn" data-v="hex">Hex</button>
+          <button class="tgl-btn" data-v="triangle">Tri</button>
+          <button class="tgl-btn" data-v="diamond">Diamond</button>
+          <button class="tgl-btn" data-v="brick">Brick</button>
+          <button class="tgl-btn" data-v="cairo">Cairo</button>
+        </div>
+      </div>
+      <div class="ctrl-section"><div class="ctrl-label">Tile Size <span class="ctrl-note" id="tsize-v">60</span></div><input type="range" id="tile-size" min="20" max="140" value="60" step="4"></div>
+      <div class="ctrl-section">
+        <div class="ctrl-label">Rotation Rule</div>
+        <div class="btn-group" id="rot-rule">
+          <button class="tgl-btn on" data-v="random">Random</button>
+          <button class="tgl-btn" data-v="alt">Alt</button>
+          <button class="tgl-btn" data-v="spiral">Spiral</button>
+          <button class="tgl-btn" data-v="fixed">Fixed</button>
+          <button class="tgl-btn" data-v="row">Rows</button>
+        </div>
+      </div>
+      <div class="ctrl-section">
+        <div class="ctrl-label">Colour Mode</div>
+        <div class="btn-group" id="col-mode">
+          <button class="tgl-btn on" data-v="mono">Mono</button>
+          <button class="tgl-btn" data-v="dual">Dual</button>
+          <button class="tgl-btn" data-v="tri">Tri</button>
+          <button class="tgl-btn" data-v="checker">Checker</button>
+          <button class="tgl-btn" data-v="row">Row</button>
+          <button class="tgl-btn" data-v="radial">Radial</button>
+        </div>
+      </div>
+      <div class="ctrl-section">
+        <div class="ctrl-label">Fill Mode</div>
+        <div class="btn-group" id="fill-mode">
+          <button class="tgl-btn on" data-v="outline">Outline</button>
+          <button class="tgl-btn" data-v="filled">Filled</button>
+          <button class="tgl-btn" data-v="mixed">Mixed</button>
+          <button class="tgl-btn" data-v="invert">Invert Alt</button>
+        </div>
+      </div>
+      <div class="ctrl-section"><div class="ctrl-label">Line Weight <span class="ctrl-note" id="lw-v">1.5</span></div><input type="range" id="line-weight" min="0.3" max="6" value="1.5" step="0.3"></div>
+      <div class="ctrl-section"><div class="ctrl-label">Cell Padding <span class="ctrl-note" id="margin-v">0.08</span></div><input type="range" id="tile-margin" min="0" max="0.38" value="0.08" step="0.01"></div>
+      <div class="ctrl-section"><div class="ctrl-label">Jitter <span class="ctrl-note" id="jitter-v">0</span></div><input type="range" id="jitter" min="0" max="0.4" value="0" step="0.02"></div>
+      <div class="ctrl-section">
+        <div class="ctrl-label">Grid Lines</div>
+        <div class="btn-group" id="border-style">
+          <button class="tgl-btn on" data-v="none">None</button>
+          <button class="tgl-btn" data-v="hairline">Hair</button>
+          <button class="tgl-btn" data-v="full">Full</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-panel" id="panel-motif">
+      <div class="motif-grid" id="motif-grid"></div>
+      <div class="ctrl-section">
+        <div class="ctrl-label">Motif Blend</div>
+        <div class="btn-group" id="motif-blend">
+          <button class="tgl-btn on" data-v="single">Single</button>
+          <button class="tgl-btn" data-v="layer2">+Layer</button>
+          <button class="tgl-btn" data-v="altrow">Alt Rows</button>
+        </div>
+      </div>
+      <div id="motif2-section" style="display:none;">
+        <div style="padding:4px 15px 2px;"><div class="ctrl-label">Second Motif</div></div>
+        <div class="motif-grid" id="motif-grid-2"></div>
+      </div>
+      <div class="ctrl-section"><div class="ctrl-label">Detail Level <span class="ctrl-note" id="detail-v">3</span></div><input type="range" id="detail" min="1" max="6" value="3" step="1"></div>
+    </div>
+
+    <div class="tab-panel" id="panel-style">
+      <div class="ctrl-section"><div class="ctrl-label">Canvas Rotation <span class="ctrl-note" id="grot-v">0°</span></div><input type="range" id="g-rot" min="0" max="90" value="0" step="1"></div>
+      <div class="ctrl-section">
+        <div class="ctrl-label">Edge Fade</div>
+        <div class="btn-group" id="fade-edge">
+          <button class="tgl-btn on" data-v="none">None</button>
+          <button class="tgl-btn" data-v="vignette">Vignette</button>
+          <button class="tgl-btn" data-v="circle">Circle</button>
+        </div>
+      </div>
+      <div class="ctrl-section">
+        <div class="ctrl-label">Symmetry</div>
+        <div class="btn-group" id="sym-mode">
+          <button class="tgl-btn on" data-v="none">None</button>
+          <button class="tgl-btn" data-v="flipx">Flip X</button>
+          <button class="tgl-btn" data-v="flipxy">Flip XY</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="pal-section">
+    <div class="ctrl-label">Colour Palette</div>
+    <div class="pal-grid" id="pal-grp"></div>
+  </div>
+  <div id="actions">
+    <button id="gen-btn">&#x25A6; New Random</button>
+    <button id="exp-btn">&#x2193; Export PNG (4000px)</button>
+  </div>
+</div>
+
+<div id="main">
+  <div id="canvas-frame">
+    <canvas id="cnv"></canvas>
+    <div id="hud">
+      <span class="hud-txt" id="hud-l">—</span>
+      <span class="hud-txt">EMVY CHECK</span>
+    </div>
+  </div>
+</div>
+
+<script>
+// ════════════════════════════════════
+//  RNG
+// ════════════════════════════════════
+function makeRNG(seed){
+  let h=2166136261>>>0;
+  for(let i=0;i<seed.length;i++){h^=seed.charCodeAt(i);h=Math.imul(h,16777619)>>>0;}
+  let s=h||1;
+  return()=>{
+    s=(Math.imul(s^(s>>>16),0x45d9f3b)^(s>>>4))>>>0;
+    s=(Math.imul(s,0xd35a2d97)+0x2827)>>>0;
+    return(s>>>0)/4294967296;
+  };
+}
+
+// ════════════════════════════════════
+//  PALETTES
+// ════════════════════════════════════
+const PALETTES=[
+  {id:'frost',  label:'FROST',  bg:'#040c10',fg:'#4dc9e6',ac:'#186080'},
+  {id:'void',   label:'VOID',   bg:'#080808',fg:'#f0ece0',ac:'#505050'},
+  {id:'ember',  label:'EMBER',  bg:'#0d0805',fg:'#d4813c',ac:'#6a3010'},
+  {id:'ink',    label:'INK',    bg:'#eee9df',fg:'#140e0a',ac:'#8a7860'},
+  {id:'blood',  label:'BLOOD',  bg:'#0a0004',fg:'#e03050',ac:'#500018'},
+  {id:'sage',   label:'SAGE',   bg:'#040a06',fg:'#5cba7a',ac:'#1e5030'},
+  {id:'gold',   label:'GOLD',   bg:'#09080a',fg:'#e8c53a',ac:'#604e10'},
+  {id:'violet', label:'VIOLET', bg:'#07050f',fg:'#9b72e8',ac:'#301860'},
+  {id:'bone',   label:'BONE',   bg:'#f4efe6',fg:'#2a1f14',ac:'#c0b09a'},
+];
+
+// ════════════════════════════════════
+//  MOTIFS
+// ════════════════════════════════════
+const MOTIFS=[
+  {id:'truchet_arc',  label:'T-ARC'},
+  {id:'truchet_line', label:'T-LINE'},
+  {id:'weave',        label:'WEAVE'},
+  {id:'pinwheel',     label:'PNWHL'},
+  {id:'islamic',      label:'ISLMK'},
+  {id:'cross',        label:'CROSS'},
+  {id:'nested',       label:'NEST'},
+  {id:'spiral',       label:'SPIRL'},
+  {id:'petal',        label:'PETAL'},
+  {id:'arrow',        label:'ARROW'},
+  {id:'star',         label:'STAR'},
+  {id:'celtic',       label:'CELT'},
+  {id:'diamond',      label:'DIAM'},
+  {id:'maze',         label:'MAZE'},
+];
+
+// ════════════════════════════════════
+//  STATE
+// ════════════════════════════════════
+const S={
+  seed:'TESS', gridType:'square', tileSize:60, rotRule:'random',
+  colMode:'mono', fillMode:'outline', lineWeight:1.5, tileMargin:0.08,
+  jitter:0, borderStyle:'none', motifId:'truchet_arc', motifId2:'weave',
+  motifBlend:'single', detail:3, gRot:0, fadeEdge:'none', symMode:'none', palette:'frost',
+};
+
+// ════════════════════════════════════
+//  CELL GENERATION
+//  All positions are in canvas pixels; size is the tile's side length
+// ════════════════════════════════════
+function buildCells(gridType, ts, W, H, rng, jitter){
+  const cells=[];
+  const jv=()=>(rng()-.5)*ts*jitter;
+  const ox=ts, oy=ts; // overdraw padding
+
+  if(gridType==='square'){
+    const cols=Math.ceil((W+ox*2)/ts)+1, rows=Math.ceil((H+oy*2)/ts)+1;
+    for(let r=0;r<rows;r++) for(let c=0;c<cols;c++)
+      cells.push({cx:c*ts-ox+jv(), cy:r*ts-oy+jv(), size:ts, row:r, col:c, type:'sq'});
+  }
+  else if(gridType==='hex'){
+    const hx=ts*1.5, hy=ts*0.866;
+    const cols=Math.ceil((W+ox*2)/hx)+2, rows=Math.ceil((H+oy*2)/hy)+2;
+    for(let r=0;r<rows;r++) for(let c=0;c<cols;c++)
+      cells.push({cx:c*hx-ox+jv(), cy:r*hy+(c%2?hy/2:0)-oy+jv(), size:ts, row:r, col:c, type:'hex'});
+  }
+  else if(gridType==='triangle'){
+    const tw=ts*0.5, th=ts*0.866;
+    const cols=Math.ceil((W+ox*2)/tw)+4, rows=Math.ceil((H+oy*2)/th)+2;
+    for(let r=0;r<rows;r++) for(let c=0;c<cols;c++){
+      const up=(r+c)%2===0;
+      cells.push({cx:c*tw-ox+jv(), cy:r*th-oy+jv(), size:ts*0.9, row:r, col:c, type:'tri', up});
+    }
+  }
+  else if(gridType==='diamond'){
+    const ds=ts*0.707;
+    const cols=Math.ceil((W+ox*4)/ds)+4, rows=Math.ceil((H+oy*4)/ds)+4;
+    for(let r=0;r<rows;r++) for(let c=0;c<cols;c++)
+      cells.push({cx:(c+r)*ds*0.5-ox+jv(), cy:(r-c)*ds*0.5+H*0.5+jv(), size:ts*0.65, row:r, col:c, type:'sq'});
+  }
+  else if(gridType==='brick'){
+    const bw=ts*1.7, bh=ts*0.65;
+    const cols=Math.ceil((W+ox*2)/bw)+2, rows=Math.ceil((H+oy*2)/bh)+2;
+    for(let r=0;r<rows;r++) for(let c=0;c<cols;c++)
+      cells.push({cx:c*bw+(r%2?bw/2:0)-ox+jv(), cy:r*bh-oy+jv(), size:ts, row:r, col:c, type:'brick', bw:bw*0.46, bh:bh*0.46});
+  }
+  else if(gridType==='cairo'){
+    const cs=ts*0.88;
+    const cols=Math.ceil((W+ox*2)/cs)+2, rows=Math.ceil((H+oy*2)/cs)+2;
+    for(let r=0;r<rows;r++) for(let c=0;c<cols;c++)
+      cells.push({cx:c*cs-ox+jv(), cy:r*cs-oy+jv(), size:ts*0.7, row:r, col:c, type:'pent', v:(c+r)%4});
+  }
+  return cells;
+}
+
+// ════════════════════════════════════
+//  ROTATION RULE
+// ════════════════════════════════════
+function getCellRot(cell, rule, rng){
+  if(rule==='fixed')  return 0;
+  if(rule==='alt')    return ((cell.col+cell.row)%2)?Math.PI/2:0;
+  if(rule==='row')    return (cell.row%2)?Math.PI:0;
+  if(rule==='spiral'){const d=Math.hypot(cell.col,cell.row);return d*0.38;}
+  return Math.floor(rng()*4)*Math.PI/2;  // random
+}
+
+// ════════════════════════════════════
+//  COLOUR
+// ════════════════════════════════════
+function getColor(cell, mode, pal){
+  if(mode==='mono')    return pal.fg;
+  if(mode==='dual')    return (cell.col+cell.row)%2?pal.ac:pal.fg;
+  if(mode==='checker') return (cell.col%2)!==(cell.row%2)?pal.fg:pal.ac;
+  if(mode==='row')     return cell.row%2?pal.ac:pal.fg;
+  if(mode==='radial')  return Math.hypot(cell.col,cell.row)%2<1?pal.fg:pal.ac;
+  if(mode==='tri')     return [pal.fg,pal.ac,lerpCol(pal.fg,pal.ac,0.5)][(cell.col+cell.row*2)%3];
+  return pal.fg;
+}
+function lerpCol(a,b,t){
+  const p=s=>[parseInt(s.slice(1,3),16),parseInt(s.slice(3,5),16),parseInt(s.slice(5,7),16)];
+  const [r1,g1,b1]=p(a),[r2,g2,b2]=p(b);
+  return '#'+[r1+(r2-r1)*t,g1+(g2-g1)*t,b1+(b2-b1)*t].map(v=>Math.round(v).toString(16).padStart(2,'0')).join('');
+}
+
+// ════════════════════════════════════
+//  MOTIF DRAW
+//  ctx already at cell centre and rotated; s = drawable half-size
+// ════════════════════════════════════
+function drawMotif(ctx, id, s, fill, lw, n, col){
+  ctx.strokeStyle=col; ctx.fillStyle=col;
+  ctx.lineWidth=lw; ctx.lineCap='round'; ctx.lineJoin='round';
+  n=Math.max(1,n);
+
+  switch(id){
+    case 'truchet_arc':
+      ctx.beginPath();ctx.arc(-s,-s,s,0,Math.PI/2);ctx.stroke();
+      ctx.beginPath();ctx.arc(s,s,s,Math.PI,Math.PI*1.5);ctx.stroke();
+      break;
+    case 'truchet_line':
+      ctx.beginPath();ctx.moveTo(-s,0);ctx.lineTo(0,s);ctx.stroke();
+      ctx.beginPath();ctx.moveTo(0,-s);ctx.lineTo(s,0);ctx.stroke();
+      break;
+    case 'weave':{
+      const step=(s*2)/(n+1);
+      for(let i=1;i<=n;i++){ctx.beginPath();ctx.moveTo(-s,-s+step*i);ctx.lineTo(s,-s+step*i);ctx.stroke();}
+      for(let i=1;i<=n;i++){
+        const x=-s+step*i;
+        if(i%2===0){ctx.beginPath();ctx.moveTo(x,-s);ctx.lineTo(x,0);ctx.stroke();}
+        else{ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,s);ctx.stroke();}
+      }
+      break;}
+    case 'pinwheel':
+      [[s,0,s,-s],[0,-s,-s,-s],[-s,0,-s,s],[0,s,s,s]].forEach(([x1,y1,x2,y2])=>{
+        ctx.beginPath();ctx.moveTo(0,0);ctx.lineTo(x1,y1);ctx.lineTo(x2,y2);ctx.closePath();
+        fill?ctx.fill():ctx.stroke();
+      });
+      break;
+    case 'islamic':{
+      const pts=4+Math.floor(n*.5),ri=s*.36,ro=s*.9;
+      ctx.beginPath();
+      for(let i=0;i<pts*2;i++){const a=(i/pts)*Math.PI-Math.PI/pts;const r=i%2?ri:ro;i?ctx.lineTo(Math.cos(a)*r,Math.sin(a)*r):ctx.moveTo(Math.cos(a)*r,Math.sin(a)*r);}
+      ctx.closePath();fill?ctx.fill():ctx.stroke();break;}
+    case 'cross':{
+      const arm=s*(0.12+n*0.04);
+      ctx.beginPath();ctx.rect(-s,-arm,s*2,arm*2);fill?ctx.fill():ctx.stroke();
+      ctx.beginPath();ctx.rect(-arm,-s,arm*2,s*2);fill?ctx.fill():ctx.stroke();
+      break;}
+    case 'nested':
+      for(let i=n;i>=1;i--){
+        const r=s*(i/n)*.9;
+        ctx.beginPath();ctx.rect(-r,-r,r*2,r*2);
+        (fill&&i===1)?ctx.fill():ctx.stroke();
+      }
+      break;
+    case 'spiral':{
+      ctx.beginPath();
+      const steps=24*n;
+      for(let i=0;i<=steps;i++){const t=i/steps,a=t*Math.PI*2*n*.7,r=t*s*.9;i?ctx.lineTo(Math.cos(a)*r,Math.sin(a)*r):ctx.moveTo(Math.cos(a)*r,Math.sin(a)*r);}
+      ctx.stroke();break;}
+    case 'petal':{
+      const petals=Math.max(2,n+1);
+      for(let i=0;i<petals;i++){
+        ctx.save();ctx.rotate((i/petals)*Math.PI*2);
+        ctx.beginPath();ctx.moveTo(0,0);ctx.bezierCurveTo(s*.5,-s*.5,s,-.1*s,s*.5,0);ctx.bezierCurveTo(s*.5,0,s,.1*s,0,0);
+        fill?ctx.fill():ctx.stroke();ctx.restore();
+      }
+      break;}
+    case 'arrow':
+      ctx.beginPath();
+      ctx.moveTo(-s*.75,s*.4);ctx.lineTo(s*.05,s*.4);ctx.lineTo(s*.05,s*.82);
+      ctx.lineTo(s*.92,0);ctx.lineTo(s*.05,-s*.82);ctx.lineTo(s*.05,-s*.4);ctx.lineTo(-s*.75,-s*.4);
+      ctx.closePath();fill?ctx.fill():ctx.stroke();break;
+    case 'star':{
+      const pts=3+n,ri=s*.35,ro=s*.88;
+      ctx.beginPath();
+      for(let i=0;i<pts*2;i++){const a=(i/pts)*Math.PI-Math.PI/2;const r=i%2?ri:ro;i?ctx.lineTo(Math.cos(a)*r,Math.sin(a)*r):ctx.moveTo(Math.cos(a)*r,Math.sin(a)*r);}
+      ctx.closePath();fill?ctx.fill():ctx.stroke();break;}
+    case 'celtic':
+      ctx.beginPath();ctx.arc(-s,0,s*.88,-Math.PI*.38,Math.PI*.38);ctx.stroke();
+      ctx.beginPath();ctx.arc(s,0,s*.88,Math.PI*.62,Math.PI*1.38);ctx.stroke();
+      ctx.beginPath();ctx.arc(0,-s,s*.88,Math.PI*.12,Math.PI*.88);ctx.stroke();
+      ctx.beginPath();ctx.arc(0,s,s*.88,-Math.PI*.88,-Math.PI*.12);ctx.stroke();
+      break;
+    case 'diamond':{
+      for(let i=n;i>=1;i--){
+        const r=s*(i/n)*.88;
+        ctx.beginPath();ctx.moveTo(r,0);ctx.lineTo(0,-r);ctx.lineTo(-r,0);ctx.lineTo(0,r);ctx.closePath();
+        (fill&&i===1)?ctx.fill():ctx.stroke();
+      }
+      break;}
+    case 'maze':{
+      const g=Math.max(1,Math.round(n*.6)),step=(s*2)/(g+1);
+      for(let r=1;r<=g;r++) for(let c=0;c<g;c++){
+        ctx.beginPath();ctx.moveTo(-s+c*step+step*.2,-s+r*step);ctx.lineTo(-s+c*step+step*.8,-s+r*step);ctx.stroke();
+      }
+      for(let c=1;c<=g;c++) for(let r=0;r<g;r++){
+        ctx.beginPath();ctx.moveTo(-s+c*step,-s+r*step+step*.2);ctx.lineTo(-s+c*step,-s+r*step+step*.8);ctx.stroke();
+      }
+      break;}
+  }
+}
+
+// ════════════════════════════════════
+//  CLIP PATH BUILDER (no save/restore — caller handles)
+// ════════════════════════════════════
+function buildClipPath(ctx, cell, s, m){
+  const r=s*(1-m);
+  ctx.beginPath();
+  if(cell.type==='hex'){
+    for(let i=0;i<6;i++){const a=(i/6)*Math.PI*2-Math.PI/6;i?ctx.lineTo(Math.cos(a)*r,Math.sin(a)*r):ctx.moveTo(Math.cos(a)*r,Math.sin(a)*r);}
+  } else if(cell.type==='tri'){
+    if(cell.up){ctx.moveTo(0,-r*.75);ctx.lineTo(r*.88,r*.42);ctx.lineTo(-r*.88,r*.42);}
+    else{ctx.moveTo(0,r*.75);ctx.lineTo(r*.88,-r*.42);ctx.lineTo(-r*.88,-r*.42);}
+  } else if(cell.type==='brick'){
+    ctx.rect(-(cell.bw||r),-(cell.bh||r*.5),(cell.bw||r)*2,(cell.bh||r*.5)*2);
+  } else if(cell.type==='pent'){
+    for(let i=0;i<5;i++){const a=(i/5)*Math.PI*2-Math.PI/2;i?ctx.lineTo(Math.cos(a)*r,Math.sin(a)*r):ctx.moveTo(Math.cos(a)*r,Math.sin(a)*r);}
+  } else {
+    ctx.rect(-r,-r,r*2,r*2);
+  }
+  ctx.closePath();
+}
+
+// ════════════════════════════════════
+//  MAIN DRAW
+// ════════════════════════════════════
+function drawAll(canvas, S){
+  const W=canvas.width, H=canvas.height;
+  const ctx=canvas.getContext('2d');
+  const pal=PALETTES.find(p=>p.id===S.palette)||PALETTES[0];
+  const {seed,gridType,tileSize:ts,rotRule,colMode,fillMode,lineWeight:lw,
+    tileMargin:tm,jitter,borderStyle,motifId,motifId2,motifBlend,detail,
+    gRot,fadeEdge,symMode}=S;
+
+  // Clear
+  ctx.fillStyle=pal.bg;
+  ctx.fillRect(0,0,W,H);
+
+  // RNG for jitter only (grid layout)
+  const gridRng=makeRNG(seed+'_grid');
+  const cells=buildCells(gridType,ts,W,H,gridRng,jitter);
+
+  // Global rotation
+  ctx.save();
+  if(gRot){ctx.translate(W/2,H/2);ctx.rotate(gRot*Math.PI/180);ctx.translate(-W/2,-H/2);}
+
+  cells.forEach(cell=>{
+    const cRng=makeRNG(seed+'_'+cell.row+'_'+cell.col);
+    const rot=getCellRot(cell,rotRule,cRng);
+    const col=getColor(cell,colMode,pal);
+    const fill=fillMode==='filled'
+      ||(fillMode==='mixed'&&(cell.col+cell.row)%2===0)
+      ||(fillMode==='invert'&&(cell.col+cell.row)%2!==0);
+    const s=cell.size*0.5;
+
+    // ── OUTER: translate to cell centre ──
+    ctx.save();
+    ctx.translate(cell.cx, cell.cy);
+
+      // ── INNER: clip ──
+      ctx.save();
+      buildClipPath(ctx,cell,s,tm);
+      ctx.clip();
+
+        // BG fill inside cell
+        ctx.fillStyle=pal.bg;
+        ctx.fillRect(-s,-s,s*2,s*2);
+
+        // Motif (rotated)
+        ctx.save();
+        ctx.rotate(rot);
+        const mId=motifBlend==='altrow'&&cell.row%2!==0?motifId2:motifId;
+        drawMotif(ctx,mId,s*(1-tm),fill,lw,detail,col);
+        ctx.restore();
+
+        // Layer 2
+        if(motifBlend==='layer2'){
+          ctx.save();
+          ctx.rotate(rot+Math.PI/4);
+          ctx.globalAlpha=0.32;
+          drawMotif(ctx,motifId2,s*(1-tm),false,lw*0.55,detail,col);
+          ctx.restore();
+        }
+
+      ctx.restore(); // ── end clip ──
+
+      // Grid lines (drawn outside clip so they show on edges)
+      if(borderStyle!=='none'){
+        buildClipPath(ctx,cell,s,0);
+        ctx.globalAlpha=borderStyle==='hairline'?.18:.4;
+        ctx.strokeStyle=col;
+        ctx.lineWidth=borderStyle==='hairline'?lw*.28:lw*.6;
+        ctx.stroke();
+        ctx.globalAlpha=1;
+      }
+
+    ctx.restore(); // ── end translate ──
+  });
+
+  ctx.restore(); // global rotation
+
+  // Vignette
+  if(fadeEdge!=='none'){
+    const cx=W/2,cy=H/2;
+    const g=ctx.createRadialGradient(cx,cy,Math.min(W,H)*(fadeEdge==='circle'?.45:.28),cx,cy,Math.min(W,H)*.78);
+    const r=parseInt(pal.bg.slice(1,3),16),gv=parseInt(pal.bg.slice(3,5),16),b=parseInt(pal.bg.slice(5,7),16);
+    g.addColorStop(0,`rgba(${r},${gv},${b},0)`);
+    g.addColorStop(1,`rgba(${r},${gv},${b},1)`);
+    ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+  }
+
+  // Symmetry mirror
+  if(symMode!=='none'){
+    const snap=ctx.getImageData(0,0,W,H);
+    const tmp=document.createElement('canvas');tmp.width=W;tmp.height=H;
+    tmp.getContext('2d').putImageData(snap,0,0);
+    if(symMode==='flipx'||symMode==='flipxy'){
+      ctx.save();ctx.translate(W,0);ctx.scale(-1,1);
+      ctx.drawImage(tmp,0,0,W/2,H,0,0,W/2,H);
+      ctx.restore();
+    }
+    if(symMode==='flipxy'){
+      const snap2=ctx.getImageData(0,0,W,H);
+      const tmp2=document.createElement('canvas');tmp2.width=W;tmp2.height=H;
+      tmp2.getContext('2d').putImageData(snap2,0,0);
+      ctx.save();ctx.translate(0,H);ctx.scale(1,-1);ctx.drawImage(tmp2,0,0);ctx.restore();
+    }
+  }
+
+  if(document.getElementById('hud-l'))
+    document.getElementById('hud-l').textContent=seed+' \u00B7 '+gridType+' \u00B7 '+motifId+' \u00B7 '+ts+'px';
+}
+
+// ════════════════════════════════════
+//  RENDER & EXPORT
+// ════════════════════════════════════
+function render(){
+  const cnv=document.getElementById('cnv');
+  const frame=document.getElementById('canvas-frame');
+  const avail=Math.min(frame.offsetWidth,frame.offsetHeight)-36;
+  cnv.width=cnv.height=Math.max(avail,300);
+  drawAll(cnv,S);
+}
+
+function exportPNG(){
+  const previewSize=document.getElementById('cnv').width;
+  const EXPSIZE=4000;
+  const scale=EXPSIZE/previewSize;
+  const saved={ts:S.tileSize,lw:S.lineWeight};
+  S.tileSize=Math.round(S.tileSize*scale);
+  S.lineWeight=S.lineWeight*scale;
+  const off=document.createElement('canvas');off.width=off.height=EXPSIZE;
+  drawAll(off,S);
+  S.tileSize=saved.ts;S.lineWeight=saved.lw;
+  const a=document.createElement('a');
+  a.download='tessellation_'+S.seed+'_'+S.gridType+'.png';
+  a.href=off.toDataURL('image/png');a.click();
+}
+
+// ════════════════════════════════════
+//  THUMBNAIL
+// ════════════════════════════════════
+function renderThumb(canvas,id,color){
+  const ctx=canvas.getContext('2d'),sz=canvas.width;
+  ctx.clearRect(0,0,sz,sz);
+  ctx.save();ctx.translate(sz/2,sz/2);ctx.rotate(Math.PI/4);
+  ctx.strokeStyle=ctx.fillStyle=color;ctx.lineWidth=1.4;ctx.lineCap='round';ctx.lineJoin='round';
+  drawMotif(ctx,id,sz*.38,false,1.4,3,color);
+  ctx.restore();
+}
+
+// ════════════════════════════════════
+//  UI
+// ════════════════════════════════════
+function rndSeed(){const c='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';return Array.from({length:6},()=>c[Math.floor(Math.random()*c.length)]).join('');}
+
+function sl(id,vid,key,fmt){
+  const el=document.getElementById(id),vl=document.getElementById(vid);
+  if(!el)return;
+  el.addEventListener('input',()=>{S[key]=parseFloat(el.value);if(vl)vl.textContent=fmt?fmt(S[key]):S[key];render();});
+}
+function tg(gid,key,cb){
+  document.querySelectorAll('#'+gid+' .tgl-btn').forEach(b=>{
+    b.onclick=()=>{
+      document.querySelectorAll('#'+gid+' .tgl-btn').forEach(x=>x.classList.remove('on'));
+      b.classList.add('on');
+      S[key]=isNaN(b.dataset.v)?b.dataset.v:parseFloat(b.dataset.v);
+      if(cb)cb();render();
+    };
+  });
+}
+
+function buildMotifGrid(cid,stateKey){
+  const g=document.getElementById(cid);if(!g)return;g.innerHTML='';
+  const pal=PALETTES.find(p=>p.id===S.palette)||PALETTES[0];
+  MOTIFS.forEach(m=>{
+    const btn=document.createElement('button');
+    btn.className='motif-btn'+(S[stateKey]===m.id?' on':'');
+    btn.dataset.id=m.id;
+    const cvs=document.createElement('canvas');cvs.width=cvs.height=36;
+    renderThumb(cvs,m.id,pal.fg);
+    const lbl=document.createElement('span');lbl.className='mlabel';lbl.textContent=m.label;
+    btn.appendChild(cvs);btn.appendChild(lbl);
+    btn.onclick=()=>{
+      document.querySelectorAll('#'+cid+' .motif-btn').forEach(b=>b.classList.remove('on'));
+      btn.classList.add('on');S[stateKey]=m.id;render();
+    };
+    g.appendChild(btn);
+  });
+}
+function rebuildThumbs(){
+  const pal=PALETTES.find(p=>p.id===S.palette)||PALETTES[0];
+  document.querySelectorAll('.motif-btn canvas').forEach(cvs=>{
+    const id=cvs.closest('.motif-btn').dataset.id;if(id)renderThumb(cvs,id,pal.fg);
+  });
+}
+
+// ════════════════════════════════════
+//  INIT
+// ════════════════════════════════════
+window.addEventListener('DOMContentLoaded',()=>{
+  // Tabs
+  document.querySelectorAll('.tab-btn').forEach(btn=>{
+    btn.onclick=()=>{
+      document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('on'));
+      document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('on'));
+      btn.classList.add('on');document.getElementById('panel-'+btn.dataset.tab).classList.add('on');
+    };
+  });
+
+  // Seed
+  const si=document.getElementById('seed');
+  si.addEventListener('change',()=>{S.seed=si.value.toUpperCase()||'TESS';si.value=S.seed;render();});
+  si.addEventListener('keydown',e=>{if(e.key==='Enter'){S.seed=si.value.toUpperCase()||'TESS';render();}});
+  document.getElementById('rand-seed').onclick=()=>{const v=rndSeed();si.value=v;S.seed=v;render();};
+
+  // Grid
+  sl('tile-size','tsize-v','tileSize');
+  sl('line-weight','lw-v','lineWeight',v=>v.toFixed(1));
+  sl('tile-margin','margin-v','tileMargin',v=>v.toFixed(2));
+  sl('jitter','jitter-v','jitter',v=>v.toFixed(2));
+  tg('grid-type','gridType');tg('rot-rule','rotRule');
+  tg('col-mode','colMode');tg('fill-mode','fillMode');tg('border-style','borderStyle');
+
+  // Motif
+  buildMotifGrid('motif-grid','motifId');
+  buildMotifGrid('motif-grid-2','motifId2');
+  sl('detail','detail-v','detail');
+  tg('motif-blend','motifBlend',()=>{
+    document.getElementById('motif2-section').style.display=
+      (S.motifBlend==='layer2'||S.motifBlend==='altrow')?'block':'none';
+  });
+
+  // Style
+  sl('g-rot','grot-v','gRot',v=>v+'\xb0');
+  tg('fade-edge','fadeEdge');tg('sym-mode','symMode');
+
+  // Palettes
+  const pg=document.getElementById('pal-grp');
+  PALETTES.forEach(p=>{
+    const btn=document.createElement('button');
+    btn.className='pal-btn'+(p.id===S.palette?' on':'');
+    btn.style.background=p.bg;btn.style.color=p.fg;
+    btn.style.borderColor=p.id===S.palette?p.fg:'#0e2028';
+    btn.textContent=p.label;
+    btn.onclick=()=>{
+      document.querySelectorAll('.pal-btn').forEach(b=>{b.classList.remove('on');b.style.borderColor='#0e2028';});
+      btn.classList.add('on');btn.style.borderColor=p.fg;
+      S.palette=p.id;document.documentElement.style.setProperty('--accent',p.fg);
+      rebuildThumbs();render();
+    };
+    pg.appendChild(btn);
+  });
+
+  document.getElementById('gen-btn').onclick=()=>{const v=rndSeed();si.value=v;S.seed=v;render();};
+  document.getElementById('exp-btn').onclick=exportPNG;
+  window.addEventListener('resize',render);
+  render();
+});
+</script>
+</body>
+</html>
