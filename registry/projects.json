@@ -1,0 +1,118 @@
+{
+  "version": 1,
+  "updated": "2026-05-25",
+  "note": "Public project directory for RINKIMIRIKATA. This lists repos, live tools and experiments that should be reachable from the main hub.",
+  "owner": "HerGotSystems",
+  "items": [
+    {
+      "id": "humanx",
+      "title": "HumanX",
+      "type": "human experiment / social framework",
+      "status": "source available",
+      "repo": "https://github.com/HerGotSystems/HumanX",
+      "launch": "https://github.com/HerGotSystems/HumanX",
+      "description": "HumanX experimental system. Public repo available; runnable deployment can be connected when ready.",
+      "visibility": "public"
+    },
+    {
+      "id": "25-100-engine",
+      "title": "25/100 Learning Engine",
+      "type": "learning system",
+      "status": "live",
+      "repo": "https://github.com/HerGotSystems/25-100-engine",
+      "launch": "https://25-100-engine.workers.dev",
+      "description": "Skill mastery platform with lessons, exercises, quizzes, pyramid progress and curriculum building tools.",
+      "visibility": "public"
+    },
+    {
+      "id": "omniforge-systemforge",
+      "title": "Omniforge System Forge",
+      "type": "AI system forge",
+      "status": "live",
+      "repo": "https://github.com/HerGotSystems/omniforge-systemforge",
+      "launch": "https://omniforge-systemforge.com",
+      "description": "AI-assisted system design, structured implementation packs and system forge workflows.",
+      "visibility": "public"
+    },
+    {
+      "id": "emvycheck",
+      "title": "EMVY CHECK",
+      "type": "music site",
+      "status": "live",
+      "repo": "https://github.com/HerGotSystems/EMVYCHECK",
+      "launch": "https://emvycheck.com",
+      "description": "Music hub and player for EMVY CHECK releases, albums and experimental electronic work.",
+      "visibility": "public"
+    },
+    {
+      "id": "aip-protocol",
+      "title": "AIP Protocol",
+      "type": "AI protocol / standard",
+      "status": "source available",
+      "repo": "https://github.com/HerGotSystems/aip-protocol",
+      "launch": "https://github.com/HerGotSystems/aip-protocol",
+      "description": "Open AI-agnostic task protocol work for apps that generate portable AI tasks.",
+      "visibility": "public"
+    },
+    {
+      "id": "valter-universe",
+      "title": "Valter Universe",
+      "type": "comic / story world",
+      "status": "source available",
+      "repo": "https://github.com/HerGotSystems/Valter-Universe",
+      "launch": "https://github.com/HerGotSystems/Valter-Universe",
+      "description": "Post-apocalyptic comic/world project and related story assets.",
+      "visibility": "public"
+    },
+    {
+      "id": "meverse",
+      "title": "MEverse",
+      "type": "personal web space",
+      "status": "source available",
+      "repo": "https://github.com/HerGotSystems/MEverse",
+      "launch": "https://github.com/HerGotSystems/MEverse",
+      "description": "Personal AI-enhanced web space concept and template work.",
+      "visibility": "public"
+    },
+    {
+      "id": "memento-mori",
+      "title": "Memento Mori",
+      "type": "creative project",
+      "status": "source available",
+      "repo": "https://github.com/HerGotSystems/Memento-Mori",
+      "launch": "https://github.com/HerGotSystems/Memento-Mori",
+      "description": "Creative project repo available for inspection and future hub connection.",
+      "visibility": "public"
+    },
+    {
+      "id": "lorr",
+      "title": "LorR",
+      "type": "experimental project",
+      "status": "source available",
+      "repo": "https://github.com/HerGotSystems/LorR",
+      "launch": "https://github.com/HerGotSystems/LorR",
+      "description": "Experimental repo available for inspection and future deployment.",
+      "visibility": "public"
+    },
+    {
+      "id": "ritual-temple",
+      "title": "Ritual Temple",
+      "type": "creative web experiment",
+      "status": "source available",
+      "repo": "https://github.com/HerGotSystems/ritual-temple",
+      "launch": "https://github.com/HerGotSystems/ritual-temple",
+      "description": "Small creative experiment repo available for future hub linking.",
+      "visibility": "public"
+    },
+    {
+      "id": "nexus-ai-music-platform",
+      "title": "NEXUS AI Music Platform",
+      "type": "music platform",
+      "status": "empty / planned",
+      "repo": "https://github.com/HerGotSystems/NEXUS-AI-MUSIC-PLATFORM",
+      "launch": "https://github.com/HerGotSystems/NEXUS-AI-MUSIC-PLATFORM",
+      "description": "Planned AI music platform repository. Needs runnable surface later.",
+      "visibility": "public"
+    }
+  ]
+}
