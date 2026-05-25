@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>RINKIMIRIKATA / CDME</title>
+<style>
+body{margin:0;background:#070707;color:#eee;font-family:monospace}main{width:min(1100px,calc(100% - 28px));margin:auto;padding:28px 0}h1{font-size:clamp(38px,7vw,80px);letter-spacing:-.07em;line-height:.9;margin:20px 0}.panel{border:1px solid #272727;background:#111;padding:16px;margin:14px 0}.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}button,input{background:#080808;color:#eee;border:1px solid #333;padding:10px;font:inherit}button:hover{border-color:#c8960a;color:#c8960a}table{width:100%;border-collapse:collapse;margin-top:14px}td,th{border:1px solid #272727;padding:8px;font-size:12px;text-align:left}th{background:#141414;color:#c8960a}.muted{color:#999;line-height:1.5}.status{color:#c8960a}a{color:#c8960a;text-decoration:none}</style>
+</head>
+<body>
+<main>
+<a href="/">← hub</a>
+<h1>CDME</h1>
+<p class="muted">Browser-local CSV/XLSX workflow shell. User files stay on the local device unless explicit upload is added later.</p>
+<div class="panel">
+<div class="row">
+<input id="fileInput" type="file" accept=".csv,.xlsx,.xls">
+<button id="exportBtn">Export Sample CSV</button>
+</div>
+<p id="status" class="status">Ready. Load a CSV file to inspect browser-local parsing flow.</p>
+</div>
+<div class="panel">
+<table>
+<thead>
+<tr><th>Row</th><th>Preview</th></tr>
+</thead>
+<tbody id="tbody"></tbody>
+</table>
+</div>
+</main>
+<script>
+const fileInput=document.getElementById('fileInput');
+const tbody=document.getElementById('tbody');
+const statusEl=document.getElementById('status');
+const exportBtn=document.getElementById('exportBtn');
+fileInput.onchange=()=>{
+ const file=fileInput.files[0];
+ if(!file)return;
+ statusEl.textContent='Loaded locally: '+file.name;
+ const reader=new FileReader();
+ reader.onload=e=>{
+  const text=String(e.target.result||'');
+  const rows=text.split(/\r?\n/).slice(0,25);
+  tbody.innerHTML=rows.map((r,i)=>`<tr><td>${i+1}</td><td>${escapeHtml(r)}</td></tr>`).join('');
+ };
+ reader.readAsText(file);
+};
+exportBtn.onclick=()=>{
+ const csv='time,value\n00:00,42\n00:01,55\n00:02,61';
+ const blob=new Blob([csv],{type:'text/csv'});
+ const a=document.createElement('a');
+ a.href=URL.createObjectURL(blob);
+ a.download='cdme-export.csv';
+ a.click();
+};
+function escapeHtml(s){return String(s).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));}
+</script>
+</body>
+</html>
