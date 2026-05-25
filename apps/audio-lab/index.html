@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>RINKIMIRIKATA / Audio Lab</title>
+<style>
+body{margin:0;background:#070707;color:#eee;font-family:monospace}main{width:min(1100px,calc(100% - 28px));margin:auto;padding:28px 0}h1{font-size:clamp(38px,7vw,80px);letter-spacing:-.07em;line-height:.9;margin:20px 0}.panel{border:1px solid #272727;background:#111;padding:16px;margin:14px 0}.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}button,input,select{background:#080808;color:#eee;border:1px solid #333;padding:10px;font:inherit}button:hover{border-color:#c8960a;color:#c8960a}canvas{width:100%;height:420px;background:#000;border:1px solid #272727;display:block}.muted{color:#999;line-height:1.5}.status{color:#c8960a}a{color:#c8960a;text-decoration:none}</style>
+</head>
+<body>
+<main>
+<a href="/">← hub</a>
+<h1>AUDIO LAB</h1>
+<p class="muted">Browser-local audio test shell. Use EMVY hosted tracks later, or load your own local MP3/WAV/OGG. Local files stay on the visitor device.</p>
+<div class="panel">
+<div class="row">
+<select id="trackSelect"><option value="">EMVY CHECK track picker placeholder</option></select>
+<input id="fileInput" type="file" accept="audio/*">
+<button id="playBtn">Play / Pause</button>
+<button id="recordBtn">Start Recording</button>
+<a id="downloadLink" hidden download="rinkimirikata-audio-lab.webm">Download recording</a>
+</div>
+<p id="status" class="status">Ready. Choose a local audio file to test.</p>
+</div>
+<canvas id="canvas" width="1280" height="720"></canvas>
+<audio id="audio" controls crossorigin="anonymous" style="width:100%;margin-top:14px"></audio>
+</main>
+<script>
+const audio=document.getElementById('audio');
+const canvas=document.getElementById('canvas');
+const ctx=canvas.getContext('2d');
+const fileInput=document.getElementById('fileInput');
+const playBtn=document.getElementById('playBtn');
+const recordBtn=document.getElementById('recordBtn');
+const statusEl=document.getElementById('status');
+const downloadLink=document.getElementById('downloadLink');
+let ac,src,analyser,data,recorder,chunks=[],recording=false;
+function setupAudio(){if(ac)return;ac=new AudioContext();src=ac.createMediaElementSource(audio);analyser=ac.createAnalyser();analyser.fftSize=2048;data=new Uint8Array(analyser.frequencyBinCount);src.connect(analyser);analyser.connect(ac.destination)}
+fileInput.onchange=()=>{const f=fileInput.files[0];if(!f)return;audio.src=URL.createObjectURL(f);statusEl.textContent='Loaded local file: '+f.name};
+playBtn.onclick=async()=>{setupAudio();await ac.resume();if(audio.paused){await audio.play();statusEl.textContent='Playing';}else{audio.pause();statusEl.textContent='Paused';}};
+recordBtn.onclick=()=>{if(!recording){const stream=canvas.captureStream(30);recorder=new MediaRecorder(stream,{mimeType:'video/webm'});chunks=[];recorder.ondataavailable=e=>chunks.push(e.data);recorder.onstop=()=>{const blob=new Blob(chunks,{type:'video/webm'});downloadLink.href=URL.createObjectURL(blob);downloadLink.hidden=false;statusEl.textContent='Recording ready to download.'};recorder.start();recording=true;recordBtn.textContent='Stop Recording';statusEl.textContent='Recording canvas to WebM.'}else{recorder.stop();recording=false;recordBtn.textContent='Start Recording'}};
+function draw(){requestAnimationFrame(draw);ctx.fillStyle='rgba(0,0,0,.18)';ctx.fillRect(0,0,canvas.width,canvas.height);if(analyser){analyser.getByteFrequencyData(data);const w=canvas.width/data.length;for(let i=0;i<data.length;i++){const v=data[i]/255;const h=v*canvas.height*.85;ctx.fillStyle='hsl('+(45+i*.18)+',80%,'+(35+v*45)+'%)';ctx.fillRect(i*w,canvas.height-h,w*1.6,h)}}else{ctx.fillStyle='#333';ctx.font='28px monospace';ctx.fillText('Load audio to activate visualizer',40,80)}}
+draw();
+</script>
+</body>
+</html>
