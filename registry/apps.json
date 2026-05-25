@@ -1,8 +1,17 @@
 {
   "version": 1,
-  "updated": "2026-05-17",
+  "updated": "2026-05-25",
   "note": "Central app registry for RINKIMIRIKATA. Add new HTML tools here to make them visible in the hub loader.",
   "items": [
+    {
+      "id": "audio-lab",
+      "title": "Audio Lab",
+      "type": "browser-local audio visualizer",
+      "status": "prototype",
+      "url": "/apps/audio-lab/",
+      "description": "Local MP3/WAV/OGG visualizer shell with recording hooks. Base pattern for EMVY track picker, Pi Atlas and audio-reactive tools.",
+      "tags": ["audio", "visualizer", "local-file", "recording"]
+    },
     {
       "id": "visual-instruments",
       "title": "Visual Instruments",
