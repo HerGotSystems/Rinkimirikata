@@ -1,2 +1,1222 @@
-<!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>RINKIMIRIKATA / Pi Atlas</title><style>body{margin:0;background:#050505;color:#eee;font-family:monospace}main{width:min(1100px,calc(100% - 28px));margin:auto;padding:28px 0}h1{font-size:clamp(40px,8vw,88px);letter-spacing:-.08em;line-height:.9;margin:20px 0}.panel{border:1px solid #272727;background:#111;padding:16px;margin:14px 0}.row{display:flex;gap:10px;flex-wrap:wrap}button,input{background:#080808;color:#eee;border:1px solid #333;padding:10px;font:inherit}button:hover{border-color:#c8960a;color:#c8960a}canvas{width:100%;height:520px;background:#000;border:1px solid #272727;display:block}.muted{color:#999;line-height:1.5}a{color:#c8960a;text-decoration:none}</style></head><body><main><a href="/">← hub</a><h1>PI ATLAS</h1><p class="muted">Starter shell for the Pi Atlas visualizer. This is the public route where the real engine can be dropped in. Current version renders a numeric spiral placeholder and keeps the browser-local pattern ready for audio/text input.</p><div class="panel"><div class="row"><input id="text" value="3141592653589793238462643383279"><button id="drawBtn">Redraw</button><button id="recBtn">Start Recording</button><a id="dl" hidden download="pi-atlas.webm">Download recording</a></div></div><canvas id="c" width="1280" height="720"></canvas></main><script>const c=document.getElementById('c'),x=c.getContext('2d'),text=document.getElementById('text'),dl=document.getElementById('dl'),recBtn=document.getElementById('recBtn');let t=0,rec,chunks=[],recording=false;function draw(){requestAnimationFrame(draw);t+=.01;x.fillStyle='rgba(0,0,0,.16)';x.fillRect(0,0,c.width,c.height);const s=text.value||'314159';const cx=c.width/2,cy=c.height/2;for(let i=0;i<900;i++){const d=Number(s[i%s.length])||0;const a=i*.19+t*(.2+d*.03);const r=8+i*.38+d*1.7;const px=cx+Math.cos(a)*r,py=cy+Math.sin(a)*r;const size=2+d*.45;x.fillStyle='hsl('+((d*32+i*.05)%360)+',80%,'+(42+d*4)+'%)';x.fillRect(px,py,size,size)}}document.getElementById('drawBtn').onclick=()=>{x.clearRect(0,0,c.width,c.height)};recBtn.onclick=()=>{if(!recording){rec=new MediaRecorder(c.captureStream(30),{mimeType:'video/webm'});chunks=[];rec.ondataavailable=e=>chunks.push(e.data);rec.onstop=()=>{dl.href=URL.createObjectURL(new Blob(chunks,{type:'video/webm'}));dl.hidden=false};rec.start();recording=true;recBtn.textContent='Stop Recording'}else{rec.stop();recording=false;recBtn.textContent='Start Recording'}};draw();</script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Constant Atlas Visualizer</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: #070707;
+    color: #f4f4f4;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    overflow: hidden;
+  }
+  #app {
+    display: grid;
+    grid-template-columns: 360px 1fr;
+    height: 100vh;
+  }
+  aside {
+    background: #111;
+    border-right: 1px solid #2a2a2a;
+    padding: 14px;
+    overflow-y: auto;
+  }
+  details {
+    border: 1px solid #252525;
+    border-radius: 14px;
+    padding: 10px 12px;
+    margin-top: 10px;
+    background: #0b0b0b;
+  }
+  summary {
+    cursor: pointer;
+    color: #eee;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    user-select: none;
+  }
+  details > label:first-of-type { margin-top: 12px; }
+  .minirow {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 6px;
+    margin-top: 8px;
+  }
+  .minirow button {
+    margin: 0;
+    padding: 7px 4px;
+    font-size: 11px;
+  }
+  .palette {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 7px;
+    margin-top: 8px;
+  }
+  .swatch {
+    display: grid;
+    grid-template-columns: 18px 1fr;
+    gap: 4px;
+    align-items: center;
+    font-size: 12px;
+    color: #ccc;
+  }
+  .swatch input[type="color"] {
+    width: 26px;
+    height: 26px;
+    padding: 0;
+    border-radius: 6px;
+  }
+  #hud {
+    position: fixed;
+    left: 50%;
+    bottom: 18px;
+    transform: translateX(-50%);
+    display: none;
+    gap: 8px;
+    padding: 8px;
+    border: 1px solid rgba(255,255,255,0.18);
+    border-radius: 999px;
+    background: rgba(0,0,0,0.55);
+    backdrop-filter: blur(10px);
+    z-index: 20;
+  }
+  #hud button, #hud select {
+    width: auto;
+    margin: 0;
+    border-radius: 999px;
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+  body.stage aside { display: none; }
+  body.stage #app { grid-template-columns: 1fr; }
+  body.stage #hud { display: flex; }
+  h1 {
+    margin: 0 0 4px;
+    font-size: 28px;
+    letter-spacing: -0.04em;
+  }
+  .sub {
+    color: #aaa;
+    font-size: 13px;
+    line-height: 1.4;
+    margin-bottom: 18px;
+  }
+  label {
+    display: block;
+    font-size: 12px;
+    color: #bbb;
+    margin: 14px 0 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  select, input, textarea, button {
+    width: 100%;
+    background: #1c1c1c;
+    color: #fff;
+    border: 1px solid #333;
+    border-radius: 10px;
+    padding: 9px 10px;
+    font-size: 14px;
+  }
+  textarea {
+    min-height: 86px;
+    resize: vertical;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 12px;
+  }
+  input[type="range"] { padding: 0; }
+  button {
+    cursor: pointer;
+    margin-top: 10px;
+    background: #262626;
+  }
+  button:hover { background: #333; }
+  .row {
+    display: grid;
+    grid-template-columns: 1fr 72px;
+    gap: 8px;
+    align-items: center;
+  }
+  canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+    background: radial-gradient(circle at center, #111 0%, #050505 72%);
+  }
+  .value {
+    background: #050505;
+    border: 1px solid #252525;
+    border-radius: 8px;
+    text-align: center;
+    padding: 7px 4px;
+    color: #ddd;
+    font-size: 12px;
+  }
+  .panel {
+    border: 1px solid #252525;
+    border-radius: 14px;
+    padding: 12px;
+    margin-top: 14px;
+    background: #0b0b0b;
+  }
+  .digits {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 12px;
+    color: #ccc;
+    word-break: break-all;
+    max-height: 120px;
+    overflow: auto;
+    line-height: 1.45;
+  }
+  .compare {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 12px;
+    line-height: 1.5;
+    color: #ddd;
+    word-break: break-all;
+    overflow-wrap: anywhere;
+  }
+  .hit { color: #8ef; }
+  .warn { color: #ffb86b; }
+  .tiny { color:#8d8d8d; font-size:11px; line-height:1.35; margin-top:8px; }
+</style>
+</head>
+<body>
+<div id="app">
+  <aside>
+    <h1>CONSTANT ATLAS</h1>
+    <div class="sub">Turn infinite numbers into spatial objects. π, e, φ, √2, √3, custom digit streams, multiple projections, angle cuts, and section comparison.</div>
+
+    <details open>
+      <summary>Source</summary>
+
+    <label>Constant / Number Source</label>
+    <select id="constant">
+      <option value="pi">π — pi</option>
+      <option value="e">e — Euler's number</option>
+      <option value="phi">φ — golden ratio</option>
+      <option value="sqrt2">√2</option>
+      <option value="sqrt3">√3</option>
+      <option value="tau">τ — 2π</option>
+      <option value="custom">Custom pasted number</option>
+    </select>
+
+    <label>Generated precision</label>
+    <div class="row"><input id="precision" type="range" min="500" max="8000" step="100" value="3000"><div class="value" id="precisionVal">3000</div></div>
+    <button id="regen">Regenerate digits</button>
+    <button id="savePng">Save PNG frame</button>
+    <div class="tiny" id="status">Ready.</div>
+
+    <div id="customBox" style="display:none">
+      <label>Custom number stream</label>
+      <textarea id="customInput" placeholder="Paste digits here, e.g. 1.6180339887..."></textarea>
+    </div>
+
+    </details>
+
+    <details open>
+      <summary>Shape</summary>
+
+    <label>Projection</label>
+    <select id="mode">
+      <option value="spiral">Spiral</option>
+      <option value="grid">Grid</option>
+      <option value="columns">Columns</option>
+      <option value="rings">Rings</option>
+      <option value="radial">Radial Burst</option>
+      <option value="flower">Flower / Petals</option>
+      <option value="helix">Double Helix</option>
+      <option value="diamond">Diamond Grid</option>
+      <option value="triangle">Triangle Stack</option>
+      <option value="orbit">Orbit Shells</option>
+      <option value="atom">Atomic Orbitals</option>
+      <option value="particle">Particle Trace</option>
+      <option value="vortex">Vortex Lens</option>
+      <option value="barcode">Barcode Field</option>
+      <option value="wave">Wave</option>
+    </select>
+
+    <label>Start position</label>
+    <div class="row"><input id="start" type="range" min="0" max="2500" value="0"><div class="value" id="startVal">0</div></div>
+
+    <label>Visible characters</label>
+    <div class="row"><input id="count" type="range" min="30" max="3000" value="900"><div class="value" id="countVal">900</div></div>
+
+    <label>Digit size</label>
+    <div class="row"><input id="fontSize" type="range" min="5" max="22" value="10"><div class="value" id="fontSizeVal">10</div></div>
+
+    <label>Spacing / Radius</label>
+    <div class="row"><input id="spacing" type="range" min="5" max="42" value="13"><div class="value" id="spacingVal">13</div></div>
+
+    <label>Grid width / Spiral density</label>
+    <div class="row"><input id="width" type="range" min="8" max="160" value="58"><div class="value" id="widthVal">58</div></div>
+
+    <label>Angle presets</label>
+    <div class="minirow">
+      <button class="anglePreset" data-sweep="45">45°</button>
+      <button class="anglePreset" data-sweep="90">90°</button>
+      <button class="anglePreset" data-sweep="180">180°</button>
+      <button class="anglePreset" data-sweep="360">360°</button>
+      <button class="anglePreset" data-sweep="720">720°</button>
+      <button class="anglePreset" data-sweep="1440">1440°</button>
+      <button class="anglePreset" data-sweep="2160">2160°</button>
+    </div>
+
+    <label>Angle start</label>
+    <div class="row"><input id="angleStart" type="range" min="0" max="360" value="0"><div class="value" id="angleStartVal">0°</div></div>
+
+    <label>Angle sweep</label>
+    <div class="row"><input id="angleSweep" type="range" min="15" max="2160" value="360"><div class="value" id="angleSweepVal">360°</div></div>
+
+    <label>Motion</label>
+    <select id="motionMode">
+      <option value="still">Still image</option>
+      <option value="rotate">Slow orbital rotation</option>
+      <option value="sweep">Animate angle sweep</option>
+      <option value="scan">Scan through number</option>
+      <option value="pulse">Pulse radius</option>
+    </select>
+
+    <label>Motion speed</label>
+    <div class="row"><input id="motionSpeed" type="range" min="0" max="100" value="28"><div class="value" id="motionSpeedVal">28</div></div>
+
+    <label>Visual atmosphere</label>
+    <select id="atmosphere">
+      <option value="clean">Clean</option>
+      <option value="trails">Soft trails</option>
+      <option value="glow">Glow field</option>
+      <option value="nucleus">Nucleus / atom</option>
+      <option value="stage">Stage beams</option>
+      <option value="video">Video poster mode</option>
+    </select>
+
+    <div class="panel">
+      <label>Constant Battle</label>
+      <select id="battleMode">
+        <option value="solo">Solo constant</option>
+        <option value="duel">Duel: π vs e</option>
+        <option value="golden">Duel: π vs φ</option>
+        <option value="trinity">Trinity: π + e + φ</option>
+      </select>
+
+      <label>Battle spread</label>
+      <div class="row"><input id="battleSpread" type="range" min="0" max="300" value="120"><div class="value" id="battleSpreadVal">120</div></div>
+
+      <label>Counter rotation</label>
+      <select id="counterRotate">
+        <option value="on">On</option>
+        <option value="off">Off</option>
+      </select>
+    </div>
+
+    <div class="panel">
+      <label>Audio Reactive</label>
+      <button id="audioBtn">Enable microphone / live audio</button>
+      <label>MP3 / audio file</label>
+      <input id="audioFile" type="file" accept="audio/*">
+      <button id="playBtn">Play / pause loaded track</button>
+      <audio id="audioPlayer" controls style="width:100%; margin-top:10px;"></audio>
+
+      <label>Audio influence</label>
+      <select id="audioMode">
+        <option value="none">Disabled</option>
+        <option value="pulse">Beat pulse</option>
+        <option value="radius">Radius deformation</option>
+        <option value="angle">Angular turbulence</option>
+        <option value="flow">Particle flow</option>
+        <option value="explode">Bass explosion</option>
+      </select>
+
+      <label>Audio sensitivity</label>
+      <div class="row"><input id="audioGain" type="range" min="1" max="300" value="120"><div class="value" id="audioGainVal">120</div></div>
+
+      <label>Bass controls</label>
+      <select id="bassTarget">
+        <option value="radius">Radius / expansion</option>
+        <option value="size">Digit size</option>
+        <option value="spread">Battle spread</option>
+        <option value="sweep">Angle sweep</option>
+      </select>
+
+      <label>Mids control</label>
+      <select id="midTarget">
+        <option value="angle">Angle turbulence</option>
+        <option value="orbit">Orbit tilt</option>
+        <option value="density">Density</option>
+      </select>
+
+      <label>Treble controls</label>
+      <select id="trebleTarget">
+        <option value="spark">Spark / flicker</option>
+        <option value="scan">Digit scan</option>
+        <option value="flow">Particle flow</option>
+      </select>
+      <div class="tiny" id="audioStatus">Audio inactive. Play music near the mic, or allow browser audio capture.</div>
+    </div>
+
+    </details>
+
+    <details open>
+      <summary>Colour</summary>
+
+    <label>Digit colour mode</label>
+    <select id="colorMode">
+      <option value="digit">By digit 0–9</option>
+      <option value="parity">Odd / even</option>
+      <option value="prime">Prime digits</option>
+      <option value="heat">Local repetition heat</option>
+      <option value="sequence">Position gradient</option>
+      <option value="manual">Manual digit palette</option>
+      <option value="neon">Neon rave</option>
+      <option value="fireice">Fire / ice</option>
+      <option value="mono">Clean monochrome</option>
+    </select>
+
+    <label>Manual digit palette</label>
+    <div class="palette" id="digitPalette"></div>
+
+    </details>
+
+    <details open>
+      <summary>Compare</summary>
+      <label>Compare section A</label>
+      <div class="row"><input id="aStart" type="range" min="0" max="2500" value="0"><div class="value" id="aStartVal">0</div></div>
+      <label>Compare section B</label>
+      <div class="row"><input id="bStart" type="range" min="0" max="2500" value="1000"><div class="value" id="bStartVal">1000</div></div>
+      <label>Compare length</label>
+      <div class="row"><input id="compareLen" type="range" min="10" max="260" value="80"><div class="value" id="compareLenVal">80</div></div>
+      <button id="jumpA">Jump view to A</button>
+      <button id="jumpB">Jump view to B</button>
+      <div class="compare" id="compareOut"></div>
+    </details>
+
+    <details>
+      <summary>Digit Window</summary>
+      <label>Current digit window</label>
+      <div class="digits" id="digitWindow"></div>
+    </details>
+
+    <details open>
+      <summary>Output</summary>
+      <button id="stageBtn">Stage / fullscreen controls</button>
+      <label>Recording quality</label>
+      <select id="recordQuality">
+        <option value="small">Small file 720p / 15fps / low bitrate</option>
+        <option value="medium" selected>Medium 1080p-ish / 24fps</option>
+        <option value="high">High quality / 30fps</option>
+      </select>
+      <label>Record seconds limit</label>
+      <div class="row"><input id="recordLimit" type="range" min="5" max="180" value="60"><div class="value" id="recordLimitVal">60</div></div>
+      <button id="recordBtn">Start / stop WebM recording</button>
+      <div class="tiny" id="recordStatus">Recorder inactive. Smaller files: use Small, lower visible characters, turn off glow/trails.</div>
+    </details>
+  </aside>
+
+  <canvas id="canvas"></canvas>
+<div id="hud">
+  <button id="hudPanel">Panel</button>
+  <button id="hudPlay">Play</button>
+  <select id="hudMode">
+    <option value="atom">Atom</option>
+    <option value="vortex">Vortex</option>
+    <option value="particle">Particle</option>
+    <option value="spiral">Spiral</option>
+    <option value="orbit">Orbit</option>
+    <option value="wave">Wave</option>
+    <option value="helix">Helix</option>
+  </select>
+  <select id="hudAudioMode">
+    <option value="none">Audio off</option>
+    <option value="pulse">Pulse</option>
+    <option value="radius">Radius</option>
+    <option value="angle">Angle</option>
+    <option value="flow">Flow</option>
+    <option value="explode">Explode</option>
+  </select>
+  <select id="hudColorMode">
+    <option value="digit">Digit colour</option>
+    <option value="manual">Manual</option>
+    <option value="neon">Neon</option>
+    <option value="fireice">Fire/Ice</option>
+    <option value="sequence">Gradient</option>
+    <option value="mono">Mono</option>
+  </select>
+  <button id="hudSweep">Sweep+</button>
+  <button id="hudMore">More</button>
+  <button id="hudLess">Less</button>
+  <button id="hudRecord">Record</button>
+</div>
+</div>
+
+<script>
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+const ids = ['constant','precision','regen','customInput','mode','start','count','fontSize','spacing','width','angleStart','angleSweep','motionMode','motionSpeed','atmosphere','colorMode','aStart','bStart','compareLen','jumpA','jumpB'];
+const els = {};
+ids.forEach(id => els[id] = document.getElementById(id));
+['audioBtn','audioFile','playBtn','audioPlayer','audioMode','audioGain','bassTarget','midTarget','trebleTarget','battleMode','battleSpread','counterRotate','savePng','stageBtn','recordBtn','recordQuality','recordLimit','hudPanel','hudPlay','hudMode','hudAudioMode','hudColorMode','hudSweep','hudMore','hudLess','hudRecord'].forEach(id => els[id] = document.getElementById(id));
+
+let NUMBER_STREAM = '3.14159';
+let NUMBER_NAME = 'π';
+let t = 0;
+let raf = null;
+let audioCtx = null;
+let analyser = null;
+let audioData = null;
+let audioEnergy = 0;
+let bassEnergy = 0;
+let midEnergy = 0;
+let trebleEnergy = 0;
+let mediaSourceNode = null;
+let micSourceNode = null;
+let cachedConstants = {};
+let isGenerating = false;
+let regenTimer = null;
+let mediaRecorder = null;
+let recordedChunks = [];
+const manualDigitColors = ['#00e5ff','#ff3df2','#ffe45c','#70ff6b','#ff7a18','#9b5cff','#ffffff','#ff3355','#32ffb4','#4f8cff'];
+
+function cleanNumberString(s){
+  s = String(s || '').replace(/[^0-9.]/g, '');
+  const firstDot = s.indexOf('.');
+  if(firstDot !== -1) {
+    s = s.slice(0, firstDot + 1) + s.slice(firstDot + 1).replace(/\./g, '');
+  }
+  return s || '0';
+}
+
+function pow10(n){ return 10n ** BigInt(n); }
+
+function bigintSqrt(n){
+  if(n < 2n) return n;
+  let x0 = n / 2n;
+  let x1 = (x0 + n / x0) / 2n;
+  while(x1 < x0) { x0 = x1; x1 = (x0 + n / x0) / 2n; }
+  return x0;
+}
+
+function fixedToDecimal(x, integerDigits, precision){
+  let s = x.toString();
+  while(s.length <= precision) s = '0' + s;
+  if(integerDigits === 1) return s.slice(0,1) + '.' + s.slice(1, precision + 1);
+  return s.slice(0, integerDigits) + '.' + s.slice(integerDigits, integerDigits + precision);
+}
+
+function arctanInv(invX, scale){
+  const x = BigInt(invX);
+  const x2 = x * x;
+  let term = scale / x;
+  let sum = term;
+  let n = 1n;
+  let sign = -1n;
+  while(term !== 0n){
+    term = term / x2;
+    const add = term / (2n * n + 1n);
+    if(add === 0n) break;
+    sum += sign * add;
+    sign *= -1n;
+    n++;
+  }
+  return sum;
+}
+
+function generatePi(precision){
+  const guard = 20;
+  const scale = pow10(precision + guard);
+  const pi = 16n * arctanInv(5, scale) - 4n * arctanInv(239, scale);
+  return fixedToDecimal(pi / pow10(guard), 1, precision);
+}
+
+function generateTau(precision){
+  // π is generated with two extra decimal guard places. After doubling the fixed
+  // integer, divide by 100n to remove those two guard places before formatting τ.
+  const p = generatePi(precision + 2);
+  const raw = BigInt(p.replace('.', '')) * 2n;
+  return fixedToDecimal(raw / 100n, 1, precision);
+}
+
+function generateE(precision){
+  const guard = 20;
+  const scale = pow10(precision + guard);
+  let sum = 0n;
+  let fact = 1n;
+  for(let n=0;n<precision*3;n++){
+    if(n > 0) fact *= BigInt(n);
+    const term = scale / fact;
+    if(term === 0n) break;
+    sum += term;
+  }
+  return fixedToDecimal(sum / pow10(guard), 1, precision);
+}
+
+function generateSqrt(n, precision){
+  const guard = 10;
+  const scaled = BigInt(n) * pow10(2 * (precision + guard));
+  const root = bigintSqrt(scaled);
+  return fixedToDecimal(root / pow10(guard), 1, precision);
+}
+
+function generatePhi(precision){
+  const guard = 12;
+  const scale = pow10(precision + guard);
+  const sqrt5 = bigintSqrt(5n * scale * scale);
+  const phi = (scale + sqrt5) / 2n;
+  return fixedToDecimal(phi / pow10(guard), 1, precision);
+}
+
+function getConstantStream(type, precision){
+  const key = type + ':' + precision;
+  if(cachedConstants[key]) return cachedConstants[key];
+  let value;
+  if(type === 'pi') value = generatePi(precision);
+  else if(type === 'tau') value = generateTau(precision);
+  else if(type === 'e') value = generateE(precision);
+  else if(type === 'phi') value = generatePhi(precision);
+  else if(type === 'sqrt2') value = generateSqrt(2, precision);
+  else if(type === 'sqrt3') value = generateSqrt(3, precision);
+  else value = cleanNumberString(els.customInput.value);
+  cachedConstants[key] = value;
+  return value;
+}
+
+function constantLabel(type){
+  return {pi:'π', e:'e', phi:'φ', sqrt2:'√2', sqrt3:'√3', tau:'τ', custom:'custom'}[type] || type;
+}
+
+function setGenerationLocked(locked){
+  isGenerating = locked;
+  [els.regen, els.precision, els.constant].forEach(el => { if(el) el.disabled = locked; });
+}
+
+function regenerate(){
+  if(isGenerating) return;
+  const type = els.constant.value;
+  const precision = Number(els.precision.value);
+  setGenerationLocked(true);
+  document.getElementById('status').textContent = 'Generating...';
+  setTimeout(() => {
+    try {
+      NUMBER_STREAM = getConstantStream(type, precision);
+      NUMBER_NAME = constantLabel(type);
+      updateRangeLimits();
+      const digitCount = NUMBER_STREAM.replace(/[^0-9]/g, '').length;
+      document.getElementById('status').textContent = `${NUMBER_NAME} loaded: ${digitCount.toLocaleString()} digits.`;
+      draw();
+    } catch(err) {
+      document.getElementById('status').textContent = 'Generation failed. Reduce precision.';
+      console.error(err);
+    } finally {
+      setGenerationLocked(false);
+    }
+  }, 20);
+}
+
+function scheduleRegenerate(){
+  clearTimeout(regenTimer);
+  regenTimer = setTimeout(regenerate, 220);
+}
+
+function updateRangeLimits(){
+  const max = Math.max(0, NUMBER_STREAM.length - 50);
+  ['start','aStart','bStart'].forEach(id => {
+    els[id].max = max;
+    if(Number(els[id].value) > max) els[id].value = max;
+  });
+  els.count.max = Math.min(5000, NUMBER_STREAM.length);
+  if(Number(els.count.value) > Number(els.count.max)) els.count.value = els.count.max;
+}
+
+function resize(){
+  canvas.width = canvas.clientWidth * devicePixelRatio;
+  canvas.height = canvas.clientHeight * devicePixelRatio;
+  ctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);
+  draw();
+}
+window.addEventListener('resize', resize);
+
+function digitColor(ch, i, segment){
+  if(ch === '.') return 'hsl(0 0% 94%)';
+  const n = Number(ch);
+  const mode = els.colorMode.value;
+  if(mode === 'manual') return manualDigitColors[n] || '#ffffff';
+  if(mode === 'neon') return `hsl(${(n * 47 + i * 0.18 + t * 8) % 360} 100% 66%)`;
+  if(mode === 'fireice') return n < 5 ? `hsl(${190 + n * 8} 95% 65%)` : `hsl(${10 + n * 9} 95% 62%)`;
+  if(mode === 'mono') return 'hsl(0 0% 88%)';
+  if(mode === 'sequence') return `hsl(${(i / Math.max(1,segment.length)) * 330} 90% 62%)`;
+  if(mode === 'parity') return n % 2 ? 'hsl(190 95% 68%)' : 'hsl(35 95% 62%)';
+  if(mode === 'prime') return [2,3,5,7].includes(n) ? 'hsl(315 95% 70%)' : 'hsl(0 0% 56%)';
+  if(mode === 'heat') {
+    const local = segment.slice(Math.max(0,i-12), i+12);
+    const repeats = [...local].filter(x => x === ch).length;
+    return `hsl(${20 + repeats * 28} 90% ${45 + repeats * 4}%)`;
+  }
+  return `hsl(${n * 36} 90% 62%)`;
+}
+
+function getAudioGain(){ return els.audioGain ? Number(els.audioGain.value) / 100 : 1; }
+function audioMode(){ return els.audioMode ? els.audioMode.value : 'none'; }
+
+function getParams(){
+  const motion = els.motionMode.value;
+  const speed = Number(els.motionSpeed.value) / 100;
+  const gain = getAudioGain();
+  const aMode = audioMode();
+  const bassTarget = els.bassTarget ? els.bassTarget.value : 'radius';
+  const midTarget = els.midTarget ? els.midTarget.value : 'angle';
+  const trebleTarget = els.trebleTarget ? els.trebleTarget.value : 'spark';
+
+  const baseStart = Number(els.start.value);
+  const scanBoost = (aMode === 'flow' || trebleTarget === 'scan') ? trebleEnergy * 240 * gain : 0;
+  const animatedStart = motion === 'scan'
+    ? Math.floor((baseStart + t * speed * (80 + scanBoost)) % Math.max(1, NUMBER_STREAM.length - 100))
+    : baseStart;
+
+  const baseAngle = Number(els.angleStart.value) * Math.PI / 180;
+  let angleStart = motion === 'rotate' ? baseAngle + t * speed * 0.45 : baseAngle;
+  if(aMode === 'angle' || aMode === 'flow' || midTarget === 'angle') angleStart += (midEnergy + trebleEnergy * 0.7) * Math.PI * gain;
+
+  const baseSweep = Number(els.angleSweep.value) * Math.PI / 180;
+  let angleSweep = motion === 'sweep' ? (Math.PI / 12) + Math.abs(Math.sin(t * speed * 0.65)) * baseSweep : baseSweep;
+  if(aMode === 'angle' || bassTarget === 'sweep') angleSweep += (midEnergy + bassEnergy) * Math.PI * gain;
+
+  let spacingPulse = motion === 'pulse' ? 1 + Math.sin(t * speed * 1.8) * 0.18 : 1;
+  if(aMode === 'pulse') spacingPulse += bassEnergy * 0.7 * gain;
+  if(aMode === 'explode') spacingPulse += bassEnergy * 1.8 * gain;
+  if(aMode === 'radius' || bassTarget === 'radius') spacingPulse += audioEnergy * 0.65 * gain;
+
+  return {
+    mode: els.mode.value,
+    start: animatedStart,
+    count: Number(els.count.value),
+    fontSize: Number(els.fontSize.value) * (1 + ((aMode === 'pulse' || bassTarget === 'size') ? bassEnergy * 0.35 * gain : 0)),
+    spacing: Number(els.spacing.value) * spacingPulse,
+    width: Number(els.width.value),
+    angleStart,
+    angleSweep,
+    audioMode: aMode,
+    audioGain: gain,
+    bassTarget,
+    midTarget,
+    trebleTarget
+  };
+}
+
+function positionFor(i, p, w, h, ch){
+  const cx = w/2, cy = h/2;
+  const s = p.spacing;
+  const rowW = p.width;
+  const angleOffset = p.angleStart;
+  const sweepFactor = p.angleSweep / (Math.PI * 2);
+  const digit = Number(ch) || 0;
+  const audioWarp = p.audioMode === 'none' ? 0 : audioEnergy * 100 * p.audioGain;
+  const bassWarp = p.audioMode === 'none' ? 0 : bassEnergy * 140 * p.audioGain;
+  const midWarp = p.audioMode === 'none' ? 0 : midEnergy * 90 * p.audioGain;
+
+  if(p.mode === 'grid') return [cx - (rowW * s)/2 + (i % rowW) * s, cy - (Math.ceil(p.count / rowW) * s)/2 + Math.floor(i / rowW) * s];
+  if(p.mode === 'columns') {
+    const col = Math.floor(i / rowW), row = i % rowW;
+    return [cx - (Math.ceil(p.count / rowW) * s)/2 + col * s, cy - (rowW * s)/2 + row * s];
+  }
+  if(p.mode === 'diamond') {
+    const x = (i % rowW) - rowW/2, y = Math.floor(i / rowW) - Math.ceil(p.count / rowW)/2;
+    return [cx + (x - y) * s * 0.72, cy + (x + y) * s * 0.42];
+  }
+  if(p.mode === 'triangle') {
+    const row = Math.floor((Math.sqrt(8*i+1)-1)/2);
+    const start = row * (row+1) / 2;
+    const col = i - start;
+    return [cx + (col - row/2) * s, cy - h * 0.38 + row * s * 0.9];
+  }
+  if(p.mode === 'rings') {
+    const ring = Math.floor(Math.sqrt(i));
+    const ringStart = ring * ring;
+    const idx = i - ringStart;
+    const total = Math.max(8, ring * 8);
+    const a = angleOffset + (idx / total) * p.angleSweep;
+    const r = ring * s * 0.82;
+    return [cx + Math.cos(a) * r, cy + Math.sin(a) * r];
+  }
+  if(p.mode === 'orbit') {
+    const ring = digit + 1;
+    const a = angleOffset + i * 0.09 * sweepFactor + (p.audioMode === 'flow' ? trebleEnergy * 2 : 0);
+    const r = 30 + ring * s * 3.2 + Math.floor(i / rowW) * s * 0.08 + bassWarp * 0.25;
+    return [cx + Math.cos(a) * r, cy + Math.sin(a) * r];
+  }
+  if(p.mode === 'atom') {
+    const shell = 1 + (digit % 5);
+    const plane = (digit % 3) * Math.PI / 3 + midEnergy * 0.4 * p.audioGain;
+    const a = angleOffset + i * 0.12 * sweepFactor + digit * 0.07 + trebleEnergy * 0.8 * p.audioGain;
+    const r = 34 + shell * s * 5.4 + Math.sin(i * 0.05) * s * 1.6 + bassWarp * 0.35;
+    const squash = 0.34 + (digit % 4) * 0.12 + midEnergy * 0.16 * p.audioGain;
+    const x = Math.cos(a) * r;
+    const y = Math.sin(a + plane) * r * squash;
+    return [cx + x * Math.cos(plane) - y * Math.sin(plane), cy + x * Math.sin(plane) + y * Math.cos(plane)];
+  }
+  if(p.mode === 'particle') {
+    const a = angleOffset + i * 0.037 * p.angleSweep + digit + trebleEnergy * 1.7 * p.audioGain;
+    const drift = Math.sin(i * 0.021 + digit + t * trebleEnergy) * rowW * 2;
+    const r = 20 + Math.sqrt(i) * s * 1.35 + drift + audioWarp * 0.6;
+    return [cx + Math.cos(a) * r, cy + Math.sin(a * 1.7) * r * (0.55 + midEnergy * 0.2)];
+  }
+  if(p.mode === 'vortex') {
+    const a = angleOffset + i * (p.angleSweep / Math.max(8,rowW)) + digit * 0.11 + midEnergy * p.audioGain;
+    const r = 8 + Math.pow(i, 0.62) * s * 0.55 + digit * s * 0.8 + bassWarp * 0.35;
+    const lens = 1 + Math.sin(i * 0.03 + t * bassEnergy) * (0.12 + audioEnergy * 0.22);
+    return [cx + Math.cos(a) * r * lens, cy + Math.sin(a) * r / lens];
+  }
+  if(p.mode === 'radial') {
+    const spoke = i % rowW;
+    const depth = Math.floor(i / rowW);
+    const a = angleOffset + (spoke / rowW) * p.angleSweep;
+    const r = 28 + depth * s;
+    return [cx + Math.cos(a) * r, cy + Math.sin(a) * r];
+  }
+  if(p.mode === 'flower') {
+    const a = angleOffset + i * 0.22 * sweepFactor;
+    const petal = Math.sin((i / rowW) * Math.PI * 2) * rowW;
+    const r = 80 + Math.abs(petal) * 2.2 + Math.sqrt(i) * s * 0.55;
+    return [cx + Math.cos(a) * r, cy + Math.sin(a) * r];
+  }
+  if(p.mode === 'helix') {
+    const x = cx - (p.count * s * 0.24)/2 + i * s * 0.24;
+    const a = angleOffset + i / rowW * p.angleSweep + trebleEnergy * p.audioGain;
+    const y = cy + Math.sin(a) * (120 + bassWarp * 0.55) + Math.cos(a * 2) * midWarp * 0.25;
+    return [x, y];
+  }
+  if(p.mode === 'barcode') {
+    const cols = rowW;
+    const x = cx - cols * s / 2 + (i % cols) * s;
+    const y = cy - 260 + Math.floor(i / cols) * s * 1.2;
+    return [x, y + digit * 1.8];
+  }
+  if(p.mode === 'wave') {
+    const x = cx - (p.count * s * 0.22)/2 + i * s * 0.22;
+    const waveAmp = rowW * 2.1 + bassWarp * 0.7;
+    const y = cy + Math.sin(i / rowW * p.angleSweep + angleOffset + trebleEnergy * p.audioGain) * waveAmp + (digit - 4.5) * (5 + midWarp * 0.08);
+    return [x,y];
+  }
+
+  const safeStep = Math.max(s * 0.82, p.fontSize * 1.25);
+  const a = angleOffset + i * (p.angleSweep / rowW);
+  const r = 10 + safeStep * Math.sqrt(i) * 0.95;
+  return [cx + Math.cos(a) * r, cy + Math.sin(a) * r];
+}
+
+function drawStream(stream, label, p, options){
+  const w = canvas.clientWidth;
+  const h = canvas.clientHeight;
+  const offsetX = options.offsetX || 0;
+  const offsetY = options.offsetY || 0;
+  const dir = options.dir || 1;
+  const hueShift = options.hueShift ?? (options.forceHue === undefined ? options.startOffset || 0 : 0);
+  const alpha = options.alpha || 0.9;
+  const start = Math.max(0, Math.min(stream.length - 1, p.start + (options.startOffset || 0)));
+  const segment = stream.slice(start, start + p.count);
+
+  ctx.save();
+  ctx.translate(offsetX, offsetY);
+  if(dir < 0) ctx.rotate(Math.PI);
+
+  ctx.font = `${p.fontSize}px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+
+  for(let i=0;i<segment.length;i++){
+    const ch = segment[i];
+    const [x,y] = positionFor(i,p,w,h,ch);
+    if(x < -120 || y < -120 || x > w+120 || y > h+120) continue;
+    let colour = digitColor(ch, i + hueShift, segment);
+    if(options.forceHue !== undefined && ch !== '.') {
+      const digit = Number(ch) || 0;
+      colour = `hsl(${(options.forceHue + digit * 8 + i * 0.02) % 360} 95% 62%)`;
+    }
+    ctx.fillStyle = colour;
+    const sparkAlpha = p.trebleTarget === 'spark'
+      ? (trebleEnergy > 0.01 ? Math.min(1, alpha * (0.72 + Math.random() * trebleEnergy * 0.6)) : alpha)
+      : alpha;
+    ctx.globalAlpha = sparkAlpha;
+    if(els.atmosphere.value === 'glow' || els.atmosphere.value === 'video') {
+      ctx.shadowBlur = 8 + bassEnergy * 18;
+      ctx.shadowColor = colour;
+    } else ctx.shadowBlur = 0;
+    ctx.fillText(ch, x, y);
+  }
+  ctx.restore();
+  ctx.globalAlpha = 1;
+  ctx.shadowBlur = 0;
+
+  return segment;
+}
+
+function drawStageFX(w,h){
+  if(els.atmosphere.value === 'stage' || els.atmosphere.value === 'video') {
+    ctx.save();
+    ctx.globalAlpha = 0.08 + bassEnergy * 0.22;
+    for(let i=0;i<8;i++){
+      const a = (i/8) * Math.PI * 2 + t * 0.12 + midEnergy;
+      const x = w/2 + Math.cos(a) * w * 0.08;
+      const grad = ctx.createLinearGradient(w/2,h/2, w/2 + Math.cos(a)*w, h/2 + Math.sin(a)*h);
+      grad.addColorStop(0, 'rgba(255,255,255,0.7)');
+      grad.addColorStop(1, 'rgba(255,255,255,0)');
+      ctx.strokeStyle = grad;
+      ctx.lineWidth = 2 + bassEnergy * 12;
+      ctx.beginPath();
+      ctx.moveTo(x,h/2);
+      ctx.lineTo(w/2 + Math.cos(a)*w, h/2 + Math.sin(a)*h);
+      ctx.stroke();
+    }
+    ctx.restore();
+  }
+}
+
+function draw(){
+  const p = getParams();
+  const w = canvas.clientWidth;
+  const h = canvas.clientHeight;
+
+  if(els.atmosphere.value === 'trails' || els.atmosphere.value === 'glow' || els.atmosphere.value === 'video') {
+    ctx.fillStyle = els.atmosphere.value === 'video' ? 'rgba(3,3,3,0.11)' : (els.atmosphere.value === 'glow' ? 'rgba(5,5,5,0.16)' : 'rgba(5,5,5,0.24)');
+    ctx.fillRect(0,0,w,h);
+  } else {
+    ctx.clearRect(0,0,w,h);
+  }
+
+  drawStageFX(w,h);
+
+  if(els.atmosphere.value === 'nucleus' || els.atmosphere.value === 'video') {
+    const g = ctx.createRadialGradient(w/2,h/2,2,w/2,h/2,120 + bassEnergy * 120);
+    g.addColorStop(0,'rgba(255,255,255,0.38)');
+    g.addColorStop(0.24,'rgba(120,220,255,0.16)');
+    g.addColorStop(1,'rgba(255,255,255,0)');
+    ctx.fillStyle = g;
+    ctx.beginPath();
+    ctx.arc(w/2,h/2,120 + bassEnergy * 120,0,Math.PI*2);
+    ctx.fill();
+  }
+
+  ctx.fillStyle = 'rgba(255,255,255,0.055)';
+  ctx.font = `bold ${Math.min(92, Math.max(38, w/12))}px system-ui`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+
+  const battle = els.battleMode ? els.battleMode.value : 'solo';
+  let segment;
+
+  if(['spiral','rings','radial','flower','orbit','atom','particle','vortex'].includes(p.mode)) {
+    ctx.strokeStyle = 'rgba(255,255,255,0.07)';
+    ctx.lineWidth = 1 + bassEnergy * 3;
+    ctx.beginPath();
+    ctx.arc(w/2,h/2,Math.min(w,h)*0.38 + bassEnergy * 60, p.angleStart, p.angleStart + p.angleSweep);
+    ctx.stroke();
+  }
+
+  let spread = els.battleSpread ? Number(els.battleSpread.value) : 0;
+  if(p.bassTarget === 'spread') spread += bassEnergy * 220 * p.audioGain;
+
+  if(battle === 'solo') {
+    ctx.fillText(NUMBER_NAME, w/2, h/2);
+    segment = drawStream(NUMBER_STREAM, NUMBER_NAME, p, { forceHue: undefined });
+  } else {
+    const precision = Number(els.precision.value);
+    const pi = getConstantStream('pi', precision);
+    const e = getConstantStream('e', precision);
+    const phi = getConstantStream('phi', precision);
+    const counter = !els.counterRotate || els.counterRotate.value === 'on';
+    ctx.fillText(battle === 'trinity' ? 'π  e  φ' : (battle === 'golden' ? 'π  φ' : 'π  e'), w/2, h/2);
+    segment = drawStream(pi, 'π', p, { offsetX: -spread, dir: 1, forceHue: 190, alpha: 0.9 });
+    if(battle === 'duel') drawStream(e, 'e', p, { offsetX: spread, dir: counter ? -1 : 1, forceHue: 25, alpha: 0.86, startOffset: 111 });
+    if(battle === 'golden') drawStream(phi, 'φ', p, { offsetX: spread, dir: counter ? -1 : 1, forceHue: 48, alpha: 0.86, startOffset: 222 });
+    if(battle === 'trinity') {
+      drawStream(e, 'e', p, { offsetX: spread, dir: counter ? -1 : 1, forceHue: 25, alpha: 0.78, startOffset: 111 });
+      drawStream(phi, 'φ', p, { offsetY: -spread * 0.8, dir: 1, forceHue: 280, alpha: 0.74, startOffset: 222 });
+    }
+  }
+
+  document.getElementById('digitWindow').textContent = segment || '';
+  updateLabels();
+  compare();
+}
+
+function updateLabels(){
+  ['precision','start','count','fontSize','spacing','width','motionSpeed','audioGain','battleSpread','recordLimit','aStart','bStart','compareLen'].forEach(id => {
+    document.getElementById(id+'Val').textContent = els[id].value;
+  });
+  document.getElementById('angleStartVal').textContent = els.angleStart.value + '°';
+  document.getElementById('angleSweepVal').textContent = els.angleSweep.value + '°';
+}
+
+function compare(){
+  const a = Number(els.aStart.value);
+  const b = Number(els.bStart.value);
+  const len = Number(els.compareLen.value);
+  const A = NUMBER_STREAM.slice(a, a + len);
+  const B = NUMBER_STREAM.slice(b, b + len);
+  let same = 0;
+  let diffLine = '';
+  for(let i=0;i<len;i++){
+    if(A[i] === B[i]) { same++; diffLine += '•'; }
+    else diffLine += '·';
+  }
+  const freq = s => [...s].filter(c=>/\d/.test(c)).reduce((o,c)=>(o[c]=(o[c]||0)+1,o),{});
+  const fa = freq(A), fb = freq(B);
+  const rows = [];
+  for(let d=0;d<=9;d++) rows.push(`${d}:${fa[d]||0}/${fb[d]||0}`);
+  document.getElementById('compareOut').innerHTML = `<br>${NUMBER_NAME} match positions: <span class="hit">${same}/${len}</span><br>A/B digit frequency:<br>${rows.join(' ')}<br><span class="warn">${diffLine}</span>`;
+}
+
+Object.values(els).forEach(el => {
+  if(el && el.addEventListener) el.addEventListener('input', () => {
+    if(el === els.precision) { updateLabels(); scheduleRegenerate(); return; }
+    if(el === els.customInput && els.constant.value === 'custom') { scheduleRegenerate(); return; }
+    draw();
+  });
+});
+
+function updateAudio(){
+  if(!analyser || !audioData) return;
+  analyser.getByteFrequencyData(audioData);
+  let low = 0, mid = 0, high = 0;
+  const lowEnd = Math.floor(audioData.length * 0.12);
+  const midEnd = Math.floor(audioData.length * 0.45);
+  for(let i=0;i<audioData.length;i++){
+    const v = audioData[i] / 255;
+    if(i < lowEnd) low += v;
+    else if(i < midEnd) mid += v;
+    else high += v;
+  }
+  bassEnergy = low / Math.max(1, lowEnd);
+  midEnergy = mid / Math.max(1, midEnd - lowEnd);
+  trebleEnergy = high / Math.max(1, audioData.length - midEnd);
+  audioEnergy = (bassEnergy + midEnergy + trebleEnergy) / 3;
+}
+
+function ensureAudioGraph(){
+  if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if(!analyser) {
+    analyser = audioCtx.createAnalyser();
+    analyser.fftSize = 1024;
+    analyser.smoothingTimeConstant = 0.82;
+    audioData = new Uint8Array(analyser.frequencyBinCount);
+    analyser.connect(audioCtx.destination);
+  }
+}
+
+async function enableAudio(){
+  try {
+    ensureAudioGraph();
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    if(micSourceNode) micSourceNode.disconnect();
+    micSourceNode = audioCtx.createMediaStreamSource(stream);
+    micSourceNode.connect(analyser);
+    if(els.audioMode) els.audioMode.value = 'pulse';
+    document.getElementById('audioStatus').textContent = 'Microphone/live audio active.';
+    draw();
+  } catch(err) {
+    document.getElementById('audioStatus').textContent = 'Audio access blocked or unavailable.';
+    console.error(err);
+  }
+}
+
+function loadAudioFile(file){
+  if(!file) return;
+  ensureAudioGraph();
+  const url = URL.createObjectURL(file);
+  els.audioPlayer.src = url;
+  els.audioPlayer.load();
+  if(!mediaSourceNode) {
+    mediaSourceNode = audioCtx.createMediaElementSource(els.audioPlayer);
+    mediaSourceNode.connect(analyser);
+  }
+  if(els.audioMode) els.audioMode.value = 'pulse';
+  document.getElementById('audioStatus').textContent = `Loaded track: ${file.name}`;
+  draw();
+}
+
+async function togglePlay(){
+  if(!els.audioPlayer || !els.audioPlayer.src) {
+    document.getElementById('audioStatus').textContent = 'Load an MP3/audio file first.';
+    return;
+  }
+  ensureAudioGraph();
+  if(audioCtx.state === 'suspended') await audioCtx.resume();
+  if(els.audioPlayer.paused) {
+    await els.audioPlayer.play();
+    document.getElementById('audioStatus').textContent = 'Track playing. Visuals are reacting to this MP3.';
+  } else {
+    els.audioPlayer.pause();
+    document.getElementById('audioStatus').textContent = 'Track paused.';
+  }
+}
+
+function loop(){
+  t += 1/60;
+  updateAudio();
+  if(els.motionMode.value !== 'still' || audioMode() !== 'none') draw();
+  raf = requestAnimationFrame(loop);
+}
+
+if(els.audioBtn) els.audioBtn.onclick = enableAudio;
+if(els.audioFile) els.audioFile.onchange = e => loadAudioFile(e.target.files[0]);
+if(els.playBtn) els.playBtn.onclick = togglePlay;
+if(els.savePng) els.savePng.onclick = savePng;
+if(els.stageBtn) els.stageBtn.onclick = toggleStageFullscreen;
+if(els.recordBtn) els.recordBtn.onclick = toggleRecording;
+if(els.hudPanel) els.hudPanel.onclick = toggleStage;
+if(els.hudPlay) els.hudPlay.onclick = togglePlay;
+if(els.hudRecord) els.hudRecord.onclick = toggleRecording;
+if(els.hudMode) els.hudMode.onchange = () => { els.mode.value = els.hudMode.value; draw(); };
+if(els.hudAudioMode) els.hudAudioMode.onchange = () => { els.audioMode.value = els.hudAudioMode.value; draw(); };
+if(els.hudColorMode) els.hudColorMode.onchange = () => { els.colorMode.value = els.hudColorMode.value; draw(); };
+if(els.hudSweep) els.hudSweep.onclick = () => {
+  const values = [45,60,90,120,180,270,360,540,720,1080,1440,2160];
+  const current = Number(els.angleSweep.value);
+  const next = values.find(v => v > current) || values[0];
+  els.angleSweep.value = next;
+  draw();
+};
+if(els.hudMore) els.hudMore.onclick = () => {
+  els.count.value = Math.min(Number(els.count.max), Number(els.count.value) + 150);
+  draw();
+};
+if(els.hudLess) els.hudLess.onclick = () => {
+  els.count.value = Math.max(Number(els.count.min), Number(els.count.value) - 150);
+  draw();
+};
+document.querySelectorAll('.anglePreset').forEach(btn => {
+  btn.addEventListener('click', () => {
+    els.angleSweep.value = btn.dataset.sweep;
+    draw();
+  });
+});
+buildDigitPalette();
+
+function savePng(){
+  canvas.toBlob(blob => {
+    if(!blob) return;
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `constant-atlas-${NUMBER_NAME}-${Date.now()}.png`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  }, 'image/png');
+}
+
+function buildDigitPalette(){
+  const box = document.getElementById('digitPalette');
+  if(!box) return;
+  box.innerHTML = '';
+  for(let i=0;i<10;i++){
+    const wrap = document.createElement('label');
+    wrap.className = 'swatch';
+    const picker = document.createElement('input');
+    picker.type = 'color';
+    picker.value = manualDigitColors[i];
+    picker.addEventListener('input', () => {
+      manualDigitColors[i] = picker.value;
+      els.colorMode.value = 'manual';
+      draw();
+    });
+    const text = document.createElement('span');
+    text.textContent = String(i);
+    wrap.appendChild(picker);
+    wrap.appendChild(text);
+    box.appendChild(wrap);
+  }
+}
+
+function toggleStage(){
+  document.body.classList.toggle('stage');
+  resize();
+}
+
+async function toggleFullscreen(){
+  try {
+    if(!document.fullscreenElement) await document.documentElement.requestFullscreen();
+    else await document.exitFullscreen();
+  } catch(err) {
+    console.warn(err);
+  }
+}
+
+function toggleStageFullscreen(){
+  toggleStage();
+  toggleFullscreen();
+}
+
+function getRecordingSettings(){
+  const q = els.recordQuality ? els.recordQuality.value : 'medium';
+  if(q === 'small') return { fps: 15, videoBitsPerSecond: 1400000 };
+  if(q === 'high') return { fps: 30, videoBitsPerSecond: 8000000 };
+  return { fps: 24, videoBitsPerSecond: 3500000 };
+}
+
+function getRecordingStream(){
+  const settings = getRecordingSettings();
+  const canvasStream = canvas.captureStream(settings.fps);
+  const tracks = [...canvasStream.getVideoTracks()];
+  const audioCapture = els.audioPlayer && els.audioPlayer.captureStream ? els.audioPlayer.captureStream() : null;
+  if(audioCapture) tracks.push(...audioCapture.getAudioTracks());
+  return new MediaStream(tracks);
+}
+
+function toggleRecording(){
+  if(mediaRecorder && mediaRecorder.state === 'recording') {
+    mediaRecorder.stop();
+    return;
+  }
+  try {
+    recordedChunks = [];
+    const stream = getRecordingStream();
+    const settings = getRecordingSettings();
+    const mime = MediaRecorder.isTypeSupported('video/webm;codecs=vp9,opus') ? 'video/webm;codecs=vp9,opus' : 'video/webm';
+    mediaRecorder = new MediaRecorder(stream, {
+      mimeType: mime,
+      videoBitsPerSecond: settings.videoBitsPerSecond,
+      audioBitsPerSecond: 128000
+    });
+    mediaRecorder.ondataavailable = e => { if(e.data && e.data.size) recordedChunks.push(e.data); };
+    mediaRecorder.onstop = () => {
+      const blob = new Blob(recordedChunks, { type: 'video/webm' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `constant-atlas-recording-${Date.now()}.webm`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+      document.getElementById('recordStatus').textContent = 'Recording saved as WebM.';
+    };
+    mediaRecorder.start(1000);
+    const limit = els.recordLimit ? Number(els.recordLimit.value) : 60;
+    setTimeout(() => {
+      if(mediaRecorder && mediaRecorder.state === 'recording') mediaRecorder.stop();
+    }, limit * 1000);
+    document.getElementById('recordStatus').textContent = `Recording ${settings.fps}fps at ~${(settings.videoBitsPerSecond/1000000).toFixed(1)} Mbps. Click again to stop.`;
+  } catch(err) {
+    document.getElementById('recordStatus').textContent = 'Recording failed in this browser.';
+    console.error(err);
+  }
+}
+els.constant.addEventListener('change', () => {
+  document.getElementById('customBox').style.display = els.constant.value === 'custom' ? 'block' : 'none';
+  regenerate();
+});
+els.regen.onclick = regenerate;
+els.jumpA.onclick = () => { els.start.value = els.aStart.value; draw(); };
+els.jumpB.onclick = () => { els.start.value = els.bStart.value; draw(); };
+
+regenerate();
+resize();
+loop();
+</script>
+</body>
+</html>
