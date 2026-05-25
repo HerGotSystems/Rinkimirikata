@@ -1,1 +1,1344 @@
-<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>STRATA Placeholder</title><style>body{background:#0b0b0b;color:#f1f1f1;font-family:monospace;display:grid;place-items:center;min-height:100vh;margin:0}.b{border:1px solid #2a2a2a;padding:28px;max-width:720px;background:#121212}code{color:#d8a22b}</style></head><body><div class="b"><h1>STRATA</h1><p>Placeholder route.</p><p>Upload real file:</p><code>strata.html</code><p>Destination:</p><code>/apps/strata/index.html</code></div></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>STRATA v1.0</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Space+Mono:wght@400;700&display=swap');
+
+:root {
+  --paper: #f2ede6;
+  --ui-bg: #0f0e0c;
+  --ui-text: #b8a890;
+  --ui-dim: #3a3028;
+  --ui-border: #221e18;
+  --ui-accent: #8b3a2a;
+  --ui-accent2: #2a5a8b;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  background: var(--ui-bg);
+  color: var(--ui-text);
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+}
+
+#header {
+  display: flex;
+  align-items: baseline;
+  gap: 20px;
+  padding: 10px 18px 9px;
+  border-bottom: 1px solid var(--ui-border);
+  flex-shrink: 0;
+}
+
+#header h1 {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 300;
+  font-size: 20px;
+  letter-spacing: 0.18em;
+  color: var(--paper);
+}
+
+#header .sub { font-size: 8px; letter-spacing: 0.2em; color: var(--ui-dim); text-transform: uppercase; }
+
+#main { display: flex; flex: 1; overflow: hidden; }
+
+/* SIDEBAR */
+#sidebar {
+  width: 200px;
+  flex-shrink: 0;
+  border-right: 1px solid var(--ui-border);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--ui-dim) transparent;
+}
+
+.ps { padding: 12px 14px; border-bottom: 1px solid var(--ui-border); }
+
+.sec {
+  display: block;
+  font-size: 7px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--ui-dim);
+  margin-bottom: 9px;
+}
+
+/* LAYER TABS */
+.layer-tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  border: 1px solid var(--ui-border);
+  margin-bottom: 10px;
+}
+
+.ltab {
+  background: none;
+  border: none;
+  border-right: 1px solid var(--ui-border);
+  color: var(--ui-text);
+  font-family: 'Space Mono', monospace;
+  font-size: 8px;
+  padding: 6px 4px;
+  cursor: pointer;
+  text-align: center;
+  letter-spacing: 0.1em;
+  transition: all 0.12s;
+}
+
+.ltab:last-child { border-right: none; }
+.ltab:hover { color: var(--paper); }
+.ltab.active-a { background: rgba(139,58,42,0.2); color: var(--paper); border-bottom: 1px solid var(--ui-accent); }
+.ltab.active-b { background: rgba(42,90,139,0.2); color: var(--paper); border-bottom: 1px solid var(--ui-accent2); }
+
+/* PATTERN GRID */
+.pgrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+}
+
+.pbtn {
+  background: none;
+  border: 1px solid var(--ui-border);
+  color: var(--ui-text);
+  font-family: 'Space Mono', monospace;
+  font-size: 8px;
+  padding: 7px 3px;
+  cursor: pointer;
+  text-align: center;
+  line-height: 1.4;
+  transition: all 0.12s;
+}
+
+.pbtn:hover { border-color: var(--ui-dim); color: var(--paper); }
+.pbtn.sel-a { border-color: var(--ui-accent); background: rgba(139,58,42,0.15); color: var(--paper); }
+.pbtn.sel-b { border-color: var(--ui-accent2); background: rgba(42,90,139,0.15); color: var(--paper); }
+
+/* BLEND */
+.blend-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+
+.blend-btn {
+  background: none;
+  border: 1px solid var(--ui-border);
+  color: var(--ui-text);
+  font-family: 'Space Mono', monospace;
+  font-size: 7px;
+  padding: 5px 2px;
+  cursor: pointer;
+  text-align: center;
+  letter-spacing: 0.05em;
+  transition: all 0.12s;
+}
+
+.blend-btn:hover { border-color: var(--ui-dim); }
+.blend-btn.active { border-color: var(--ui-accent2); background: rgba(42,90,139,0.12); color: var(--paper); }
+
+/* SLIDERS */
+.ctrl { display: flex; flex-direction: column; gap: 4px; margin-bottom: 8px; }
+.ctrl:last-child { margin-bottom: 0; }
+
+.ctrl-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 8px;
+  color: var(--ui-text);
+}
+
+.ctrl-label span { color: var(--paper); }
+
+input[type=range] {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 2px;
+  background: var(--ui-dim);
+  outline: none;
+  cursor: pointer;
+}
+
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 9px;
+  height: 9px;
+  background: var(--ui-accent);
+  border-radius: 0;
+}
+
+.ctrl-b input[type=range]::-webkit-slider-thumb { background: var(--ui-accent2); }
+
+/* COLOUR GROUNDS */
+.grounds {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 4px;
+}
+
+.ground-swatch {
+  height: 20px;
+  border: 1px solid var(--ui-border);
+  cursor: pointer;
+  transition: all 0.12s;
+  border-radius: 1px;
+}
+
+.ground-swatch.active { border-color: var(--paper); box-shadow: 0 0 0 1px var(--paper); }
+
+/* TOGGLES */
+.tog-row { display: flex; flex-direction: column; gap: 5px; }
+
+.tog {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  cursor: pointer;
+  font-size: 8px;
+  padding: 5px 8px;
+  border: 1px solid var(--ui-border);
+  transition: all 0.12s;
+  user-select: none;
+}
+
+.tog:hover { border-color: var(--ui-dim); }
+.tog.on { border-color: var(--ui-accent); }
+.tog-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--ui-dim); flex-shrink: 0; transition: background 0.12s; }
+.tog.on .tog-dot { background: var(--ui-accent); }
+
+/* TILE CONTROLS */
+.size-row { display: flex; gap: 4px; margin-top: 8px; }
+
+.sbtn {
+  flex: 1;
+  background: none;
+  border: 1px solid var(--ui-border);
+  color: var(--ui-text);
+  font-family: 'Space Mono', monospace;
+  font-size: 7px;
+  padding: 5px 2px;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.12s;
+}
+
+.sbtn:hover { border-color: var(--ui-dim); }
+.sbtn.active { border-color: var(--ui-accent); background: rgba(139,58,42,0.12); color: var(--paper); }
+
+.rot-row { display: flex; gap: 4px; margin-top: 6px; }
+
+/* SEED */
+.seed-row { display: flex; gap: 5px; align-items: center; }
+#seed-display { flex: 1; background: var(--ui-border); padding: 5px 7px; font-size: 9px; color: var(--paper); letter-spacing: 0.1em; }
+
+/* ACTIONS */
+.action-col { display: flex; flex-direction: column; gap: 5px; }
+
+.btn {
+  background: none;
+  border: 1px solid var(--ui-border);
+  color: var(--ui-text);
+  font-family: 'Space Mono', monospace;
+  font-size: 8px;
+  padding: 8px 10px;
+  cursor: pointer;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  transition: all 0.12s;
+  text-align: center;
+}
+
+.btn:hover { border-color: var(--ui-accent); color: var(--paper); }
+.btn.primary { border-color: var(--ui-accent); background: rgba(139,58,42,0.18); color: var(--paper); }
+.btn.primary:hover { background: rgba(139,58,42,0.35); }
+
+.export-row { display: flex; gap: 4px; }
+.export-row .btn { flex: 1; }
+
+.res-row { display: flex; gap: 4px; margin-top: 5px; }
+.rbtn {
+  flex: 1;
+  background: none;
+  border: 1px solid var(--ui-border);
+  color: var(--ui-text);
+  font-family: 'Space Mono', monospace;
+  font-size: 7px;
+  padding: 4px 2px;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.12s;
+}
+.rbtn:hover { border-color: var(--ui-dim); }
+.rbtn.active { border-color: var(--ui-accent); background: rgba(139,58,42,0.12); color: var(--paper); }
+
+/* MUSE TEXT */
+.muse {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--ui-text);
+  padding: 2px 0;
+}
+
+/* CANVAS AREA */
+#canvas-wrap {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #0a0908;
+  padding: 16px;
+  overflow: hidden;
+  position: relative;
+}
+
+#canvas-wrap::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 50%, rgba(139,58,42,0.03) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+#main-canvas {
+  box-shadow: 0 0 60px rgba(0,0,0,0.9), 0 0 0 1px rgba(200,184,162,0.08);
+  max-width: 100%;
+  max-height: 100%;
+  display: block;
+}
+
+/* TILE PREVIEW */
+#tile-view {
+  display: none;
+  position: absolute;
+  inset: 0;
+  background: #0a0908;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  padding: 16px;
+}
+
+#tile-view.on { display: flex; }
+
+#tile-single-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+#tile-lbl { font-size: 7px; letter-spacing: 0.25em; text-transform: uppercase; color: var(--ui-dim); }
+
+#tile-canvas {
+  box-shadow: 0 0 30px rgba(0,0,0,0.8), 0 0 0 1px rgba(200,184,162,0.1);
+  display: block;
+}
+
+#preview-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+#preview-lbl { font-size: 7px; letter-spacing: 0.25em; text-transform: uppercase; color: var(--ui-dim); }
+
+#preview-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0;
+  box-shadow: 0 0 30px rgba(0,0,0,0.8), 0 0 0 1px rgba(200,184,162,0.08);
+}
+
+#preview-grid canvas { display: block; }
+
+#status {
+  font-size: 8px;
+  color: var(--ui-dim);
+  text-align: center;
+  letter-spacing: 0.1em;
+  position: absolute;
+  bottom: 8px;
+  left: 0; right: 0;
+}
+</style>
+</head>
+<body>
+
+<div id="header">
+  <h1>STRATA</h1>
+  <div class="sub">Underpainting Generator v1.0</div>
+</div>
+
+<div id="main">
+<div id="sidebar">
+
+  <!-- LAYER SELECT -->
+  <div class="ps">
+    <label class="sec">Pattern Layers</label>
+    <div class="layer-tabs">
+      <button class="ltab active-a" id="tab-a">A — PRIMARY</button>
+      <button class="ltab" id="tab-b">B — OVERLAY</button>
+    </div>
+    <div class="pgrid" id="pattern-grid">
+      <button class="pbtn sel-a" data-pat="flow">FLOW<br>FIELD</button>
+      <button class="pbtn" data-pat="branch">BRANCH<br>GROW</button>
+      <button class="pbtn" data-pat="interference">INTER<br>FERENCE</button>
+      <button class="pbtn" data-pat="threshold">THRESH<br>OLD</button>
+      <button class="pbtn" data-pat="constellation">CONST<br>ELLATION</button>
+      <button class="pbtn" data-pat="vein">VEIN<br>MAP</button>
+      <button class="pbtn" data-pat="voronoi">VORO<br>NOI</button>
+      <button class="pbtn" data-pat="spiral">SPIRAL<br>FIBO</button>
+    </div>
+  </div>
+
+  <!-- LAYER B BLEND -->
+  <div class="ps" id="blend-section">
+    <label class="sec">B Blend Mode</label>
+    <div class="blend-row">
+      <button class="blend-btn active" data-blend="source-over">OVER</button>
+      <button class="blend-btn" data-blend="multiply">MULTIPLY</button>
+      <button class="blend-btn" data-blend="screen">SCREEN</button>
+      <button class="blend-btn" data-blend="overlay">OVERLAY</button>
+    </div>
+    <div class="ctrl ctrl-b">
+      <div class="ctrl-label">B Opacity <span id="v-bopacity">40</span></div>
+      <input type="range" id="s-bopacity" min="5" max="100" value="40">
+    </div>
+  </div>
+
+  <!-- COLOUR GROUND -->
+  <div class="ps">
+    <label class="sec">Ground</label>
+    <div class="grounds">
+      <div class="ground-swatch active" data-ground="ivory" style="background:#f0ebe2" title="Ivory"></div>
+      <div class="ground-swatch" data-ground="ochre" style="background:#e8d8a0" title="Ochre"></div>
+      <div class="ground-swatch" data-ground="sienna" style="background:#d4b090" title="Sienna"></div>
+      <div class="ground-swatch" data-ground="grisaille" style="background:#d8d4ce" title="Grisaille"></div>
+      <div class="ground-swatch" data-ground="umber" style="background:#c0a882" title="Umber"></div>
+      <div class="ground-swatch" data-ground="indigo" style="background:#c8ccd8" title="Indigo"></div>
+    </div>
+  </div>
+
+  <!-- CHARACTER A -->
+  <div class="ps">
+    <label class="sec">A Character</label>
+    <div class="ctrl">
+      <div class="ctrl-label">Density <span id="v-density">50</span></div>
+      <input type="range" id="s-density" min="10" max="100" value="50">
+    </div>
+    <div class="ctrl">
+      <div class="ctrl-label">Turbulence <span id="v-turb">40</span></div>
+      <input type="range" id="s-turb" min="0" max="100" value="40">
+    </div>
+    <div class="ctrl">
+      <div class="ctrl-label">Weight <span id="v-weight">35</span></div>
+      <input type="range" id="s-weight" min="5" max="100" value="35">
+    </div>
+    <div class="ctrl">
+      <div class="ctrl-label">Breathe <span id="v-breathe">60</span></div>
+      <input type="range" id="s-breathe" min="0" max="100" value="60">
+    </div>
+  </div>
+
+  <!-- CHARACTER B -->
+  <div class="ps" id="b-char">
+    <label class="sec">B Character</label>
+    <div class="ctrl ctrl-b">
+      <div class="ctrl-label">Density <span id="v-bdensity">50</span></div>
+      <input type="range" id="s-bdensity" min="10" max="100" value="50">
+    </div>
+    <div class="ctrl ctrl-b">
+      <div class="ctrl-label">Turbulence <span id="v-bturb">30</span></div>
+      <input type="range" id="s-bturb" min="0" max="100" value="30">
+    </div>
+    <div class="ctrl ctrl-b">
+      <div class="ctrl-label">Weight <span id="v-bweight">25</span></div>
+      <input type="range" id="s-bweight" min="5" max="100" value="25">
+    </div>
+  </div>
+
+  <!-- LAYERS -->
+  <div class="ps">
+    <label class="sec">Extra Layers</label>
+    <div class="tog-row">
+      <div class="tog on" data-layer="shadow"><div class="tog-dot"></div>Shadow mass</div>
+      <div class="tog" data-layer="gesture"><div class="tog-dot"></div>Gesture lines</div>
+      <div class="tog" data-layer="horizon"><div class="tog-dot"></div>Horizon anchor</div>
+      <div class="tog" data-layer="grain"><div class="tog-dot"></div>Paper grain</div>
+    </div>
+  </div>
+
+  <!-- TILE MODE -->
+  <div class="ps">
+    <label class="sec">Tile Mode</label>
+    <div class="tog" id="tile-tog"><div class="tog-dot"></div>Seamless tile</div>
+    <div class="size-row">
+      <button class="sbtn active" data-size="500">500</button>
+      <button class="sbtn" data-size="700">700</button>
+      <button class="sbtn" data-size="1000">1k</button>
+    </div>
+    <div class="rot-row">
+      <button class="sbtn active" data-rot="0">RECT</button>
+      <button class="sbtn" data-rot="45">45deg</button>
+      <button class="sbtn" data-rot="60">HEX</button>
+    </div>
+  </div>
+
+  <!-- SEED -->
+  <div class="ps">
+    <label class="sec">Seed</label>
+    <div class="seed-row">
+      <div id="seed-display">-----</div>
+      <button class="btn" id="btn-seed">&#8635;</button>
+    </div>
+  </div>
+
+  <!-- MUSE -->
+  <div class="ps">
+    <div class="muse" id="muse-text">Flow fields carry directional energy — like wind over a plain.</div>
+  </div>
+
+  <!-- OUTPUT -->
+  <div class="ps">
+    <label class="sec">Output</label>
+    <div class="action-col">
+      <button class="btn primary" id="btn-gen">GENERATE</button>
+      <div class="export-row">
+        <button class="btn" id="btn-png">PNG</button>
+        <button class="btn" id="btn-svg-exp">SVG*</button>
+      </div>
+      <div class="res-row">
+        <button class="rbtn active" data-res="1">1x</button>
+        <button class="rbtn" data-res="2">2x</button>
+        <button class="rbtn" data-res="3">3x</button>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /sidebar -->
+
+<div id="canvas-wrap">
+  <canvas id="main-canvas" width="1200" height="900"></canvas>
+
+  <div id="tile-view">
+    <div id="tile-single-wrap">
+      <div id="tile-lbl">TILE</div>
+      <canvas id="tile-canvas" width="500" height="500"></canvas>
+    </div>
+    <div id="preview-wrap">
+      <div id="preview-lbl">3x3 REPEAT</div>
+      <div id="preview-grid"></div>
+    </div>
+  </div>
+
+  <div id="status">ready</div>
+</div>
+</div><!-- /main -->
+
+<script>
+// ===== RNG =====
+class RNG {
+  constructor(seed) { this.s = (seed || 1) >>> 0; }
+  next() {
+    this.s ^= this.s << 13;
+    this.s ^= this.s >> 17;
+    this.s ^= this.s << 5;
+    return (this.s >>> 0) / 4294967296;
+  }
+  r(a, b) { return a + this.next() * (b - a); }
+  i(a, b) { return Math.floor(this.r(a, b)); }
+  clone() { const c = new RNG(1); c.s = this.s; return c; }
+}
+
+// ===== VALUE NOISE =====
+function makeNoise(rng, sz = 256) {
+  const t = new Float32Array(sz * sz);
+  for (let i = 0; i < t.length; i++) t[i] = rng.next();
+  return (x, y) => {
+    const xi = Math.floor(x) & (sz - 1);
+    const yi = Math.floor(y) & (sz - 1);
+    const xf = x - Math.floor(x), yf = y - Math.floor(y);
+    const u = xf*xf*(3-2*xf), v = yf*yf*(3-2*yf);
+    const a = t[yi*sz+xi], b = t[yi*sz+((xi+1)&(sz-1))];
+    const c = t[((yi+1)&(sz-1))*sz+xi], d = t[((yi+1)&(sz-1))*sz+((xi+1)&(sz-1))];
+    return a + u*(b-a) + v*(c-a) + u*v*(a-b-c+d);
+  };
+}
+
+// ===== SEAMLESS NOISE =====
+function seamless(nFn, W, H) {
+  return (x, y) => {
+    const fx = x/W, fy = y/H;
+    const wx = fx*fx*(3-2*fx), wy = fy*fy*(3-2*fy);
+    return nFn(x,y)*(1-wx)*(1-wy) + nFn(x-W,y)*wx*(1-wy)
+         + nFn(x,y-H)*(1-wx)*wy  + nFn(x-W,y-H)*wx*wy;
+  };
+}
+
+// ===== STATE =====
+const GROUNDS = {
+  ivory:    { bg:'#f0ebe2', ink:'rgba(15,10,5,', accent:'rgba(40,20,5,' },
+  ochre:    { bg:'#e8d8a0', ink:'rgba(20,10,2,', accent:'rgba(80,40,5,' },
+  sienna:   { bg:'#d4b090', ink:'rgba(30,10,5,', accent:'rgba(60,20,5,' },
+  grisaille:{ bg:'#d8d4ce', ink:'rgba(10,10,15,', accent:'rgba(30,30,40,' },
+  umber:    { bg:'#c0a882', ink:'rgba(20,10,5,', accent:'rgba(50,25,10,' },
+  indigo:   { bg:'#c8ccd8', ink:'rgba(10,15,30,', accent:'rgba(20,30,60,' }
+};
+
+const MUSE = {
+  flow:'Flow fields carry directional energy — like wind over a plain, or feeling moving through a room.',
+  branch:'Branching grows outward from necessity — river deltas, root systems, decisions made once.',
+  interference:'Interference is two truths meeting — their agreement and their argument made visible.',
+  threshold:'Thresholds mark where one thing becomes another — coastlines, cell walls, fault lines.',
+  constellation:'Constellation maps relationship as distance — thought to thought, body to memory.',
+  vein:'Veins carry what is needed to where it must go. A map of urgency beneath the surface.',
+  voronoi:'Voronoi divides space by belonging — every point claimed by its nearest neighbour.',
+  spiral:'The spiral is the universe remembering its own logic — growth, return, and growth again.'
+};
+
+let state = {
+  patA: 'flow',
+  patB: 'constellation',
+  activeTab: 'a',
+  ground: 'ivory',
+  tileMode: false,
+  tileSize: 500,
+  tileRot: 0,
+  exportRes: 1,
+  seed: Math.floor(Math.random() * 99999) + 1,
+  layers: { shadow: true, gesture: false, horizon: false, grain: false },
+  blendMode: 'source-over',
+  bOpacity: 0.4
+};
+
+// ===== CANVAS REFS =====
+const mainCanvas = document.getElementById('main-canvas');
+const mainCtx = mainCanvas.getContext('2d');
+const tileCanvas = document.getElementById('tile-canvas');
+const tileCtx = tileCanvas.getContext('2d');
+
+function setStatus(t) { document.getElementById('status').textContent = t; }
+
+function getP(prefix = '') {
+  const d = (id) => +document.getElementById(id).value / 100;
+  return prefix === 'b'
+    ? { density: d('s-bdensity'), turb: d('s-bturb'), weight: d('s-bweight'), breathe: 0.5 }
+    : { density: d('s-density'), turb: d('s-turb'), weight: d('s-weight'), breathe: d('s-breathe') };
+}
+
+// ===== DRAW DISPATCH =====
+function draw() {
+  setStatus('rendering...');
+  setTimeout(() => {
+    try {
+      if (state.tileMode) drawTile();
+      else drawFull();
+    } catch(e) { setStatus('error: ' + e.message); console.error(e); }
+  }, 10);
+}
+
+// ===== FULL CANVAS DRAW =====
+function drawFull() {
+  const W = 1200, H = 900;
+  mainCanvas.width = W; mainCanvas.height = H;
+  const g = GROUNDS[state.ground];
+  const rng = new RNG(state.seed);
+  const n1 = makeNoise(rng), n2 = makeNoise(rng), n3 = makeNoise(rng);
+
+  mainCtx.fillStyle = g.bg;
+  mainCtx.fillRect(0, 0, W, H);
+
+  if (state.layers.grain) drawGrain(mainCtx, W, H, new RNG(state.seed + 99));
+  if (state.layers.shadow) drawShadow(mainCtx, W, H, new RNG(state.seed + 10), n1, getP(), g);
+
+  // Layer A
+  drawPatternLayer(mainCtx, W, H, new RNG(state.seed + 1), n1, n2, getP(), state.patA, g, false, false);
+
+  // Layer B
+  const pB = getP('b');
+  mainCtx.save();
+  mainCtx.globalCompositeOperation = state.blendMode;
+  mainCtx.globalAlpha = state.bOpacity;
+  const offB = document.createElement('canvas');
+  offB.width = W; offB.height = H;
+  const ctxB = offB.getContext('2d');
+  drawPatternLayer(ctxB, W, H, new RNG(state.seed + 50), n2, n3, pB, state.patB, g, false, false);
+  mainCtx.drawImage(offB, 0, 0);
+  mainCtx.restore();
+
+  if (state.layers.gesture) drawGesture(mainCtx, W, H, new RNG(state.seed + 20), n1, getP(), g);
+  if (state.layers.horizon) drawHorizon(mainCtx, W, H, new RNG(state.seed + 30), getP(), g);
+
+  setStatus(`seed ${state.seed} — ${state.patA} + ${state.patB}`);
+}
+
+// ===== TILE DRAW =====
+function drawTile() {
+  const S = state.tileSize;
+  tileCanvas.width = S; tileCanvas.height = S;
+  const g = GROUNDS[state.ground];
+  const rng = new RNG(state.seed);
+  const rawN1 = makeNoise(rng), rawN2 = makeNoise(rng), rawN3 = makeNoise(rng);
+  const n1 = seamless(rawN1, S, S);
+  const n2 = seamless(rawN2, S, S);
+  const n3 = seamless(rawN3, S, S);
+
+  tileCtx.fillStyle = g.bg;
+  tileCtx.fillRect(0, 0, S, S);
+
+  tileCtx.save();
+  tileCtx.beginPath();
+  tileCtx.rect(0, 0, S, S);
+  tileCtx.clip();
+
+  if (state.layers.grain) drawGrain(tileCtx, S, S, new RNG(state.seed + 99));
+
+  const FIELD = ['flow','interference','threshold'];
+  const isFieldA = FIELD.includes(state.patA);
+  const isFieldB = FIELD.includes(state.patB);
+
+  if (state.layers.shadow) {
+    forWrapped(S, S, (ox, oy) => {
+      tileCtx.save(); tileCtx.translate(ox, oy);
+      drawShadow(tileCtx, S, S, new RNG(state.seed+10), rawN1, getP(), g);
+      tileCtx.restore();
+    });
+  }
+
+  // Tile rotation transform
+  const rotRad = state.tileRot * Math.PI / 180;
+
+  // Layer A
+  tileCtx.save();
+  if (state.tileRot !== 0) applyTileRotation(tileCtx, S, rotRad);
+  if (isFieldA) {
+    drawPatternLayer(tileCtx, S, S, new RNG(state.seed+1), n1, n2, getP(), state.patA, g, true, false);
+  } else {
+    forWrapped(S, S, (ox, oy) => {
+      tileCtx.save(); tileCtx.translate(ox, oy);
+      drawPatternLayer(tileCtx, S, S, new RNG(state.seed+1), n1, n2, getP(), state.patA, g, true, false);
+      tileCtx.restore();
+    });
+  }
+  tileCtx.restore();
+
+  // Layer B
+  const offB = document.createElement('canvas');
+  offB.width = S; offB.height = S;
+  const ctxB = offB.getContext('2d');
+  if (isFieldB) {
+    drawPatternLayer(ctxB, S, S, new RNG(state.seed+50), n2, n3, getP('b'), state.patB, g, true, false);
+  } else {
+    ctxB.save(); ctxB.beginPath(); ctxB.rect(0,0,S,S); ctxB.clip();
+    forWrapped(S, S, (ox, oy) => {
+      ctxB.save(); ctxB.translate(ox, oy);
+      drawPatternLayer(ctxB, S, S, new RNG(state.seed+50), n2, n3, getP('b'), state.patB, g, true, false);
+      ctxB.restore();
+    });
+    ctxB.restore();
+  }
+  tileCtx.save();
+  tileCtx.globalCompositeOperation = state.blendMode;
+  tileCtx.globalAlpha = state.bOpacity;
+  tileCtx.drawImage(offB, 0, 0);
+  tileCtx.restore();
+
+  if (state.layers.gesture) {
+    forWrapped(S, S, (ox, oy) => {
+      tileCtx.save(); tileCtx.translate(ox, oy);
+      drawGesture(tileCtx, S, S, new RNG(state.seed+20), n1, getP(), g);
+      tileCtx.restore();
+    });
+  }
+
+  tileCtx.restore();
+
+  updateTilePreview(S);
+  setStatus(`tile ${S}x${S} rot:${state.tileRot} — seed ${state.seed}`);
+}
+
+function applyTileRotation(ctx, S, rad) {
+  ctx.translate(S/2, S/2);
+  ctx.rotate(rad);
+  ctx.translate(-S/2, -S/2);
+}
+
+function forWrapped(W, H, fn) {
+  for (let dx = -1; dx <= 1; dx++)
+    for (let dy = -1; dy <= 1; dy++)
+      fn(dx * W, dy * H);
+}
+
+function updateTilePreview(S) {
+  const grid = document.getElementById('preview-grid');
+  grid.innerHTML = '';
+  const cell = Math.min(140, Math.floor((window.innerHeight - 180) / 3));
+  for (let i = 0; i < 9; i++) {
+    const c = document.createElement('canvas');
+    c.width = cell; c.height = cell;
+    c.getContext('2d').drawImage(tileCanvas, 0, 0, cell, cell);
+    grid.appendChild(c);
+  }
+}
+
+// ===== PATTERN ROUTER =====
+function drawPatternLayer(ctx, W, H, rng, n1, n2, p, pat, g, seam, wrap) {
+  switch(pat) {
+    case 'flow':         drawFlow(ctx, W, H, rng, n1, n2, p, g, seam); break;
+    case 'branch':       drawBranch(ctx, W, H, rng, n1, p, g); break;
+    case 'interference': drawInterference(ctx, W, H, rng, n1, n2, p, g); break;
+    case 'threshold':    drawThreshold(ctx, W, H, rng, n1, p, g); break;
+    case 'constellation':drawConstellation(ctx, W, H, rng, n1, p, g); break;
+    case 'vein':         drawVein(ctx, W, H, rng, n1, p, g); break;
+    case 'voronoi':      drawVoronoi(ctx, W, H, rng, n1, p, g); break;
+    case 'spiral':       drawSpiral(ctx, W, H, rng, n1, p, g); break;
+  }
+}
+
+// ===== SHADOW MASS =====
+function drawShadow(ctx, W, H, rng, noise, p, g) {
+  const num = Math.floor(p.density * 5) + 2;
+  for (let i = 0; i < num; i++) {
+    const cx = rng.r(W*0.1, W*0.9), cy = rng.r(H*0.1, H*0.9);
+    const rx = rng.r(W*0.08, W*0.32)*(1-p.breathe*0.4);
+    const ry = rng.r(H*0.06, H*0.26)*(1-p.breathe*0.4);
+    const rot = rng.r(0, Math.PI);
+    const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.max(rx,ry));
+    const a = 0.04 + p.weight*0.04;
+    grad.addColorStop(0, g.ink + a + ')');
+    grad.addColorStop(0.6, g.ink + (a*0.5) + ')');
+    grad.addColorStop(1, g.ink + '0)');
+    ctx.save();
+    ctx.translate(cx, cy); ctx.rotate(rot);
+    ctx.scale(rx/Math.max(rx,ry), ry/Math.max(rx,ry));
+    ctx.beginPath(); ctx.arc(0, 0, Math.max(rx,ry), 0, Math.PI*2);
+    ctx.fillStyle = grad; ctx.fill();
+    ctx.restore();
+  }
+}
+
+// ===== PAPER GRAIN =====
+function drawGrain(ctx, W, H, rng) {
+  const imgData = ctx.getImageData(0, 0, W, H);
+  const d = imgData.data;
+  for (let i = 0; i < d.length; i += 4) {
+    const n = (rng.next() - 0.5) * 18;
+    d[i]   = Math.max(0, Math.min(255, d[i]   + n));
+    d[i+1] = Math.max(0, Math.min(255, d[i+1] + n));
+    d[i+2] = Math.max(0, Math.min(255, d[i+2] + n));
+  }
+  ctx.putImageData(imgData, 0, 0);
+}
+
+// ===== FLOW FIELD =====
+function drawFlow(ctx, W, H, rng, n1, n2, p, g, seam) {
+  const num = Math.floor(130*p.density) + 20;
+  const steps = Math.floor(60 + p.density*80);
+  const stepLen = W*0.004;
+  const scale = 0.0025 + p.turb*0.004;
+  const baseAlpha = 0.28 + p.weight*0.38;
+
+  for (let i = 0; i < num; i++) {
+    let x = rng.r(0, W), y = rng.r(0, H);
+    ctx.beginPath(); ctx.moveTo(x, y);
+    let prev = null;
+    for (let s = 0; s < steps; s++) {
+      let ang = n1(x*scale, y*scale)*Math.PI*2*(1+p.turb*2) + n2(x*scale*1.3+5, y*scale*1.3+5)*Math.PI*p.turb;
+      if (prev !== null) {
+        let d = ang - prev;
+        while (d > Math.PI) d -= Math.PI*2;
+        while (d < -Math.PI) d += Math.PI*2;
+        ang = prev + d*0.4;
+      }
+      prev = ang;
+      x += Math.cos(ang)*stepLen;
+      y += Math.sin(ang)*stepLen;
+      if (seam) { x = ((x%W)+W)%W; y = ((y%H)+H)%H; ctx.lineTo(x,y); }
+      else { if (x<0||x>W||y<0||y>H) break; ctx.lineTo(x,y); }
+    }
+    ctx.strokeStyle = g.ink + (baseAlpha*(0.3+rng.next()*0.7)) + ')';
+    ctx.lineWidth = (0.2+p.weight*0.6)*(0.5+rng.next()*0.8);
+    ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.stroke();
+  }
+}
+
+// ===== BRANCHING =====
+function drawBranch(ctx, W, H, rng, noise, p, g) {
+  const roots = Math.floor(3 + p.density*6);
+  function branch(x, y, ang, depth, len, gen) {
+    if (depth <= 0 || len < 2) return;
+    const ex = x + Math.cos(ang)*len, ey = y + Math.sin(ang)*len;
+    const wob = (noise(x*0.003, y*0.003)-0.5)*p.turb*1.5;
+    const mx = (x+ex)/2 + Math.cos(ang+Math.PI/2)*wob*len*0.3;
+    const my = (y+ey)/2 + Math.sin(ang+Math.PI/2)*wob*len*0.3;
+    ctx.beginPath(); ctx.moveTo(x,y); ctx.quadraticCurveTo(mx,my,ex,ey);
+    ctx.strokeStyle = g.ink + (0.15+(depth/gen)*0.5*(0.5+p.weight*0.5)) + ')';
+    ctx.lineWidth = Math.max(0.3, (depth/gen)*p.weight*2.5);
+    ctx.lineCap = 'round'; ctx.stroke();
+    const kids = depth > gen*0.5 ? rng.i(2,4) : rng.i(1,3);
+    for (let i = 0; i < kids; i++) {
+      const sp = (0.3+p.turb*0.8)*Math.PI;
+      branch(ex, ey, ang+rng.r(-sp,sp), depth-1, len*rng.r(0.55,0.78), gen);
+    }
+  }
+  for (let i = 0; i < roots; i++) {
+    const depth = Math.floor(5+p.density*4);
+    branch(rng.r(W*0.2,W*0.8), rng.r(H*0.7,H*0.95), rng.r(-Math.PI*0.6,-Math.PI*0.4), depth, rng.r(H*0.12,H*0.25), depth);
+  }
+}
+
+// ===== INTERFERENCE =====
+function drawInterference(ctx, W, H, rng, n1, n2, p, g) {
+  const num = Math.floor(2+p.density*4);
+  const sources = [];
+  for (let i = 0; i < num; i++) sources.push({
+    x: rng.r(W*0.15, W*0.85), y: rng.r(H*0.15, H*0.85),
+    freq: rng.r(0.008, 0.025)*(1+p.turb), phase: rng.r(0, Math.PI*2), amp: rng.r(0.6,1.0)
+  });
+  const contours = Math.floor(20+p.density*60);
+  const res = Math.max(2, Math.floor(8-p.density*3));
+  for (let ci = 0; ci < contours; ci++) {
+    const target = ci / contours;
+    ctx.beginPath();
+    let drawing = false;
+    for (let y = 0; y < H; y += res*2) {
+      let prev = null;
+      for (let x = 0; x <= W; x += res) {
+        let val = 0;
+        for (const s of sources) {
+          const dist = Math.sqrt((x-s.x)**2+(y-s.y)**2);
+          val += Math.sin(dist*s.freq+s.phase)*s.amp;
+        }
+        val = (val/sources.length+1)/2 + (n1(x*0.004, y*0.004)-0.5)*p.turb*0.3;
+        if (prev !== null && (prev < target) !== (val < target)) {
+          const f = (target-prev)/(val-prev);
+          const ix = x-res+f*res;
+          if (!drawing) { ctx.moveTo(ix,y); drawing=true; }
+          else ctx.lineTo(ix,y);
+        }
+        prev = val;
+      }
+    }
+    ctx.strokeStyle = g.ink + ((0.06+p.weight*0.12)*(0.4+rng.next()*0.6)) + ')';
+    ctx.lineWidth = 0.5+p.weight*0.8; ctx.stroke();
+  }
+}
+
+// ===== THRESHOLD =====
+function drawThreshold(ctx, W, H, rng, noise, p, g) {
+  const layers = Math.floor(4+p.density*8);
+  for (let l = 0; l < layers; l++) {
+    const thresh = rng.r(0.25, 0.75);
+    const sx = 0.003+p.turb*0.006, sy = 0.003+p.turb*0.005;
+    const ox = rng.r(0,100), oy = rng.r(0,100);
+    const res = 4;
+    ctx.beginPath();
+    for (let y = 0; y < H-res; y += res) {
+      for (let x = 0; x < W-res; x += res) {
+        const v00 = noise((x+ox)*sx,(y+oy)*sy);
+        const v10 = noise((x+res+ox)*sx,(y+oy)*sy);
+        const v01 = noise((x+ox)*sx,(y+res+oy)*sy);
+        if ((v00<thresh) !== (v10<thresh)) { const f=(thresh-v00)/(v10-v00); const px=x+f*res; ctx.moveTo(px,y); ctx.lineTo(px,y+1); }
+        if ((v00<thresh) !== (v01<thresh)) { const f=(thresh-v00)/(v01-v00); const py=y+f*res; ctx.moveTo(x,py); ctx.lineTo(x+1,py); }
+      }
+    }
+    ctx.strokeStyle = g.ink + (0.12+p.weight*0.2) + ')';
+    ctx.lineWidth = 0.5+p.weight; ctx.stroke();
+  }
+}
+
+// ===== CONSTELLATION =====
+function drawConstellation(ctx, W, H, rng, noise, p, g) {
+  const num = Math.floor(20+p.density*80);
+  const nodes = [];
+  for (let i = 0; i < num; i++) {
+    let x, y;
+    for (let a = 0; a < 5; a++) {
+      const tx = rng.r(W*0.05,W*0.95), ty = rng.r(H*0.05,H*0.95);
+      if (noise(tx*0.002,ty*0.002) > (0.5-p.density*0.3) || a===4) { x=tx; y=ty; break; }
+    }
+    nodes.push({ x, y, w: rng.r(0.3,1.0) });
+  }
+  for (const n of nodes) {
+    ctx.beginPath(); ctx.arc(n.x,n.y, 1+n.w*p.weight*4, 0, Math.PI*2);
+    ctx.fillStyle = g.ink+(0.4+p.weight*0.4)+')'; ctx.fill();
+  }
+  const maxD = W*(0.08+p.density*0.12);
+  for (let i = 0; i < nodes.length; i++) {
+    for (let j = i+1; j < nodes.length; j++) {
+      const dx=nodes[j].x-nodes[i].x, dy=nodes[j].y-nodes[i].y;
+      const dist = Math.sqrt(dx*dx+dy*dy);
+      if (dist < maxD) {
+        const str = 1-dist/maxD;
+        const mx=(nodes[i].x+nodes[j].x)/2, my=(nodes[i].y+nodes[j].y)/2;
+        const wob=(noise(mx*0.005,my*0.005)-0.5)*p.turb*maxD*0.4;
+        const ang=Math.atan2(dy,dx)+Math.PI/2;
+        ctx.beginPath();
+        ctx.moveTo(nodes[i].x,nodes[i].y);
+        ctx.quadraticCurveTo(mx+Math.cos(ang)*wob, my+Math.sin(ang)*wob, nodes[j].x,nodes[j].y);
+        ctx.strokeStyle = g.ink+(str*(0.08+p.weight*0.2))+')';
+        ctx.lineWidth = str*(0.3+p.weight*1.5); ctx.stroke();
+      }
+    }
+  }
+}
+
+// ===== VEIN MAP =====
+function drawVein(ctx, W, H, rng, noise, p, g) {
+  const spines = Math.floor(1+p.density*3);
+  for (let s = 0; s < spines; s++) {
+    const sx=rng.r(W*0.1,W*0.9), sy=rng.r(H*0.1,H*0.5);
+    const ex=sx+rng.r(-W*0.2,W*0.2), ey=rng.r(H*0.6,H*0.95);
+    const pts=[];
+    for (let i = 0; i <= 80; i++) {
+      const t=i/80;
+      pts.push({
+        x: sx+(ex-sx)*t+(noise(t*5+s,0)-0.5)*W*0.1*p.turb,
+        y: sy+(ey-sy)*t+(noise(0,t*5+s)-0.5)*H*0.05*p.turb
+      });
+    }
+    ctx.beginPath(); ctx.moveTo(pts[0].x,pts[0].y);
+    for (const pt of pts) ctx.lineTo(pt.x,pt.y);
+    ctx.strokeStyle=g.ink+(0.4+p.weight*0.4)+')'; ctx.lineWidth=1+p.weight*2;
+    ctx.lineCap='round'; ctx.lineJoin='round'; ctx.stroke();
+    const branches=Math.floor(8+p.density*20);
+    for (let b=0; b<branches; b++) {
+      const idx=rng.i(5,pts.length-5), pt=pts[idx], npt=pts[Math.min(idx+1,pts.length-1)];
+      const ma=Math.atan2(npt.y-pt.y,npt.x-pt.x);
+      const side=rng.next()<0.5?1:-1;
+      const ba=ma+side*(rng.r(0.3,0.7)*Math.PI)*(1+p.turb*0.5);
+      const bl=rng.r(W*0.03,W*0.1)*p.density;
+      const bex=pt.x+Math.cos(ba)*bl, bey=pt.y+Math.sin(ba)*bl;
+      ctx.beginPath(); ctx.moveTo(pt.x,pt.y);
+      ctx.quadraticCurveTo(
+        pt.x+Math.cos(ba)*bl*0.5+(rng.next()-0.5)*bl*0.3*p.turb,
+        pt.y+Math.sin(ba)*bl*0.5+(rng.next()-0.5)*bl*0.3*p.turb,
+        bex, bey
+      );
+      ctx.strokeStyle=g.ink+(0.2+p.weight*0.3)+')'; ctx.lineWidth=0.4+p.weight*0.8; ctx.stroke();
+    }
+  }
+}
+
+// ===== VORONOI =====
+function drawVoronoi(ctx, W, H, rng, noise, p, g) {
+  const num = Math.floor(15 + p.density*60);
+  const pts = [];
+  for (let i=0; i<num; i++) {
+    pts.push({
+      x: rng.r(0,W) + (noise(rng.next()*5, rng.next()*5)-0.5)*W*0.1*p.turb,
+      y: rng.r(0,H) + (noise(rng.next()*5+10, rng.next()*5+10)-0.5)*H*0.1*p.turb
+    });
+  }
+  // Draw edges: scan and find cell boundaries
+  const res = Math.max(3, Math.floor(6 - p.density*3));
+  const field = new Int16Array(Math.ceil(W/res) * Math.ceil(H/res));
+  const cols = Math.ceil(W/res), rows = Math.ceil(H/res);
+  // Assign cells
+  for (let gy=0; gy<rows; gy++) {
+    for (let gx=0; gx<cols; gx++) {
+      const px=gx*res+res/2, py=gy*res+res/2;
+      let minD=Infinity, minI=0;
+      for (let i=0; i<pts.length; i++) {
+        const d=(px-pts[i].x)**2+(py-pts[i].y)**2;
+        if (d<minD) { minD=d; minI=i; }
+      }
+      field[gy*cols+gx]=minI;
+    }
+  }
+  // Draw edges
+  ctx.beginPath();
+  for (let gy=0; gy<rows-1; gy++) {
+    for (let gx=0; gx<cols-1; gx++) {
+      const c=field[gy*cols+gx];
+      if (field[gy*cols+gx+1]!==c || field[(gy+1)*cols+gx]!==c) {
+        const px=gx*res+res/2, py=gy*res+res/2;
+        ctx.moveTo(px,py); ctx.lineTo(px+res,py+res);
+      }
+    }
+  }
+  ctx.strokeStyle=g.ink+(0.18+p.weight*0.3)+')';
+  ctx.lineWidth=0.6+p.weight*0.8; ctx.stroke();
+
+  // Draw cell centers as subtle dots
+  for (const pt of pts) {
+    const r = noise(pt.x*0.003, pt.y*0.003)*p.weight*4+0.5;
+    ctx.beginPath(); ctx.arc(pt.x, pt.y, r, 0, Math.PI*2);
+    ctx.fillStyle=g.ink+(0.15+p.weight*0.25)+')'; ctx.fill();
+  }
+
+  // Soft fills per cell
+  if (p.density > 0.5) {
+    for (let i=0; i<pts.length; i++) {
+      const r = rng.r(W*0.03, W*0.08)*(1-p.breathe*0.5);
+      const grad = ctx.createRadialGradient(pts[i].x,pts[i].y,0,pts[i].x,pts[i].y,r);
+      const a = (rng.next()*0.04+0.01)*p.weight;
+      grad.addColorStop(0, g.ink+a+')');
+      grad.addColorStop(1, g.ink+'0)');
+      ctx.beginPath(); ctx.arc(pts[i].x,pts[i].y,r,0,Math.PI*2);
+      ctx.fillStyle=grad; ctx.fill();
+    }
+  }
+}
+
+// ===== SPIRAL / FIBONACCI =====
+function drawSpiral(ctx, W, H, rng, noise, p, g) {
+  const numSpirals = Math.floor(1 + p.density*4);
+  const PHI = (1 + Math.sqrt(5)) / 2;
+
+  for (let s=0; s<numSpirals; s++) {
+    const cx = rng.r(W*0.2, W*0.8), cy = rng.r(H*0.2, H*0.8);
+    const maxR = rng.r(Math.min(W,H)*0.12, Math.min(W,H)*0.35);
+    const rotOffset = rng.r(0, Math.PI*2);
+    const direction = rng.next()<0.5?1:-1;
+    const turns = 3 + p.density*5;
+    const totalAngle = turns * Math.PI * 2;
+    const numPts = Math.floor(totalAngle * 20 * p.density);
+
+    // Main spiral arm
+    ctx.beginPath();
+    for (let i=0; i<=numPts; i++) {
+      const t = i/numPts;
+      const ang = rotOffset + direction*t*totalAngle;
+      const r = t*maxR;
+      const warp = (noise(cx*0.002+t*3, cy*0.002+t*2)-0.5)*p.turb*maxR*0.15;
+      const x = cx + (r+warp)*Math.cos(ang);
+      const y = cy + (r+warp)*Math.sin(ang);
+      if (i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+    }
+    ctx.strokeStyle=g.ink+(0.35+p.weight*0.35)+')';
+    ctx.lineWidth=0.8+p.weight*1.5; ctx.lineCap='round'; ctx.stroke();
+
+    // Fibonacci points along spiral
+    const numFib = Math.floor(8+p.density*20);
+    for (let i=1; i<=numFib; i++) {
+      const ang = rotOffset + direction*(i*2*Math.PI/PHI);
+      const r = (i/numFib)*maxR;
+      const warp = (noise(cx*0.002+i*0.5, cy*0.002+i*0.3)-0.5)*p.turb*maxR*0.1;
+      const x = cx + (r+warp)*Math.cos(ang);
+      const y = cy + (r+warp)*Math.sin(ang);
+      const dotR = (1-i/numFib)*p.weight*5+0.5;
+      ctx.beginPath(); ctx.arc(x,y,dotR,0,Math.PI*2);
+      ctx.fillStyle=g.ink+(0.3+p.weight*0.3)+')'; ctx.fill();
+
+      // Spokes from center
+      if (p.density > 0.4 && i % 2 === 0) {
+        ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(x,y);
+        ctx.strokeStyle=g.ink+(0.04+p.weight*0.06)+')';
+        ctx.lineWidth=0.4; ctx.stroke();
+      }
+    }
+
+    // Secondary phantom spirals
+    if (p.density > 0.6) {
+      for (let arm=1; arm<3; arm++) {
+        ctx.beginPath();
+        for (let i=0; i<=numPts; i++) {
+          const t=i/numPts;
+          const ang = rotOffset + direction*(t*totalAngle + arm*2*Math.PI/3);
+          const r=t*maxR*0.85;
+          const warp=(noise(cx*0.002+t*3+arm*10,cy*0.002+t*2)-0.5)*p.turb*maxR*0.1;
+          const x=cx+(r+warp)*Math.cos(ang), y=cy+(r+warp)*Math.sin(ang);
+          if (i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+        }
+        ctx.strokeStyle=g.ink+(0.08+p.weight*0.1)+')';
+        ctx.lineWidth=0.4+p.weight*0.6; ctx.stroke();
+      }
+    }
+  }
+}
+
+// ===== GESTURE LINES =====
+function drawGesture(ctx, W, H, rng, noise, p, g) {
+  const num=Math.floor(8+p.density*20);
+  for (let i=0; i<num; i++) {
+    const x1=rng.r(W*0.05,W*0.95), y1=rng.r(H*0.05,H*0.95);
+    const ang=rng.r(0,Math.PI*2), len=rng.r(W*0.05,W*0.25);
+    ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x1+Math.cos(ang)*len, y1+Math.sin(ang)*len);
+    ctx.strokeStyle=g.ink+(0.05+p.weight*0.08)+')';
+    ctx.lineWidth=0.5+p.weight;
+    ctx.setLineDash([4, rng.r(8,24)]); ctx.stroke(); ctx.setLineDash([]);
+  }
+}
+
+// ===== HORIZON =====
+function drawHorizon(ctx, W, H, rng, p, g) {
+  const hy=rng.r(H*0.3,H*0.6), wob=p.turb*H*0.04;
+  ctx.beginPath(); ctx.moveTo(0,hy+(rng.next()-0.5)*wob);
+  for (let x=0; x<=W; x+=8) ctx.lineTo(x, hy+(rng.next()-0.5)*wob);
+  ctx.strokeStyle=g.ink+(0.12+p.weight*0.15)+')';
+  ctx.lineWidth=0.8+p.weight*0.5; ctx.stroke();
+}
+
+// ===== UI WIRING =====
+
+// Slider labels
+document.querySelectorAll('input[type=range]').forEach(s => {
+  s.addEventListener('input', () => {
+    const vid = s.id.replace('s-','v-');
+    const el = document.getElementById(vid);
+    if (el) el.textContent = s.value;
+  });
+});
+
+// Pattern buttons + layer tabs
+let activeTab = 'a';
+
+document.getElementById('tab-a').addEventListener('click', () => {
+  activeTab = 'a';
+  document.getElementById('tab-a').className = 'ltab active-a';
+  document.getElementById('tab-b').className = 'ltab';
+  refreshPatternGrid();
+  document.getElementById('muse-text').textContent = MUSE[state.patA];
+});
+
+document.getElementById('tab-b').addEventListener('click', () => {
+  activeTab = 'b';
+  document.getElementById('tab-b').className = 'ltab active-b';
+  document.getElementById('tab-a').className = 'ltab';
+  refreshPatternGrid();
+  document.getElementById('muse-text').textContent = MUSE[state.patB];
+});
+
+function refreshPatternGrid() {
+  document.querySelectorAll('.pbtn').forEach(btn => {
+    btn.classList.remove('sel-a','sel-b');
+    const pat = btn.dataset.pat;
+    if (activeTab==='a' && pat===state.patA) btn.classList.add('sel-a');
+    if (activeTab==='b' && pat===state.patB) btn.classList.add('sel-b');
+  });
+}
+
+document.querySelectorAll('.pbtn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    if (activeTab==='a') { state.patA = btn.dataset.pat; }
+    else { state.patB = btn.dataset.pat; }
+    document.getElementById('muse-text').textContent = MUSE[btn.dataset.pat];
+    refreshPatternGrid();
+  });
+});
+
+// Grounds
+document.querySelectorAll('.ground-swatch').forEach(sw => {
+  sw.addEventListener('click', () => {
+    document.querySelectorAll('.ground-swatch').forEach(s=>s.classList.remove('active'));
+    sw.classList.add('active');
+    state.ground = sw.dataset.ground;
+  });
+});
+
+// Layer toggles
+document.querySelectorAll('.tog[data-layer]').forEach(t => {
+  t.addEventListener('click', () => {
+    const l = t.dataset.layer;
+    state.layers[l] = !state.layers[l];
+    t.classList.toggle('on', state.layers[l]);
+  });
+});
+
+// Blend mode
+document.querySelectorAll('.blend-btn').forEach(b => {
+  b.addEventListener('click', () => {
+    document.querySelectorAll('.blend-btn').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');
+    state.blendMode = b.dataset.blend;
+  });
+});
+
+document.getElementById('s-bopacity').addEventListener('input', e => {
+  state.bOpacity = +e.target.value / 100;
+});
+
+// Tile mode
+document.getElementById('tile-tog').addEventListener('click', () => {
+  state.tileMode = !state.tileMode;
+  document.getElementById('tile-tog').classList.toggle('on', state.tileMode);
+  document.getElementById('tile-view').classList.toggle('on', state.tileMode);
+  mainCanvas.style.display = state.tileMode ? 'none' : '';
+  if (state.tileMode) setTimeout(draw, 20);
+});
+
+document.querySelectorAll('.sbtn[data-size]').forEach(b => {
+  b.addEventListener('click', () => {
+    document.querySelectorAll('.sbtn[data-size]').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');
+    state.tileSize = +b.dataset.size;
+    if (state.tileMode) setTimeout(draw, 10);
+  });
+});
+
+document.querySelectorAll('.sbtn[data-rot]').forEach(b => {
+  b.addEventListener('click', () => {
+    document.querySelectorAll('.sbtn[data-rot]').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');
+    state.tileRot = +b.dataset.rot;
+    if (state.tileMode) setTimeout(draw, 10);
+  });
+});
+
+// Resolution
+document.querySelectorAll('.rbtn').forEach(b => {
+  b.addEventListener('click', () => {
+    document.querySelectorAll('.rbtn').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');
+    state.exportRes = +b.dataset.res;
+  });
+});
+
+// Seed
+document.getElementById('btn-seed').addEventListener('click', () => {
+  state.seed = Math.floor(Math.random() * 99999) + 1;
+  document.getElementById('seed-display').textContent = String(state.seed).padStart(5,'0');
+});
+
+// Generate
+document.getElementById('btn-gen').addEventListener('click', () => { requestAnimationFrame(draw); });
+
+// Export
+document.getElementById('btn-png').addEventListener('click', () => {
+  const src = state.tileMode ? tileCanvas : mainCanvas;
+  const res = state.exportRes;
+  if (res === 1) {
+    const a=document.createElement('a');
+    a.download=`strata_${state.patA}+${state.patB}_${state.seed}.png`;
+    a.href=src.toDataURL('image/png'); a.click();
+    return;
+  }
+  // High-res: scale up
+  const out=document.createElement('canvas');
+  out.width=src.width*res; out.height=src.height*res;
+  const cx=out.getContext('2d');
+  cx.imageSmoothingEnabled=false;
+  cx.drawImage(src,0,0,out.width,out.height);
+  const a=document.createElement('a');
+  a.download=`strata_${state.patA}+${state.patB}_${state.seed}_${res}x.png`;
+  a.href=out.toDataURL('image/png'); a.click();
+});
+
+document.getElementById('btn-svg-exp').addEventListener('click', () => {
+  alert("SVG export coming in v1.1 — use PNG at 3x for print quality.");
+});
+
+// Init
+document.getElementById('seed-display').textContent = String(state.seed).padStart(5,'0');
+requestAnimationFrame(draw);
+</script>
+</body>
+</html>
