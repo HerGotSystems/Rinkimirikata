@@ -1,1 +1,629 @@
-<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Signal Ecology Placeholder</title><style>body{background:#050505;color:#fff;font-family:monospace;display:grid;place-items:center;min-height:100vh;margin:0}.x{padding:28px;border:1px solid #303030;background:#101010;max-width:760px}code{color:#8de1ff}</style></head><body><div class="x"><h1>SIGNAL ECOLOGY</h1><p>Placeholder awaiting production HTML upload.</p><p><code>signal-ecology.html</code></p><p><code>/apps/signal-ecology/index.html</code></p></div></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Signal Ecology</title>
+<meta name="description" content="A practice of persistence-and-selection for emergent signal states. Everything becomes signal. Nothing is lost. Evolution is cumulative.">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%2306070a'/%3E%3Cellipse cx='16' cy='16' rx='7' ry='12' fill='none' stroke='%2374f0ff' stroke-width='1.5' transform='rotate(25 16 16)'/%3E%3Cellipse cx='16' cy='16' rx='7' ry='12' fill='none' stroke='%234ade80' stroke-width='1.2' transform='rotate(-25 16 16)'/%3E%3Ccircle cx='16' cy='16' r='2' fill='%2374f0ff'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Lora:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#06070a;
+  --fg:#dde2ee;
+  --muted:#485060;
+  --muted2:#6a778a;
+  --a:#74f0ff;
+  --b:#4ade80;
+  --c:#fb923c;
+  --line:rgba(255,255,255,0.07);
+  --line2:rgba(255,255,255,0.12);
+  --mono:'Space Mono',monospace;
+  --serif:'Lora',serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);
+  color:var(--fg);
+  font-family:var(--mono);
+  font-size:14px;
+  line-height:1.7;
+  overflow-x:hidden;
+}
+/* SIGNAL CANVAS BG */
+#sig-canvas{
+  position:fixed;top:0;left:0;
+  width:100%;height:100%;
+  opacity:.07;
+  pointer-events:none;
+  z-index:0;
+}
+/* NAV */
+nav{
+  position:fixed;top:0;left:0;right:0;
+  z-index:100;
+  display:flex;justify-content:space-between;align-items:center;
+  padding:16px 48px;
+  border-bottom:1px solid var(--line);
+  background:rgba(6,7,10,.88);
+  backdrop-filter:blur(14px);
+}
+.nav-logo{
+  font-size:12px;letter-spacing:.22em;
+  color:var(--a);text-transform:uppercase;
+  text-decoration:none;
+}
+.nav-links{display:flex;gap:0;align-items:center}
+.nav-links a{
+  font-size:11px;letter-spacing:.1em;
+  color:var(--muted2);text-decoration:none;
+  padding:6px 14px;
+  border-left:1px solid var(--line);
+  transition:color .2s;
+}
+.nav-links a:last-child{border-right:1px solid var(--line)}
+.nav-links a:hover{color:var(--fg)}
+/* MAIN CONTENT */
+main{
+  position:relative;z-index:1;
+  max-width:780px;
+  margin:0 auto;
+  padding:130px 48px 80px;
+}
+/* HERO */
+.hero{
+  padding-bottom:80px;
+  margin-bottom:80px;
+  border-bottom:1px solid var(--line);
+}
+.eyebrow{
+  display:inline-block;
+  font-size:10px;letter-spacing:.28em;
+  color:var(--a);text-transform:uppercase;
+  margin-bottom:28px;
+  padding:5px 10px;
+  border:1px solid rgba(116,240,255,.25);
+  border-radius:2px;
+  background:rgba(116,240,255,.04);
+}
+h1{
+  font-family:var(--mono);
+  font-size:clamp(40px,7vw,72px);
+  font-weight:700;
+  line-height:1.02;
+  letter-spacing:-.025em;
+  margin-bottom:36px;
+}
+h1 em{color:var(--a);font-style:normal}
+.hero-lede{
+  font-family:var(--serif);
+  font-size:18px;line-height:1.72;
+  color:#8896b0;font-style:italic;
+  max-width:580px;margin-bottom:44px;
+}
+.cta-row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.btn{
+  display:inline-block;
+  font-family:var(--mono);
+  font-size:12px;letter-spacing:.08em;
+  text-decoration:none;
+  border-radius:2px;
+  padding:11px 24px;
+  transition:all .2s;
+}
+.btn-a{
+  background:var(--a);
+  color:#06070a;font-weight:700;
+}
+.btn-a:hover{opacity:.85;transform:translateY(-1px)}
+.btn-b{
+  border:1px solid var(--line2);
+  color:var(--muted2);
+}
+.btn-b:hover{color:var(--fg);border-color:rgba(255,255,255,.25)}
+/* SECTIONS */
+.sec{margin-bottom:72px}
+.sec-head{
+  display:flex;align-items:center;gap:14px;
+  margin-bottom:24px;
+}
+.sec-num{
+  font-size:10px;letter-spacing:.2em;
+  color:var(--a);
+  flex-shrink:0;
+}
+.sec-line{flex:1;height:1px;background:var(--line)}
+h2{
+  font-family:var(--mono);
+  font-size:19px;font-weight:700;
+  letter-spacing:-.01em;
+  margin-bottom:20px;
+  color:var(--fg);
+}
+.body-text{
+  font-family:var(--serif);
+  font-size:16px;line-height:1.8;
+  color:#7a8898;
+  margin-bottom:18px;
+}
+.body-text strong,.body-text b{color:var(--fg);font-weight:600}
+.body-text em{color:var(--fg);font-style:italic}
+/* PULL QUOTE */
+.pull{
+  border-left:2px solid var(--a);
+  padding:18px 24px;
+  margin:32px 0;
+  background:rgba(116,240,255,.025);
+}
+.pull p{
+  font-family:var(--serif);
+  font-size:17px;line-height:1.7;
+  color:#b0c0d8;
+  font-style:italic;
+  margin:0;
+}
+/* LOOP DIAGRAM */
+.loop-wrap{
+  display:flex;align-items:center;
+  flex-wrap:wrap;gap:6px;
+  margin:32px 0;
+}
+.loop-node{
+  font-size:11px;letter-spacing:.08em;
+  padding:8px 16px;
+  border:1px solid var(--line2);
+  border-radius:2px;
+  color:var(--muted2);
+}
+.loop-node.hi{
+  border-color:var(--a);
+  color:var(--a);
+  background:rgba(116,240,255,.05);
+}
+.loop-arr{font-size:13px;color:var(--line2)}
+/* COMPARISON GRID */
+.compare-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:1px;
+  background:var(--line);
+  border:1px solid var(--line);
+  margin:28px 0;
+}
+.compare-cell{
+  background:var(--bg);
+  padding:20px 22px;
+}
+.compare-cell .cn{
+  font-size:13px;font-weight:700;
+  color:var(--fg);margin-bottom:6px;
+}
+.compare-cell .cd{
+  font-size:12px;color:var(--muted2);
+  line-height:1.6;margin-bottom:8px;
+}
+.compare-cell .cg{
+  font-size:11px;color:var(--c);
+  line-height:1.55;letter-spacing:.02em;
+}
+/* SIGNAL TYPE SCROLL */
+.signal-scroll{
+  display:flex;flex-wrap:wrap;gap:8px;
+  margin:28px 0;
+}
+.signal-tag{
+  font-size:11px;letter-spacing:.06em;
+  padding:5px 11px;
+  border:1px solid var(--line2);
+  border-radius:2px;
+  color:var(--muted2);
+  background:rgba(255,255,255,.02);
+}
+.signal-tag.active{
+  border-color:var(--b);
+  color:var(--b);
+  background:rgba(74,222,128,.04);
+}
+/* SCORES VISUAL */
+.score-bar-wrap{margin:28px 0}
+.score-row{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.score-label{font-size:11px;color:var(--muted2);width:130px;flex-shrink:0}
+.score-bar-bg{flex:1;height:4px;background:rgba(255,255,255,.06);border-radius:2px;overflow:hidden}
+.score-bar{height:100%;border-radius:2px;transition:width 1.5s ease}
+/* FOOTER */
+footer{
+  position:relative;z-index:1;
+  border-top:1px solid var(--line);
+  padding:36px 48px;
+  max-width:780px;margin:0 auto;
+  display:flex;justify-content:space-between;align-items:center;
+  flex-wrap:wrap;gap:16px;
+}
+.foot-left{font-size:12px;color:var(--muted)}
+.foot-left strong{color:var(--muted2)}
+.foot-right{display:flex;gap:0}
+.foot-right a{
+  font-size:11px;color:var(--muted);
+  text-decoration:none;
+  padding:4px 12px;
+  border-left:1px solid var(--line);
+  transition:color .2s;
+}
+.foot-right a:last-child{border-right:1px solid var(--line)}
+.foot-right a:hover{color:var(--a)}
+/* MOBILE */
+@media(max-width:640px){
+  nav{padding:14px 20px}
+  main{padding:100px 24px 60px}
+  .compare-grid{grid-template-columns:1fr}
+  footer{padding:28px 24px;flex-direction:column;align-items:flex-start}
+  .foot-right{flex-wrap:wrap}
+  .foot-right a:first-child{border-left:none}
+}
+/* SCROLL REVEAL */
+.reveal{
+  opacity:0;transform:translateY(18px);
+  transition:opacity .6s ease,transform .6s ease;
+}
+.reveal.visible{opacity:1;transform:none}
+</style>
+</head>
+<body>
+
+<canvas id="sig-canvas"></canvas>
+
+<nav>
+  <a href="#" class="nav-logo">Signal Ecology</a>
+  <div class="nav-links">
+    <a href="#concept">Concept</a>
+    <a href="#loop">Loop</a>
+    <a href="#corpus">Corpus</a>
+    <a href="#instrument">CDME</a>
+  </div>
+</nav>
+
+<main>
+
+  <section class="hero reveal">
+    <div class="eyebrow">Category definition · 2025</div>
+    <h1>Signal<br><em>Ecology</em></h1>
+    <p class="hero-lede">
+      A practice of persistence-and-selection for emergent signal states.
+      Everything becomes signal. Nothing is lost. Evolution is cumulative.
+    </p>
+    <div class="cta-row">
+      <a href="#instrument" class="btn btn-a">Open Instrument ↗</a>
+      <a href="#concept" class="btn btn-b">Read the concept</a>
+    </div>
+  </section>
+
+  <!-- 01 -->
+  <section class="sec reveal" id="concept">
+    <div class="sec-head">
+      <span class="sec-num">01</span>
+      <div class="sec-line"></div>
+    </div>
+    <h2>The normalization problem that isn't a problem</h2>
+    <p class="body-text">
+      A text string, a prime number sequence, a microphone feed, an image row, the Planck
+      blackbody radiation spectrum. These appear to be fundamentally incompatible sources.
+      They are not.
+    </p>
+    <p class="body-text">
+      Map each to a normalized array of 512 floating-point values in [0,&nbsp;1].
+      At that resolution, the ontological difference between them dissolves.
+      A chord progression and a Lorenz attractor become indistinguishable to an operator.
+    </p>
+    <div class="pull">
+      <p>"The source ontology is permanently out of scope."</p>
+    </div>
+    <p class="body-text">
+      Once signal unification is in place, the rest of the system operates on a single
+      assumption: any two signals can be operated on, scored, mutated, persisted, and evolved.
+      This is the foundational move of Signal Ecology: <strong>everything becomes signal</strong>.
+    </p>
+    <div class="signal-scroll">
+      <span class="signal-tag active">text</span>
+      <span class="signal-tag active">equations</span>
+      <span class="signal-tag active">mic input</span>
+      <span class="signal-tag active">image rows</span>
+      <span class="signal-tag active">physics constants</span>
+      <span class="signal-tag active">orbital formulas</span>
+      <span class="signal-tag active">weather feeds</span>
+      <span class="signal-tag active">biological sequences</span>
+      <span class="signal-tag active">gesture data</span>
+      <span class="signal-tag active">stock movement</span>
+      <span class="signal-tag">any domain →</span>
+    </div>
+  </section>
+
+  <!-- 02 -->
+  <section class="sec reveal" id="loop">
+    <div class="sec-head">
+      <span class="sec-num">02</span>
+      <div class="sec-line"></div>
+    </div>
+    <h2>Beyond generation</h2>
+    <p class="body-text">
+      Most generative tools stop at generation. They produce output — possibly beautiful,
+      possibly complex. Then it disappears. Signal Ecology continues past generation into
+      a structurally different process:
+    </p>
+    <div class="loop-wrap">
+      <div class="loop-node hi">generate</div>
+      <div class="loop-arr">→</div>
+      <div class="loop-node hi">mutate</div>
+      <div class="loop-arr">→</div>
+      <div class="loop-node hi">evaluate</div>
+      <div class="loop-arr">→</div>
+      <div class="loop-node hi">preserve</div>
+      <div class="loop-arr">→</div>
+      <div class="loop-node hi">branch</div>
+      <div class="loop-arr">→</div>
+      <div class="loop-node hi">evolve</div>
+    </div>
+    <p class="body-text">
+      This loop is borrowed from artificial life. Karl Sims ran the same loop in 1994 for
+      evolved virtual creatures. The <em>loop</em> was the invention — not the physics, not the
+      rendering. The loop made discovery cumulative rather than ephemeral.
+    </p>
+    <p class="body-text">
+      Signal Ecology applies the same loop to audiovisual signal states in a browser,
+      with human aesthetic judgment replacing the fitness function.
+    </p>
+  </section>
+
+  <!-- 03 -->
+  <section class="sec reveal" id="corpus">
+    <div class="sec-head">
+      <span class="sec-num">03</span>
+      <div class="sec-line"></div>
+    </div>
+    <h2>The corpus is the invention</h2>
+    <p class="body-text">
+      The renderer is not the invention. The audio engine is not the invention.
+      The equations are not the invention.
+    </p>
+    <div class="pull">
+      <p>"The corpus turns ephemeral generation into ecological exploration."</p>
+    </div>
+    <p class="body-text">
+      A corpus of scored, timestamped, operator-chained signal configurations is not a gallery.
+      A gallery holds finished work. A corpus holds <strong>discovered states</strong> —
+      including the ambiguous, the failed, the interesting-but-not-quite. The corpus
+      is the memory of an exploration, not the exhibition of its results.
+    </p>
+    <p class="body-text">
+      Without corpus persistence, a mutation system is a toy. With persistence:
+      evolution becomes meaningful, scoring becomes comparative, mutation becomes cumulative,
+      exploration becomes navigable, discovery becomes social.
+    </p>
+    <div class="score-bar-wrap">
+      <div class="score-row">
+        <span class="score-label">mutation systems</span>
+        <div class="score-bar-bg"><div class="score-bar" data-w="18" style="width:0%;background:#333"></div></div>
+      </div>
+      <div class="score-row">
+        <span class="score-label">visual synths</span>
+        <div class="score-bar-bg"><div class="score-bar" data-w="32" style="width:0%;background:#444"></div></div>
+      </div>
+      <div class="score-row">
+        <span class="score-label">generative art tools</span>
+        <div class="score-bar-bg"><div class="score-bar" data-w="28" style="width:0%;background:#444"></div></div>
+      </div>
+      <div class="score-row">
+        <span class="score-label">Signal Ecology</span>
+        <div class="score-bar-bg"><div class="score-bar" data-w="92" style="width:0%;background:var(--a)"></div></div>
+      </div>
+    </div>
+    <p class="body-text" style="font-size:12px;color:var(--muted)">
+      * Ecological completeness: persistence × evolution × scoring × lineage × shareability
+    </p>
+    <div class="pull" style="margin-top:32px">
+      <p>"The corpus contains things that nobody planned and nobody could have planned.
+      It contains emergence."</p>
+    </div>
+  </section>
+
+  <!-- 04 -->
+  <section class="sec reveal">
+    <div class="sec-head">
+      <span class="sec-num">04</span>
+      <div class="sec-line"></div>
+    </div>
+    <h2>Cultivation, not construction</h2>
+    <p class="body-text">
+      Hydra requires code. Strudel requires patterns. TouchDesigner requires node graphs.
+      These are construction models: the operator builds the system, then observes it.
+    </p>
+    <p class="body-text">
+      Signal Ecology operates on a different model. The operator does not construct the system.
+      The operator <strong>selects from what the system generates</strong>, steers the evolution of
+      what survives, and cultivates an ecology of discovered states over time.
+      Authorship is real — selection pressure is a creative act — but it operates through
+      judgment rather than construction.
+    </p>
+    <p class="body-text">
+      <strong>More gardener than programmer. More ecologist than engineer.</strong>
+    </p>
+    <p class="body-text">
+      The no-code constraint is therefore philosophical, not a simplification.
+      Removing the construction barrier is what makes cultivation possible.
+    </p>
+  </section>
+
+  <!-- 05 -->
+  <section class="sec reveal">
+    <div class="sec-head">
+      <span class="sec-num">05</span>
+      <div class="sec-line"></div>
+    </div>
+    <h2>Adjacent systems</h2>
+    <div class="compare-grid">
+      <div class="compare-cell">
+        <div class="cn">Hydra</div>
+        <div class="cd">Browser visual synth. Framebuffer recursion. Live code-first. WebGL.</div>
+        <div class="cg">No corpus · No scoring · No evolution · Code required</div>
+      </div>
+      <div class="compare-cell">
+        <div class="cn">TouchDesigner</div>
+        <div class="cd">Desktop node graph. AV modular. Professional performance tool.</div>
+        <div class="cg">Construction model · No mutation loop · Desktop-only</div>
+      </div>
+      <div class="compare-cell">
+        <div class="cn">Strudel / TidalCycles</div>
+        <div class="cd">Pattern language. Cross-domain signals. Live coding culture.</div>
+        <div class="cg">Code-first · No persistence · No emergence scoring</div>
+      </div>
+      <div class="compare-cell">
+        <div class="cn">Academic IEC systems</div>
+        <div class="cd">Interactive evolutionary computation. Human-in-loop sound evolution.</div>
+        <div class="cg">Audio-only · Non-realtime · Research demos, not instruments</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 06 -->
+  <section class="sec reveal">
+    <div class="sec-head">
+      <span class="sec-num">06</span>
+      <div class="sec-line"></div>
+    </div>
+    <h2>Collective emergence archaeology</h2>
+    <p class="body-text">
+      A corpus stored locally is a personal ecosystem. A corpus that can be published, forked,
+      browsed, and merged becomes something else entirely.
+    </p>
+    <p class="body-text">
+      GitHub proved this model for code: commits, diffs, forks, branches. The power was not
+      storage — it was that evolutionary relationships became <em>navigable</em>. You could trace
+      any line's history. You could fork at any point. You could see what was tried and abandoned.
+    </p>
+    <p class="body-text">
+      Signal Ecology corpora have the same structural properties: mutation lineage, rejection
+      history, scoring pressure over time, emergent states as restorable configurations —
+      not images, but full signal environments. When corpora are public, the system gains
+      <strong>collective emergence archaeology</strong>.
+    </p>
+    <p class="body-text">
+      Not authored by any one person. Shaped by the cumulative selection pressure
+      of everyone who cultivated it.
+    </p>
+  </section>
+
+  <!-- 07 category -->
+  <section class="sec reveal">
+    <div class="sec-head">
+      <span class="sec-num">07</span>
+      <div class="sec-line"></div>
+    </div>
+    <h2>The term, offered as infrastructure</h2>
+    <p class="body-text">
+      Signal Ecology describes a practice, not a medium. It does not specify what signals
+      contain, what operators do, or what rendering looks like. It specifies only:
+    </p>
+    <p class="body-text">
+      Signal unification as the foundational architecture.
+      The generate→mutate→evaluate→preserve→branch→evolve loop as the operational model.
+      The corpus as persistent memory of discovered complexity configurations.
+      Cultivation as the authorship mode.
+    </p>
+    <div class="pull">
+      <p>"The term is offered as a category, not a brand. If other practitioners build
+      systems with these properties, they should call them Signal Ecology systems."</p>
+    </div>
+    <p class="body-text">
+      Categories form when more than one person uses the term for more than one thing.
+      Until then, CDME is the first implementation of a nameable practice.
+    </p>
+  </section>
+
+  <!-- INSTRUMENT -->
+  <section class="sec reveal" id="instrument">
+    <div class="sec-head">
+      <span class="sec-num">REF</span>
+      <div class="sec-line"></div>
+    </div>
+    <h2>CDME — Cross-Domain Mutation Engine</h2>
+    <p class="body-text">
+      CDME is the reference implementation of Signal Ecology. Browser-native, single-file,
+      no dependencies, no account required. Sources span physics constants, mathematical equations,
+      audio input, image data, and text. Operators combine any signal with any other.
+      The emergence scorer runs continuously. The corpus persists locally and exports as JSON.
+    </p>
+    <p class="body-text">
+      The <strong>AIP Protocol</strong> (CC BY 4.0, HerGotSystems) defines the open interchange
+      format for Signal Ecology configurations — the spec that makes corpora portable across
+      implementations.
+    </p>
+    <div class="cta-row" style="margin-top:32px">
+      <a href="https://emvycheck.com/cdme" class="btn btn-a" target="_blank">Open CDME ↗</a>
+      <a href="https://github.com/HerGotSystems" class="btn btn-b" target="_blank">HerGotSystems GitHub ↗</a>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="foot-left">
+    <strong>Signal Ecology</strong> · Mike Veltruský / EMVY CHECK · 2025<br>
+    CDME is the reference implementation. AIP Protocol is the open standard.
+  </div>
+  <div class="foot-right">
+    <a href="https://emvycheck.com" target="_blank">EMVY CHECK</a>
+    <a href="https://github.com/HerGotSystems" target="_blank">GitHub</a>
+  </div>
+</footer>
+
+<script>
+/* ---- background signal canvas ---- */
+const cv=document.getElementById('sig-canvas');
+const cx=cv.getContext('2d');
+let t=0,W=0,H=0;
+function resize(){W=cv.width=window.innerWidth;H=cv.height=window.innerHeight}
+window.addEventListener('resize',resize);resize();
+const SN=6;
+const sigs=Array.from({length:SN},(_,i)=>({
+  f:0.6+i*0.41,ph:i*1.72,amp:.22+i*.08,yo:.08+i*.155,hue:185+i*12
+}));
+(function frame(){
+  cx.clearRect(0,0,W,H);
+  sigs.forEach(s=>{
+    cx.beginPath();
+    cx.strokeStyle=`hsla(${s.hue},85%,65%,.55)`;
+    cx.lineWidth=1;
+    for(let x=0;x<=W;x+=2){
+      const nx=x/W;
+      const y=s.yo*H
+        +Math.sin(nx*Math.PI*2*s.f+t*s.ph*.25)*s.amp*H*.5
+        +Math.sin(nx*Math.PI*4*s.f*1.27-t*s.ph*.15)*s.amp*H*.18;
+      x===0?cx.moveTo(x,y):cx.lineTo(x,y);
+    }
+    cx.stroke();
+  });
+  t+=0.011;
+  requestAnimationFrame(frame);
+})();
+
+/* ---- scroll reveal ---- */
+const observer=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible')})
+},{threshold:.12});
+document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
+
+/* ---- score bars animate on reveal ---- */
+const barObserver=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      e.target.querySelectorAll('.score-bar').forEach(b=>{
+        setTimeout(()=>{b.style.width=b.dataset.w+'%'},200)
+      });
+    }
+  })
+},{threshold:.3});
+document.querySelectorAll('.score-bar-wrap').forEach(el=>barObserver.observe(el));
+</script>
+</body>
+</html>
