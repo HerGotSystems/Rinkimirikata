@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>RINKIMIRIKATA / Projects</title>
+<link rel="stylesheet" href="./projects.css">
+</head>
+<body>
+<main class="wrap">
+<a class="back" href="/">← RINKIMIRIKATA home</a>
+<header>
+<h1>Projects</h1>
+<p class="intro">Public directory of systems, tools, experiments and repos. Live tools open directly. Source-only projects open GitHub until a runnable surface exists.</p>
+</header>
+<nav class="toolbar">
+<button class="filter active" data-filter="all">All</button>
+<button class="filter" data-filter="live">Live</button>
+<button class="filter" data-filter="source">Source</button>
+<button class="filter" data-filter="planned">Planned</button>
+</nav>
+<section id="grid" class="grid"></section>
+<div id="empty" class="empty" hidden>No projects found. Check /registry/projects.json.</div>
+<footer>Registry source: /registry/projects.json</footer>
+</main>
+<script src="./projects.js"></script>
+</body>
+</html>
