@@ -1,8 +1,28 @@
 {
-  "version": 2,
+  "version": 3,
   "updated": "2026-05-26",
   "note": "Central app registry for RINKIMIRIKATA. Add new HTML tools here to make them visible in the hub loader.",
   "items": [
+    {
+      "id": "humanx-belief-engine",
+      "title": "HumanX Belief Engine",
+      "type": "HumanX personal layer",
+      "status": "uploaded live",
+      "privacy": "browser-local",
+      "url": "/apps/humanx-belief-engine/",
+      "description": "Personal HumanX entry point: belief mapping, contradiction profile, identity structure and response-pattern testing before public claim pressure.",
+      "tags": ["humanx", "belief", "personal", "quiz"]
+    },
+    {
+      "id": "humanx-claims-engine",
+      "title": "HumanX Claims Engine",
+      "type": "HumanX public layer",
+      "status": "source / deploy target",
+      "privacy": "server-backed when deployed",
+      "url": "https://github.com/HerGotSystems/HumanX",
+      "description": "Public HumanX layer for making, challenging and pressure-testing claims with evidence, pressure points and reveal cards. Live deployment can be linked here when ready.",
+      "tags": ["humanx", "claims", "evidence", "public"]
+    },
     {
       "id": "pi-atlas",
       "title": "Pi / Constant Atlas",
@@ -22,16 +42,6 @@
       "url": "/apps/cdme/",
       "description": "Signal mutation engine with physics, equations, audio/image/text inputs, corpus, recording, Layer B compositor and sonification.",
       "tags": ["signal", "visualizer", "audio", "engine"]
-    },
-    {
-      "id": "humanx-belief-engine",
-      "title": "HumanX Belief Engine",
-      "type": "belief / social system",
-      "status": "uploaded live",
-      "privacy": "browser-local",
-      "url": "/apps/humanx-belief-engine/",
-      "description": "HumanX belief-mapping and profile engine for testing social, identity and contradiction structures.",
-      "tags": ["humanx", "belief", "quiz", "social"]
     },
     {
       "id": "canvas-grid",
