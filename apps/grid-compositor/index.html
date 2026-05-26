@@ -1,1 +1,669 @@
-<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Grid Compositor Placeholder</title><style>body{margin:0;background:#080808;color:#eee;font-family:monospace;display:grid;place-items:center;min-height:100vh}.b{border:1px solid #333;background:#111;padding:28px;max-width:760px}code{color:#c8960a}</style></head><body><main class="b"><h1>GRID COMPOSITOR</h1><p>Placeholder. Replace with:</p><code>grid_compositor_v5.html</code><p>Destination:</p><code>/apps/grid-compositor/index.html</code></main></body></html>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Grid Compositor v5</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Crimson+Pro:wght@300;600&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0e0d0b;--sf:#181611;--pn:#1f1d18;--bd:#2e2b22;--ac:#c8a96e;--g2:#7a9e7e;--tx:#d4cfc4;--mu:#6b6558}
+html,body{height:100%;overflow:hidden}
+body{background:var(--bg);color:var(--tx);font-family:'Space Mono',monospace;font-size:11px;padding:8px;display:flex;flex-direction:column;gap:5px}
+
+/* HEADER */
+.hdr{display:flex;align-items:baseline;gap:10px;flex-shrink:0}
+h1{font-family:'Crimson Pro',serif;font-size:16px;font-weight:300;letter-spacing:.12em;color:var(--ac)}
+.sub{font-size:8px;color:var(--mu);letter-spacing:.08em;text-transform:uppercase}
+
+/* LAYOUT ROW */
+.lrow{display:flex;gap:4px;overflow-x:auto;flex-shrink:0;padding-bottom:3px;align-items:center}
+.lrow::-webkit-scrollbar{height:2px}.lrow::-webkit-scrollbar-thumb{background:var(--mu)}
+.lc{flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:2px;padding:4px 5px;border:1px solid var(--bd);background:var(--sf);cursor:pointer;transition:all .15s}
+.lc:hover{border-color:var(--mu)}.lc.act{border-color:var(--ac);background:#1a1710}
+.lc svg{display:block}.lc em{font-style:normal;font-size:7px;color:var(--mu);letter-spacing:.04em;text-transform:uppercase}.lc.act em{color:var(--ac)}
+
+/* CUSTOM + SEED BAR */
+#custB{background:var(--sf);border:1px solid var(--bd);padding:6px 8px;flex-shrink:0;display:none;flex-direction:column;gap:5px}
+.crow{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.cct{display:flex;align-items:center;gap:3px;font-size:8px;color:var(--mu);text-transform:uppercase;letter-spacing:.04em}
+.nb{width:14px;height:14px;border:1px solid var(--bd);background:var(--pn);color:var(--tx);cursor:pointer;font-size:8px;display:inline-flex;align-items:center;justify-content:center}
+.nb:hover{border-color:var(--ac);color:var(--ac)}.nv{width:16px;text-align:center;font-size:9px;color:var(--ac)}
+.cbg{display:inline-grid;gap:2px}
+.cbc{width:14px;height:14px;border:1px solid #2e2a1f;background:var(--ac);cursor:pointer;transition:all .1s;opacity:.9}
+.cbc:hover{opacity:1}.cbc.off{background:#222;opacity:.4}
+
+/* SEED BAR */
+#seedBar{background:var(--sf);border:1px solid var(--bd);padding:5px 8px;flex-shrink:0;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.seed-grp{display:flex;align-items:center;gap:5px;font-size:8px;color:var(--mu);text-transform:uppercase;letter-spacing:.04em}
+#seedInp{width:70px;background:var(--pn);border:1px solid var(--bd);color:var(--ac);font-family:'Space Mono',monospace;font-size:9px;padding:2px 5px;outline:none}
+#seedInp:focus{border-color:var(--ac)}
+.seed-divider{color:var(--bd);font-size:10px}
+
+/* TABS */
+.tabs{display:flex;gap:2px;border-bottom:1px solid var(--bd);flex-shrink:0}
+.tab{padding:4px 10px;cursor:pointer;border:1px solid transparent;border-bottom:none;color:var(--mu);font-family:'Space Mono',monospace;font-size:8px;letter-spacing:.08em;text-transform:uppercase;background:none;transition:all .15s;position:relative;bottom:-1px}
+.tab:hover{color:var(--tx)}.tab.act{color:var(--ac);border-color:var(--bd);border-bottom-color:var(--bg);background:var(--bg)}
+
+/* PANELS */
+.panel{display:none;flex:1;min-height:0}.panel.act{display:flex}
+
+/* SHARED SIDEBAR */
+.sidebar{width:148px;flex-shrink:0;display:flex;flex-direction:column;gap:6px}
+.main{flex:1;min-width:0;min-height:0;display:flex;flex-direction:column}
+
+/* DROP ZONE */
+.dz{border:1px dashed var(--bd);background:var(--sf);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:4px;cursor:pointer;padding:12px 6px;text-align:center;transition:all .15s}
+.dz:hover,.dz.dg{border-color:var(--ac);background:#1a1812}
+.dz-i{font-size:16px;opacity:.3}.dz-t{font-size:7px;color:var(--mu);letter-spacing:.04em}.dz-t b{color:var(--ac);font-weight:normal}
+
+/* CANVAS CONTAINERS */
+.canv-box{flex:1;min-height:0;position:relative;background:var(--sf);border:1px solid var(--bd);overflow:hidden;display:flex;align-items:center;justify-content:center}
+.canv-ph{font-size:8px;color:var(--mu);letter-spacing:.06em}
+canvas.fc{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%)}
+
+/* CONTROLS */
+.ctrl-grp{display:flex;flex-direction:column;gap:3px}
+.lbl{font-size:7px;color:var(--mu);letter-spacing:.06em;text-transform:uppercase}
+.slider-row{display:flex;align-items:center;gap:4px}
+input[type=range]{-webkit-appearance:none;flex:1;height:2px;background:var(--bd);outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:10px;height:10px;background:var(--ac);cursor:pointer;border-radius:0}
+.sv{font-size:8px;color:var(--ac);width:24px;text-align:right}
+.wall-row{display:flex;gap:3px}
+.wc{width:16px;height:16px;border:2px solid transparent;cursor:pointer;transition:border-color .12s}
+.wc.sel{border-color:var(--ac)}
+
+/* BUTTONS */
+.acts{display:flex;gap:3px;flex-wrap:wrap}
+.btn{padding:4px 8px;border:1px solid var(--bd);background:var(--pn);color:var(--tx);font-family:'Space Mono',monospace;font-size:7px;letter-spacing:.05em;text-transform:uppercase;cursor:pointer;transition:all .15s}
+.btn:hover{border-color:var(--ac);color:var(--ac)}
+.btn.pri{border-color:var(--ac);color:var(--ac);background:#1a1710}
+.btn.grn{border-color:var(--g2);color:var(--g2);background:#111}
+.btn:disabled{opacity:.3;pointer-events:none}
+
+/* STAT */
+.stat{font-size:7px;color:var(--mu);min-height:10px;letter-spacing:.04em}
+.stat.ok{color:var(--g2)}.stat.warn{color:var(--ac)}
+
+/* CELLS GRID */
+.cgrid{display:grid;gap:2px;overflow-y:auto;max-height:100%}
+.cgrid::-webkit-scrollbar{width:2px}.cgrid::-webkit-scrollbar-thumb{background:var(--mu)}
+.cs{border:1px dashed #3a3628;background:var(--sf);display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;overflow:hidden;transition:all .12s}
+.cs.on:hover,.cs.on.dg{border-color:var(--ac);background:#1a1812}
+.cs.filled{border-color:var(--g2);border-style:solid}
+.cs.dead{background:#0f0e0c;border-color:#1a1915;cursor:default;pointer-events:none}
+.cs img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.cn{font-family:'Crimson Pro',serif;font-size:9px;color:var(--ac);z-index:1;text-shadow:0 0 4px #000;pointer-events:none}
+.cs.filled .cn{display:none}
+.cx{position:absolute;top:1px;right:1px;width:11px;height:11px;background:rgba(0,0,0,.85);border:1px solid #333;color:#888;font-size:7px;cursor:pointer;display:none;align-items:center;justify-content:center;z-index:10}
+.cs.filled .cx{display:flex}.cx:hover{color:#e88}
+
+/* CELL POOL */
+.pool-box{background:var(--sf);border:1px solid var(--bd);padding:5px;flex-shrink:0}
+.pool-lbl{font-size:7px;color:var(--mu);letter-spacing:.06em;text-transform:uppercase;margin-bottom:4px}
+.pool{display:flex;gap:3px;flex-wrap:wrap}
+.pt{width:36px;height:36px;border:1px solid var(--bd);overflow:hidden;position:relative;cursor:pointer;flex-shrink:0}
+.pt img{width:100%;height:100%;object-fit:cover}
+.pt-x{position:absolute;top:0;right:0;width:10px;height:10px;background:rgba(0,0,0,.8);color:#888;font-size:7px;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:2}
+.pt-x:hover{color:#e88}
+.pt-add{border-style:dashed;border-color:var(--bd);display:flex;align-items:center;justify-content:center;color:var(--mu);font-size:14px;transition:all .15s}
+.pt-add:hover{border-color:var(--ac);color:var(--ac)}
+
+input[type=file]{display:none}
+.wc-dk{background:#0e0d0b}.wc-st{background:#3a3632}.wc-wm{background:#e8e0d0}.wc-wh{background:#f5f5f0}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <h1>Grid Compositor</h1>
+  <div class="sub">v5 — gaps · seeds · image pool</div>
+</div>
+
+<!-- LAYOUT SELECTOR -->
+<div class="lrow" id="lrow"></div>
+
+<!-- CUSTOM BUILDER -->
+<div id="custB">
+  <div class="crow">
+    <div class="cct">Cols<button class="nb" onclick="adj('c',-1)">−</button><span class="nv" id="vC">3</span><button class="nb" onclick="adj('c',1)">+</button></div>
+    <div class="cct">Rows<button class="nb" onclick="adj('r',-1)">−</button><span class="nv" id="vR">3</span><button class="nb" onclick="adj('r',1)">+</button></div>
+    <button class="btn" style="padding:2px 5px" onclick="cAll(1)">All on</button>
+    <button class="btn" style="padding:2px 5px" onclick="cAll(0)">All off</button>
+  </div>
+  <div class="cbg" id="cbg"></div>
+</div>
+
+<!-- SEED BAR -->
+<div id="seedBar">
+  <div class="seed-grp">
+    Seed
+    <input type="text" id="seedInp" value="42" maxlength="10" placeholder="seed…" oninput="onSeedInput()">
+    <button class="btn" style="padding:2px 6px" onclick="rndSeed()">⚄ Random</button>
+  </div>
+  <span class="seed-divider">|</span>
+  <div class="seed-grp">
+    Layout
+    <button class="btn" onclick="seedLayout()" title="Randomise which cells are active">Shuffle layout</button>
+  </div>
+  <span class="seed-divider">|</span>
+  <div class="seed-grp">
+    Images
+    <button class="btn" onclick="seedCells()" id="btnSeedCells" disabled title="Randomly assign pool images to cells">Shuffle images</button>
+    <button class="btn" onclick="mirrorH()" title="Mirror image assignments horizontally">↔ Mirror</button>
+    <button class="btn" onclick="rotateCells()" title="Rotate image assignments 90°">↻ Rotate</button>
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="tabs">
+  <button class="tab act" onclick="sm('f')">Full Image → Split</button>
+  <button class="tab" onclick="sm('c')">Mix Cells → Compose</button>
+</div>
+
+<!-- FULL IMAGE PANEL -->
+<div class="panel act" id="pFull">
+  <div class="sidebar">
+    <div class="dz" id="dzF" onclick="document.getElementById('inF').click()"
+      ondragover="dov(event,'dzF',1)" ondragleave="dov(event,'dzF',0)" ondrop="dropF(event)">
+      <div class="dz-i">⊞</div>
+      <div class="dz-t">Drop or <b>click</b> to upload</div>
+    </div>
+    <div class="ctrl-grp">
+      <div class="lbl">Panel gap</div>
+      <div class="slider-row">
+        <input type="range" id="gapSlider" min="0" max="50" value="8" oninput="onGap()">
+        <span class="sv" id="gvLbl">8px</span>
+      </div>
+    </div>
+    <div class="ctrl-grp">
+      <div class="lbl">Wall colour</div>
+      <div class="wall-row">
+        <div class="wc wc-dk sel" title="Dark" onclick="setWall(this,'#0e0d0b')"></div>
+        <div class="wc wc-st" title="Stone" onclick="setWall(this,'#3a3632')"></div>
+        <div class="wc wc-wm" title="Warm" onclick="setWall(this,'#e8e0d0')"></div>
+        <div class="wc wc-wh" title="White" onclick="setWall(this,'#f5f5f0')"></div>
+      </div>
+    </div>
+    <div class="acts">
+      <button class="btn pri" id="btnDF" onclick="dlFull()" disabled>Download</button>
+      <button class="btn" onclick="clrF()">Clear</button>
+    </div>
+    <div class="stat" id="stF"></div>
+  </div>
+  <div class="main">
+    <div class="canv-box" id="boxF">
+      <span class="canv-ph">Upload an image to preview</span>
+      <canvas id="canvF" class="fc" style="display:none"></canvas>
+    </div>
+  </div>
+</div>
+
+<!-- MIX CELLS PANEL -->
+<div class="panel" id="pCells">
+  <div class="sidebar">
+    <!-- Image pool -->
+    <div class="pool-box">
+      <div class="pool-lbl">Image pool</div>
+      <div class="pool" id="pool">
+        <div class="pt pt-add" onclick="document.getElementById('inPool').click()" title="Add images to pool">+</div>
+      </div>
+    </div>
+    <div class="ctrl-grp">
+      <div class="lbl">Panel gap</div>
+      <div class="slider-row">
+        <input type="range" id="gapSliderC" min="0" max="50" value="8" oninput="onGap()">
+        <span class="sv" id="gvLblC">8px</span>
+      </div>
+    </div>
+    <div class="ctrl-grp">
+      <div class="lbl">Wall colour</div>
+      <div class="wall-row">
+        <div class="wc wc-dk sel" title="Dark" onclick="setWall(this,'#0e0d0b')"></div>
+        <div class="wc wc-st" title="Stone" onclick="setWall(this,'#3a3632')"></div>
+        <div class="wc wc-wm" title="Warm" onclick="setWall(this,'#e8e0d0')"></div>
+        <div class="wc wc-wh" title="White" onclick="setWall(this,'#f5f5f0')"></div>
+      </div>
+    </div>
+    <div class="acts">
+      <button class="btn pri" id="btnDC" onclick="dlComp()" disabled>Download</button>
+      <button class="btn" onclick="clrC()">Clear cells</button>
+    </div>
+    <div class="stat" id="stC"></div>
+  </div>
+  <div class="main" style="gap:5px">
+    <div class="cgrid" id="cGrid" style="overflow-y:visible"></div>
+    <div class="canv-box" id="boxC" style="flex:1">
+      <span class="canv-ph">Add images to compose</span>
+      <canvas id="canvC" class="fc" style="display:none"></canvas>
+    </div>
+  </div>
+</div>
+
+<input type="file" id="inF" accept="image/*" onchange="loadF(this)">
+<input type="file" id="inCell" accept="image/*">
+<input type="file" id="inPool" accept="image/*" multiple onchange="loadPool(this)">
+
+<script>
+// ═══════════════════════════════
+// PRESETS
+// ═══════════════════════════════
+const PRESETS={
+  '1×1':{c:1,r:1,a:null},
+  '2×2':{c:2,r:2,a:null},
+  '3×3':{c:3,r:3,a:null},
+  '4×4':{c:4,r:4,a:null},
+  '5×5':{c:5,r:5,a:null},
+  'Cross':{c:3,r:3,a:[[0,1],[1,0],[1,1],[1,2],[2,1]]},
+  'L':{c:3,r:3,a:[[0,0],[1,0],[2,0],[2,1],[2,2]]},
+  'T':{c:3,r:3,a:[[0,0],[0,1],[0,2],[1,1],[2,1]]},
+  'Star':{c:5,r:5,a:[[0,2],[1,1],[1,2],[1,3],[2,0],[2,1],[2,2],[2,3],[2,4],[3,1],[3,2],[3,3],[4,2]]},
+  'Frame':{c:4,r:4,a:[[0,0],[0,1],[0,2],[0,3],[1,0],[1,3],[2,0],[2,3],[3,0],[3,1],[3,2],[3,3]]},
+  'Custom':null
+};
+
+// ═══════════════════════════════
+// STATE
+// ═══════════════════════════════
+let cur='3×3';
+let fullImg=null;
+let cells={};         // "r_c" → Image
+let pool=[];          // array of Image
+let cCols=3,cRows=3,cDead=new Set();
+let wallCol='#0e0d0b';
+let gapPx=8;
+let raf=null;
+let curMode='f';
+
+// ═══════════════════════════════
+// SEEDED RNG (mulberry32)
+// ═══════════════════════════════
+function mkRng(seed){
+  let s=seed>>>0;
+  return()=>{s+=0x6D2B79F5;let t=Math.imul(s^s>>>15,1|s);t^=t+Math.imul(t^t>>>7,61|t);return((t^t>>>14)>>>0)/4294967296;};
+}
+function seedVal(){return parseInt(document.getElementById('seedInp').value)||42;}
+function onSeedInput(){}  // nothing auto; user explicitly clicks buttons
+function rndSeed(){
+  document.getElementById('seedInp').value=Math.floor(Math.random()*99999)+1;
+}
+
+// Shuffle array in-place with rng
+function seededShuffle(arr,rng){
+  for(let i=arr.length-1;i>0;i--){const j=Math.floor(rng()*( i+1));[arr[i],arr[j]]=[arr[j],arr[i]];}
+  return arr;
+}
+
+function seedLayout(){
+  if(cur!=='Custom')selLayout('Custom');
+  const rng=mkRng(seedVal());
+  cDead.clear();
+  // randomly activate ~50-80% of cells
+  const keep=0.4+rng()*0.4; // 40-80%
+  for(let r=0;r<cRows;r++)for(let c=0;c<cCols;c++){
+    if(rng()>keep)cDead.add(r+'_'+c);
+  }
+  buildCustGrid();rebuildCGrid();buildLRow();renderFull();renderComp();
+}
+
+function seedCells(){
+  if(!pool.length)return;
+  const l=L();
+  const rng=mkRng(seedVal());
+  const active=[];
+  for(let r=0;r<l.r;r++)for(let c=0;c<l.c;c++)if(on(r,c))active.push(r+'_'+c);
+  // shuffle active slots
+  seededShuffle(active,rng);
+  // assign pool images round-robin to shuffled slots
+  active.forEach((k,i)=>{cells[k]=pool[i%pool.length];});
+  rebuildCGrid();updStat();renderComp();
+}
+
+function mirrorH(){
+  const l=L();
+  const newCells={};
+  for(let r=0;r<l.r;r++)for(let c=0;c<l.c;c++){
+    const k=r+'_'+c,mk=r+'_'+(l.c-1-c);
+    if(cells[k])newCells[mk]=cells[k];
+  }
+  cells=newCells;rebuildCGrid();updStat();renderComp();
+}
+
+function rotateCells(){
+  const l=L();
+  const newCells={};
+  // 90° CW: (r,c) → (c, rows-1-r) in new grid of size (cols,rows) → (cols×rows)
+  for(let r=0;r<l.r;r++)for(let c=0;c<l.c;c++){
+    const k=r+'_'+c;
+    if(cells[k]){const nr=c,nc=l.r-1-r;newCells[nr+'_'+nc]=cells[k];}
+  }
+  cells=newCells;rebuildCGrid();updStat();renderComp();
+}
+
+// ═══════════════════════════════
+// LAYOUT
+// ═══════════════════════════════
+function L(){
+  if(cur==='Custom'){
+    const allOn=!([...Array(cRows*cCols)].some((_,i)=>cDead.has(Math.floor(i/cCols)+'_'+(i%cCols))));
+    return{c:cCols,r:cRows,a:allOn?null:(()=>{const a=[];for(let r=0;r<cRows;r++)for(let c=0;c<cCols;c++)if(!cDead.has(r+'_'+c))a.push([r,c]);return a})()};
+  }
+  return PRESETS[cur];
+}
+function on(r,c){const l=L();return!l.a||l.a.some(([ar,ac])=>ar===r&&ac===c);}
+function gap(){return gapPx;}
+
+function mkIcon(name){
+  const l=name==='Custom'?L():PRESETS[name];
+  if(!l)return`<svg viewBox="0 0 18 18" width="18" height="18"><rect x="1" y="1" width="7" height="7" fill="#c8a96e"/><rect x="10" y="10" width="7" height="7" fill="#c8a96e"/><rect x="10" y="1" width="7" height="7" fill="#2a2720"/><rect x="1" y="10" width="7" height="7" fill="#2a2720"/></svg>`;
+  const{c,r,a}=l;
+  const S=Math.min(9,Math.floor(42/Math.max(c,r))),G=1,W=c*(S+G)-G,H=r*(S+G)-G;
+  let s='';
+  for(let row=0;row<r;row++)for(let col=0;col<c;col++){
+    const v=!a||a.some(([ar,ac])=>ar===row&&ac===col);
+    s+=`<rect x="${col*(S+G)}" y="${row*(S+G)}" width="${S}" height="${S}" fill="${v?'#c8a96e':'#2a2720'}" rx=".4"/>`;
+  }
+  return`<svg viewBox="0 0 ${W} ${H}" width="${Math.max(W,18)}" height="${Math.max(H,18)}">${s}</svg>`;
+}
+
+function buildLRow(){
+  const row=document.getElementById('lrow');row.innerHTML='';
+  Object.keys(PRESETS).forEach(name=>{
+    const d=document.createElement('div');
+    d.className='lc'+(name===cur?' act':'');
+    d.innerHTML=mkIcon(name)+`<em>${name}</em>`;
+    d.onclick=()=>selLayout(name);
+    row.appendChild(d);
+  });
+}
+
+function selLayout(name){
+  cur=name;cells={};
+  document.getElementById('custB').style.display=name==='Custom'?'flex':'none';
+  buildLRow();buildCustGrid();rebuildCGrid();renderFull();renderComp();updStat();
+}
+
+// ═══════════════════════════════
+// CUSTOM BUILDER
+// ═══════════════════════════════
+function buildCustGrid(){
+  if(cur!=='Custom')return;
+  document.getElementById('vC').textContent=cCols;
+  document.getElementById('vR').textContent=cRows;
+  const g=document.getElementById('cbg');
+  g.style.gridTemplateColumns=`repeat(${cCols},16px)`;g.innerHTML='';
+  for(let r=0;r<cRows;r++)for(let c=0;c<cCols;c++){
+    const k=r+'_'+c,el=document.createElement('div');
+    el.className='cbc'+(cDead.has(k)?' off':'');
+    el.onclick=()=>{cDead.has(k)?cDead.delete(k):cDead.add(k);el.classList.toggle('off',cDead.has(k));rebuildCGrid();renderFull();renderComp();buildLRow();};
+    g.appendChild(el);
+  }
+}
+
+function adj(d,v){
+  if(d==='c')cCols=Math.max(1,Math.min(7,cCols+v));
+  else cRows=Math.max(1,Math.min(7,cRows+v));
+  for(const k of[...cDead]){const[r,c]=k.split('_').map(Number);if(r>=cRows||c>=cCols)cDead.delete(k);}
+  cells={};buildCustGrid();rebuildCGrid();renderFull();renderComp();buildLRow();
+}
+function cAll(v){
+  if(v)cDead.clear();
+  else for(let r=0;r<cRows;r++)for(let c=0;c<cCols;c++)cDead.add(r+'_'+c);
+  buildCustGrid();rebuildCGrid();renderFull();renderComp();buildLRow();
+}
+
+// ═══════════════════════════════
+// MODE + GAP + WALL
+// ═══════════════════════════════
+function sm(m){
+  curMode=m;
+  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('act',(m==='f'?0:1)===i));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('act'));
+  document.getElementById(m==='f'?'pFull':'pCells').classList.add('act');
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{renderFull();renderComp();}));
+}
+
+function onGap(){
+  // Read from whichever slider just moved
+  const vF=parseInt(document.getElementById('gapSlider').value)||0;
+  const vC=parseInt(document.getElementById('gapSliderC').value)||0;
+  gapPx=curMode==='f'?vF:vC;
+  // Sync both
+  document.getElementById('gapSlider').value=gapPx;
+  document.getElementById('gapSliderC').value=gapPx;
+  document.getElementById('gvLbl').textContent=gapPx+'px';
+  document.getElementById('gvLblC').textContent=gapPx+'px';
+  renderFull();renderComp();
+}
+
+function setWall(el,c){
+  wallCol=c;
+  document.querySelectorAll('.wc').forEach(w=>w.classList.remove('sel'));
+  // Select matching colour in both panels
+  document.querySelectorAll('.wc').forEach(w=>{if(w.title===el.title)w.classList.add('sel');});
+  renderFull();renderComp();
+}
+
+function dov(e,id,v){e.preventDefault();document.getElementById(id)?.classList.toggle('dg',!!v);}
+
+// ═══════════════════════════════
+// FULL IMAGE
+// ═══════════════════════════════
+function loadF(inp){
+  const f=inp.files[0];if(!f)return;
+  const img=new Image();
+  img.onload=()=>{fullImg=img;document.getElementById('btnDF').disabled=false;setStat('stF',`${img.naturalWidth}×${img.naturalHeight}px`,'ok');renderFull();};
+  img.src=URL.createObjectURL(f);
+}
+function dropF(e){
+  e.preventDefault();document.getElementById('dzF').classList.remove('dg');
+  const f=e.dataTransfer.files[0];if(!f)return;
+  const dt=new DataTransfer();dt.items.add(f);const i=document.getElementById('inF');i.files=dt.files;loadF(i);
+}
+function clrF(){fullImg=null;document.getElementById('inF').value='';document.getElementById('btnDF').disabled=true;setStat('stF','');renderFull();}
+
+function renderFull(){
+  const ph=document.querySelector('#boxF .canv-ph');
+  const cv=document.getElementById('canvF');
+  if(!fullImg){cv.style.display='none';if(ph)ph.style.display='';return;}
+  if(ph)ph.style.display='none';
+  const box=document.getElementById('boxF');
+  const bw=box.clientWidth-2, bh=box.clientHeight-2;
+  if(bw<10||bh<10)return;
+
+  const l=L(),{c:cols,r:rows,a:active}=l;
+  const g=gap();
+
+  // Cell size to fit, preserving image AR per cell
+  const cellAR=(fullImg.naturalHeight/rows)/(fullImg.naturalWidth/cols);
+  let cW=(bw-g*(cols-1))/cols;
+  let cH=cW*cellAR;
+  if(rows*cH+(rows-1)*g>bh){cH=(bh-g*(rows-1))/rows;cW=cH/cellAR;}
+  cW=Math.floor(cW);cH=Math.floor(cH);
+  const W=cols*cW+(cols-1)*g, H=rows*cH+(rows-1)*g;
+
+  cv.width=W;cv.height=H;cv.style.display='block';
+  const ctx=cv.getContext('2d');
+  ctx.fillStyle=wallCol;ctx.fillRect(0,0,W,H);
+
+  const srcCW=fullImg.naturalWidth/cols, srcCH=fullImg.naturalHeight/rows;
+  for(let row=0;row<rows;row++)for(let col=0;col<cols;col++){
+    const x=col*(cW+g),y=row*(cH+g);
+    if(!on(row,col)){ctx.fillStyle='rgba(0,0,0,.5)';ctx.fillRect(x,y,cW,cH);continue;}
+    ctx.drawImage(fullImg,Math.round(col*srcCW),Math.round(row*srcCH),Math.round(srcCW),Math.round(srcCH),x,y,cW,cH);
+  }
+}
+
+function dlFull(){
+  if(!fullImg)return;
+  const l=L(),{c:cols,r:rows}=l;
+  // Use natural cell size + proportional gap
+  const cW=Math.floor(fullImg.naturalWidth/cols), cH=Math.floor(fullImg.naturalHeight/rows);
+  const g=gap();
+  // Scale gap to match display ratio
+  const dispCW=(document.getElementById('canvF').width-(cols-1)*g)/cols||cW;
+  const gFull=Math.round(g*(cW/dispCW));
+  const W=cols*cW+(cols-1)*gFull, H=rows*cH+(rows-1)*gFull;
+  const cv=document.createElement('canvas');cv.width=W;cv.height=H;
+  const ctx=cv.getContext('2d');ctx.fillStyle=wallCol;ctx.fillRect(0,0,W,H);
+  for(let row=0;row<rows;row++)for(let col=0;col<cols;col++){
+    if(!on(row,col)){ctx.fillStyle='rgba(0,0,0,.5)';ctx.fillRect(col*(cW+gFull),row*(cH+gFull),cW,cH);continue;}
+    ctx.drawImage(fullImg,col*cW,row*cH,cW,cH,col*(cW+gFull),row*(cH+gFull),cW,cH);
+  }
+  dl(cv,'grid_split.png');
+}
+
+// ═══════════════════════════════
+// IMAGE POOL
+// ═══════════════════════════════
+function loadPool(inp){
+  const files=[...inp.files];
+  files.forEach(f=>{
+    const img=new Image();
+    img.onload=()=>{pool.push(img);buildPool();document.getElementById('btnSeedCells').disabled=false;};
+    img.src=URL.createObjectURL(f);
+  });
+}
+function buildPool(){
+  const p=document.getElementById('pool');
+  // Keep the add button
+  p.innerHTML='<div class="pt pt-add" onclick="document.getElementById(\'inPool\').click()" title="Add more images">+</div>';
+  pool.forEach((img,i)=>{
+    const t=document.createElement('div');t.className='pt';
+    t.innerHTML=`<img src="${img.src}"><div class="pt-x" onclick="removePool(${i})">✕</div>`;
+    t.draggable=true;
+    t.addEventListener('dragstart',e=>{e.dataTransfer.setData('pool',i);});
+    p.insertBefore(t,p.firstChild);
+  });
+}
+function removePool(i){
+  pool.splice(i,1);buildPool();
+  if(!pool.length)document.getElementById('btnSeedCells').disabled=true;
+}
+
+// ═══════════════════════════════
+// CELLS GRID
+// ═══════════════════════════════
+function rebuildCGrid(){
+  const l=L(),{c:cols,r:rows}=l;
+  const grid=document.getElementById('cGrid');
+  const SZ=Math.min(80,Math.max(28,Math.floor(230/cols)));
+  grid.style.gridTemplateColumns=`repeat(${cols},${SZ}px)`;
+  grid.innerHTML='';
+  let idx=0;
+  for(let r=0;r<rows;r++)for(let c=0;c<cols;c++){
+    const k=r+'_'+c,isOn=on(r,c);
+    const div=document.createElement('div');
+    div.id='cs-'+k;div.style.cssText=`width:${SZ}px;height:${SZ}px`;
+    div.className='cs'+(isOn?' on':'  dead')+(isOn&&cells[k]?' filled':'');
+    if(isOn){
+      const n=++idx;
+      div.innerHTML=`${cells[k]?`<img src="${cells[k].src}" draggable="false">`:''}<span class="cn">${n}</span><span class="cx" onclick="clrCell(event,'${k}')">✕</span>`;
+      div.addEventListener('click',()=>pickC(k));
+      div.addEventListener('dragover',e=>{e.preventDefault();div.classList.add('dg');});
+      div.addEventListener('dragleave',()=>div.classList.remove('dg'));
+      div.addEventListener('drop',e=>{
+        e.preventDefault();div.classList.remove('dg');
+        // From pool
+        const pi=e.dataTransfer.getData('pool');
+        if(pi!==''&&pool[parseInt(pi)]){cells[k]=pool[parseInt(pi)];rebuildCGrid();updStat();renderComp();return;}
+        // From file
+        const f=e.dataTransfer.files[0];if(!f||!f.type.startsWith('image/'))return;
+        const img=new Image();img.onload=()=>{cells[k]=img;rebuildCGrid();updStat();renderComp();};img.src=URL.createObjectURL(f);
+      });
+    }
+    grid.appendChild(div);
+  }
+  renderComp();
+}
+
+function pickC(k){
+  const inp=document.getElementById('inCell');inp.value='';
+  inp.onchange=()=>{
+    const f=inp.files[0];if(!f)return;
+    const img=new Image();img.onload=()=>{cells[k]=img;rebuildCGrid();updStat();renderComp();};img.src=URL.createObjectURL(f);
+  };
+  inp.click();
+}
+
+function clrCell(e,k){e.stopPropagation();delete cells[k];rebuildCGrid();updStat();renderComp();}
+function clrC(){cells={};rebuildCGrid();document.getElementById('btnDC').disabled=true;setStat('stC','');}
+
+function updStat(){
+  const l=L(),total=l.a?l.a.length:l.c*l.r;
+  const loaded=Object.keys(cells).filter(k=>{const[r,c]=k.split('_').map(Number);return on(r,c);}).length;
+  if(!loaded)setStat('stC','');
+  else if(loaded===total)setStat('stC',`All ${total} cells ✓`,'ok');
+  else setStat('stC',`${loaded}/${total}`,'warn');
+}
+
+// ═══════════════════════════════
+// COMPOSITE RENDER
+// ═══════════════════════════════
+function renderComp(){
+  const ph=document.querySelector('#boxC .canv-ph');
+  const cv=document.getElementById('canvC');
+  const box=document.getElementById('boxC');
+  const bw=box.clientWidth-2, bh=box.clientHeight-2;
+  if(bw<10||bh<10)return;
+
+  const l=L(),{c:cols,r:rows}=l;
+  const g=gap();
+  let cSz=(bw-g*(cols-1))/cols;
+  if(rows*cSz+(rows-1)*g>bh)cSz=(bh-g*(rows-1))/rows;
+  cSz=Math.floor(cSz);
+  const W=cols*cSz+(cols-1)*g, H=rows*cSz+(rows-1)*g;
+
+  cv.width=W;cv.height=H;cv.style.display='block';
+  if(ph)ph.style.display='none';
+  const ctx=cv.getContext('2d');
+  ctx.fillStyle=wallCol;ctx.fillRect(0,0,W,H);
+
+  let any=false;
+  for(let r=0;r<rows;r++)for(let c=0;c<cols;c++){
+    const k=r+'_'+c,x=c*(cSz+g),y=r*(cSz+g);
+    if(!on(r,c))continue;
+    if(!cells[k]){ctx.fillStyle='#181612';ctx.fillRect(x,y,cSz,cSz);ctx.strokeStyle='#2a2720';ctx.lineWidth=1;ctx.strokeRect(x+.5,y+.5,cSz-1,cSz-1);continue;}
+    any=true;
+    const img=cells[k],sc=Math.max(cSz/img.naturalWidth,cSz/img.naturalHeight);
+    const sw=cSz/sc,sh=cSz/sc,sx=(img.naturalWidth-sw)/2,sy=(img.naturalHeight-sh)/2;
+    ctx.drawImage(img,sx,sy,sw,sh,x,y,cSz,cSz);
+  }
+  document.getElementById('btnDC').disabled=!any;
+}
+
+function dlComp(){
+  const l=L(),{c:cols,r:rows}=l;
+  const g=gap(), CELL=300;
+  const dispCW=(document.getElementById('canvC').width-(cols-1)*g)/cols||CELL;
+  const gFull=Math.round(g*(CELL/dispCW));
+  const W=cols*CELL+(cols-1)*gFull, H=rows*CELL+(rows-1)*gFull;
+  const cv=document.createElement('canvas');cv.width=W;cv.height=H;
+  const ctx=cv.getContext('2d');ctx.fillStyle=wallCol;ctx.fillRect(0,0,W,H);
+  for(let r=0;r<rows;r++)for(let c=0;c<cols;c++){
+    if(!on(r,c))continue;
+    const k=r+'_'+c,x=c*(CELL+gFull),y=r*(CELL+gFull);
+    if(!cells[k]){ctx.fillStyle='#181612';ctx.fillRect(x,y,CELL,CELL);continue;}
+    const img=cells[k],sc=Math.max(CELL/img.naturalWidth,CELL/img.naturalHeight);
+    const sw=CELL/sc,sh=CELL/sc,sx=(img.naturalWidth-sw)/2,sy=(img.naturalHeight-sh)/2;
+    ctx.drawImage(img,sx,sy,sw,sh,x,y,CELL,CELL);
+  }
+  dl(cv,'grid_composite.png');
+}
+
+function dl(cv,name){const a=document.createElement('a');a.download=name;a.href=cv.toDataURL('image/png');a.click();}
+function setStat(id,msg,t){const el=document.getElementById(id);el.textContent=msg;el.className='stat'+(t?' '+t:'');}
+
+// ═══════════════════════════════
+// RESIZE
+// ═══════════════════════════════
+let rz;
+window.addEventListener('resize',()=>{clearTimeout(rz);rz=setTimeout(()=>{renderFull();renderComp();},80);});
+
+// ═══════════════════════════════
+// INIT
+// ═══════════════════════════════
+buildLRow();buildCustGrid();rebuildCGrid();
+requestAnimationFrame(()=>requestAnimationFrame(()=>{renderFull();renderComp();}));
+</script>
+</body>
+</html>
