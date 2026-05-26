@@ -1,1 +1,1205 @@
-<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Mosaic Generator Placeholder</title><style>body{margin:0;background:#060606;color:#eee;font-family:monospace;display:grid;place-items:center;min-height:100vh}.x{padding:28px;border:1px solid #303030;background:#101010;max-width:760px}code{color:#7ce0ff}</style></head><body><section class="x"><h1>MOSAIC GENERATOR</h1><p>Placeholder route.</p><p><code>mosaic-generator.html</code></p><p><code>/apps/mosaic-generator/index.html</code></p></section></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mosaic Generator — Czech Mike / EMVY CHECK</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:      #0e0c0a;
+  --surface: #181512;
+  --panel:   #201d18;
+  --border:  #2e2820;
+  --accent:  #c86d3e;
+  --accent2: #7aab8a;
+  --gold:    #c8a85a;
+  --text:    #e8ddd0;
+  --dim:     #9a8a76;
+  --muted:   #4e4638;
+  --red:     #c84a3e;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+}
+
+/* ── HEADER ──────────────────────────────────────────── */
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 24px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+  gap: 16px;
+}
+.logo {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}
+.logo h1 {
+  font-family: 'Cinzel', serif;
+  font-size: 22px;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  color: var(--accent);
+  line-height: 1;
+}
+.logo span {
+  font-size: 11px;
+  color: var(--dim);
+  letter-spacing: 0.08em;
+  font-weight: 300;
+  text-transform: uppercase;
+}
+.header-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.btn-demo {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--dim);
+  padding: 6px 14px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  cursor: pointer;
+  border-radius: 3px;
+  transition: all 0.2s;
+  letter-spacing: 0.04em;
+}
+.btn-demo:hover { border-color: var(--accent); color: var(--accent); }
+
+.btn-export {
+  background: var(--accent);
+  border: none;
+  color: #fff;
+  padding: 8px 20px;
+  font-family: 'Cinzel', serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  border-radius: 3px;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.btn-export:hover { background: #d9814f; }
+.btn-export:disabled { background: var(--muted); cursor: not-allowed; color: var(--dim); }
+.btn-export svg { flex-shrink: 0; }
+
+/* ── MAIN LAYOUT ─────────────────────────────────────── */
+.workspace {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* ── CANVAS AREA ─────────────────────────────────────── */
+.canvas-area {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg);
+  position: relative;
+  min-height: 0;
+  overflow: hidden;
+  padding: 20px;
+}
+
+#dropzone {
+  width: 100%;
+  max-width: 560px;
+  aspect-ratio: 4/3;
+  border: 2px dashed var(--muted);
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  cursor: pointer;
+  transition: all 0.3s;
+  padding: 32px;
+  text-align: center;
+}
+#dropzone.drag-over {
+  border-color: var(--accent);
+  background: rgba(200,109,62,0.06);
+}
+#dropzone.hidden { display: none; }
+
+.drop-icon {
+  width: 64px;
+  height: 64px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 3px;
+  opacity: 0.4;
+}
+.drop-icon span {
+  border-radius: 2px;
+  background: var(--accent);
+}
+.drop-icon span:nth-child(even) { background: var(--gold); }
+.drop-icon span:nth-child(3n) { background: var(--accent2); }
+
+#dropzone h2 {
+  font-family: 'Cinzel', serif;
+  font-size: 15px;
+  font-weight: 400;
+  color: var(--dim);
+  letter-spacing: 0.06em;
+}
+#dropzone p {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.5;
+  max-width: 280px;
+}
+.btn-upload {
+  background: none;
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  padding: 8px 20px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  border-radius: 3px;
+  letter-spacing: 0.04em;
+  transition: all 0.2s;
+}
+.btn-upload:hover { background: var(--accent); color: #fff; }
+
+#canvasWrap {
+  display: none;
+  position: relative;
+  max-width: 100%;
+  max-height: calc(100vh - 140px);
+}
+#canvasWrap canvas {
+  display: block;
+  max-width: 100%;
+  max-height: calc(100vh - 140px);
+  object-fit: contain;
+  border-radius: 3px;
+  box-shadow: 0 8px 48px rgba(0,0,0,0.6);
+}
+.canvas-badge {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  background: rgba(14,12,10,0.85);
+  border: 1px solid var(--border);
+  padding: 4px 10px;
+  font-size: 11px;
+  color: var(--dim);
+  border-radius: 3px;
+  letter-spacing: 0.04em;
+  pointer-events: none;
+}
+.change-img {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: rgba(14,12,10,0.85);
+  border: 1px solid var(--border);
+  padding: 5px 12px;
+  font-size: 11px;
+  color: var(--dim);
+  border-radius: 3px;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  transition: all 0.2s;
+}
+.change-img:hover { border-color: var(--accent); color: var(--accent); }
+
+/* ── SIDEBAR ──────────────────────────────────────────── */
+.sidebar {
+  width: 240px;
+  flex-shrink: 0;
+  background: var(--surface);
+  border-left: 1px solid var(--border);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 20px;
+}
+
+.section {
+  padding: 16px;
+  border-bottom: 1px solid var(--border);
+}
+.section-title {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--dim);
+  margin-bottom: 12px;
+}
+
+/* Shape buttons */
+.shape-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+}
+.shape-btn {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 8px 4px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  transition: all 0.2s;
+  color: var(--dim);
+}
+.shape-btn:hover { border-color: var(--dim); color: var(--text); }
+.shape-btn.active { border-color: var(--accent); background: rgba(200,109,62,0.12); color: var(--accent); }
+.shape-btn svg { width: 20px; height: 20px; }
+.shape-btn span { font-size: 9px; letter-spacing: 0.04em; text-align: center; line-height: 1.2; }
+
+/* Sliders */
+.slider-row {
+  margin-bottom: 14px;
+}
+.slider-row:last-child { margin-bottom: 0; }
+.slider-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+.slider-label span:first-child {
+  font-size: 12px;
+  color: var(--dim);
+}
+.slider-label .val {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text);
+  min-width: 30px;
+  text-align: right;
+}
+input[type=range] {
+  width: 100%;
+  height: 3px;
+  -webkit-appearance: none;
+  background: var(--panel);
+  border-radius: 2px;
+  outline: none;
+  cursor: pointer;
+}
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px;
+  height: 14px;
+  background: var(--accent);
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 0 6px rgba(200,109,62,0.4);
+}
+input[type=range]::-webkit-slider-runnable-track {
+  background: linear-gradient(to right, var(--accent) 0%, var(--accent) var(--pct, 50%), var(--panel) var(--pct, 50%));
+  height: 3px;
+  border-radius: 2px;
+}
+
+/* Grout color */
+.grout-colors {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+.grout-swatch {
+  width: 24px;
+  height: 24px;
+  border-radius: 3px;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: all 0.15s;
+  position: relative;
+}
+.grout-swatch.active { border-color: var(--accent); }
+.grout-swatch[title="Custom"] {
+  background: conic-gradient(red, yellow, lime, cyan, blue, magenta, red);
+  overflow: hidden;
+}
+.grout-swatch[title="Custom"] input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+  width: 100%;
+  height: 100%;
+}
+
+/* Color mode */
+.mode-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 5px;
+}
+.mode-btn {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 7px 6px;
+  font-size: 11px;
+  font-family: 'DM Sans', sans-serif;
+  color: var(--dim);
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.15s;
+  letter-spacing: 0.03em;
+}
+.mode-btn:hover { color: var(--text); border-color: var(--dim); }
+.mode-btn.active { border-color: var(--accent2); background: rgba(122,171,138,0.12); color: var(--accent2); }
+
+/* Rendering options */
+.toggle-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+.toggle-row:last-child { margin-bottom: 0; }
+.toggle-row span {
+  font-size: 12px;
+  color: var(--dim);
+}
+.toggle {
+  width: 34px;
+  height: 18px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s;
+}
+.toggle.on { background: var(--accent2); border-color: var(--accent2); }
+.toggle::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 12px;
+  height: 12px;
+  background: #fff;
+  border-radius: 50%;
+  transition: transform 0.2s;
+}
+.toggle.on::after { transform: translateX(16px); }
+
+/* Stats bar */
+.stats {
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  gap: 12px;
+}
+.stat {
+  flex: 1;
+  text-align: center;
+}
+.stat .n {
+  font-family: 'Cinzel', serif;
+  font-size: 15px;
+  color: var(--accent);
+  font-weight: 700;
+}
+.stat .l {
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* Spinner */
+.spinner {
+  display: none;
+  position: absolute;
+  inset: 0;
+  background: rgba(14,12,10,0.7);
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 12px;
+  border-radius: 3px;
+  z-index: 10;
+}
+.spinner.show { display: flex; }
+.spinner-ring {
+  width: 36px;
+  height: 36px;
+  border: 3px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.spinner p {
+  font-size: 12px;
+  color: var(--dim);
+  letter-spacing: 0.06em;
+}
+
+/* Hidden file input */
+#fileInput { display: none; }
+
+/* Scrollbar */
+.sidebar::-webkit-scrollbar { width: 4px; }
+.sidebar::-webkit-scrollbar-track { background: transparent; }
+.sidebar::-webkit-scrollbar-thumb { background: var(--muted); border-radius: 2px; }
+
+/* Mobile */
+@media (max-width: 600px) {
+  .workspace { flex-direction: column; }
+  .sidebar { width: 100%; border-left: none; border-top: 1px solid var(--border); max-height: 320px; }
+  .shape-grid { grid-template-columns: repeat(5, 1fr); }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <h1>MOSAIC</h1>
+    <span>Generator · Czech Mike / EMVY CHECK</span>
+  </div>
+  <div class="header-actions">
+    <button class="btn-demo" id="btnDemo">Try Demo Image</button>
+    <button class="btn-export" id="btnExport" disabled>
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+      Export PNG
+    </button>
+  </div>
+</header>
+
+<div class="workspace">
+
+  <!-- Canvas Area -->
+  <div class="canvas-area" id="canvasArea">
+    <div id="dropzone">
+      <div class="drop-icon">
+        <span></span><span></span><span></span>
+        <span></span><span></span><span></span>
+        <span></span><span></span><span></span>
+      </div>
+      <h2>Drop your image here</h2>
+      <p>JPG, PNG, WEBP supported. Any size. Your image stays in the browser.</p>
+      <button class="btn-upload" id="btnUpload">Choose Image</button>
+    </div>
+
+    <div id="canvasWrap">
+      <canvas id="display"></canvas>
+      <div class="canvas-badge" id="badge">—</div>
+      <button class="change-img" id="btnChange">Change Image</button>
+      <div class="spinner" id="spinner">
+        <div class="spinner-ring"></div>
+        <p>Rendering mosaic…</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sidebar Controls -->
+  <div class="sidebar">
+
+    <!-- Stats -->
+    <div class="stats">
+      <div class="stat"><div class="n" id="statTiles">—</div><div class="l">Tiles</div></div>
+      <div class="stat"><div class="n" id="statSize">—</div><div class="l">px/tile</div></div>
+      <div class="stat"><div class="n" id="statRes">—</div><div class="l">Export</div></div>
+    </div>
+
+    <!-- Shape -->
+    <div class="section">
+      <div class="section-title">Tile Shape</div>
+      <div class="shape-grid">
+        <button class="shape-btn active" data-shape="square">
+          <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" fill="currentColor" rx="1"/></svg>
+          <span>Square</span>
+        </button>
+        <button class="shape-btn" data-shape="hex">
+          <svg viewBox="0 0 24 24"><polygon points="12,2 21,7 21,17 12,22 3,17 3,7" fill="currentColor"/></svg>
+          <span>Hex</span>
+        </button>
+        <button class="shape-btn" data-shape="circle">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="currentColor"/></svg>
+          <span>Circle</span>
+        </button>
+        <button class="shape-btn" data-shape="diamond">
+          <svg viewBox="0 0 24 24"><polygon points="12,2 22,12 12,22 2,12" fill="currentColor"/></svg>
+          <span>Diamond</span>
+        </button>
+        <button class="shape-btn" data-shape="brick">
+          <svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="7" fill="currentColor" rx="1"/><rect x="2" y="13" width="9" height="7" fill="currentColor" rx="1"/><rect x="13" y="13" width="9" height="7" fill="currentColor" rx="1"/></svg>
+          <span>Brick</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Size & Grout -->
+    <div class="section">
+      <div class="section-title">Tile Size &amp; Grout</div>
+
+      <div class="slider-row">
+        <div class="slider-label">
+          <span>Tile size</span>
+          <span class="val" id="valSize">20px</span>
+        </div>
+        <input type="range" id="slSize" min="4" max="80" value="20">
+      </div>
+
+      <div class="slider-row">
+        <div class="slider-label">
+          <span>Grout width</span>
+          <span class="val" id="valGrout">2px</span>
+        </div>
+        <input type="range" id="slGrout" min="0" max="12" value="2">
+      </div>
+
+      <div class="slider-label" style="margin-top:12px;">
+        <span style="font-size:12px;color:var(--dim)">Grout colour</span>
+      </div>
+      <div class="grout-colors" id="groutColors">
+        <div class="grout-swatch active" data-color="#1a1614" style="background:#1a1614" title="Charcoal"></div>
+        <div class="grout-swatch" data-color="#f0ebe0" style="background:#f0ebe0" title="Cream"></div>
+        <div class="grout-swatch" data-color="#7a6a58" style="background:#7a6a58" title="Stone"></div>
+        <div class="grout-swatch" data-color="#2e4838" style="background:#2e4838" title="Forest"></div>
+        <div class="grout-swatch" data-color="#3a2020" style="background:#3a2020" title="Rust"></div>
+        <div class="grout-swatch" data-color="#000000" style="background:#000000" title="Black"></div>
+        <div class="grout-swatch" data-color="#ffffff" style="background:#ffffff;border-color:#555" title="White"></div>
+        <div class="grout-swatch" title="Custom">
+          <input type="color" id="customGrout" value="#885533">
+        </div>
+      </div>
+    </div>
+
+    <!-- Colour Mode -->
+    <div class="section">
+      <div class="section-title">Colour Mode</div>
+      <div class="mode-grid">
+        <button class="mode-btn active" data-mode="original">Original</button>
+        <button class="mode-btn" data-mode="vivid">Vivid</button>
+        <button class="mode-btn" data-mode="vintage">Vintage</button>
+        <button class="mode-btn" data-mode="noir">Noir</button>
+        <button class="mode-btn" data-mode="sepia">Sepia</button>
+        <button class="mode-btn" data-mode="warm">Warm</button>
+        <button class="mode-btn" data-mode="cool">Cool</button>
+        <button class="mode-btn" data-mode="invert">Invert</button>
+      </div>
+    </div>
+
+    <!-- Options -->
+    <div class="section">
+      <div class="section-title">Options</div>
+      <div class="toggle-row">
+        <span>Soft sampling (blur)</span>
+        <div class="toggle" id="toggleBlur"></div>
+      </div>
+      <div class="toggle-row">
+        <span>Rounded corners</span>
+        <div class="toggle on" id="toggleRound"></div>
+      </div>
+      <div class="toggle-row">
+        <span>Shadow depth</span>
+        <div class="toggle" id="toggleShadow"></div>
+      </div>
+    </div>
+
+    <!-- Brightness / Contrast -->
+    <div class="section">
+      <div class="section-title">Adjustments</div>
+      <div class="slider-row">
+        <div class="slider-label">
+          <span>Brightness</span>
+          <span class="val" id="valBright">0</span>
+        </div>
+        <input type="range" id="slBright" min="-80" max="80" value="0">
+      </div>
+      <div class="slider-row">
+        <div class="slider-label">
+          <span>Contrast</span>
+          <span class="val" id="valContrast">1.0×</span>
+        </div>
+        <input type="range" id="slContrast" min="0" max="40" value="10">
+      </div>
+      <div class="slider-row">
+        <div class="slider-label">
+          <span>Saturation</span>
+          <span class="val" id="valSat">1.0×</span>
+        </div>
+        <input type="range" id="slSat" min="0" max="40" value="10">
+      </div>
+    </div>
+
+  </div><!-- /sidebar -->
+</div><!-- /workspace -->
+
+<input type="file" id="fileInput" accept="image/*">
+
+<script>
+/* ═══════════════════════════════════════════════════════
+   STATE
+═══════════════════════════════════════════════════════ */
+let srcCanvas = document.createElement('canvas');
+let srcCtx = srcCanvas.getContext('2d', { willReadFrequently: true });
+let hasImage = false;
+let renderTimer = null;
+
+const state = {
+  shape: 'square',
+  tileSize: 20,
+  grout: 2,
+  groutColor: '#1a1614',
+  colorMode: 'original',
+  blur: false,
+  round: true,
+  shadow: false,
+  brightness: 0,
+  contrast: 1.0,
+  saturation: 1.0
+};
+
+/* ═══════════════════════════════════════════════════════
+   ELEMENTS
+═══════════════════════════════════════════════════════ */
+const dropzone  = document.getElementById('dropzone');
+const canvasWrap = document.getElementById('canvasWrap');
+const displayCanvas = document.getElementById('display');
+const displayCtx = displayCanvas.getContext('2d');
+const fileInput = document.getElementById('fileInput');
+const spinner   = document.getElementById('spinner');
+const badge     = document.getElementById('badge');
+const btnExport = document.getElementById('btnExport');
+
+/* ═══════════════════════════════════════════════════════
+   IMAGE LOADING
+═══════════════════════════════════════════════════════ */
+function loadImageFile(file) {
+  if (!file || !file.type.startsWith('image/')) return;
+  const url = URL.createObjectURL(file);
+  const img = new Image();
+  img.onload = () => {
+    const MAX = 1400;
+    let w = img.width, h = img.height;
+    if (w > MAX || h > MAX) {
+      const r = MAX / Math.max(w, h);
+      w = Math.round(w * r); h = Math.round(h * r);
+    }
+    srcCanvas.width = w; srcCanvas.height = h;
+    srcCtx.drawImage(img, 0, 0, w, h);
+    hasImage = true;
+    dropzone.classList.add('hidden');
+    canvasWrap.style.display = 'block';
+    btnExport.disabled = false;
+    URL.revokeObjectURL(url);
+    scheduleRender();
+  };
+  img.src = url;
+}
+
+function generateDemo() {
+  const w = 600, h = 600;
+  srcCanvas.width = w; srcCanvas.height = h;
+
+  // Background
+  const bg = srcCtx.createRadialGradient(w/2, h/2, 0, w/2, h/2, w*0.7);
+  bg.addColorStop(0, '#1a0a38');
+  bg.addColorStop(0.45, '#0d3060');
+  bg.addColorStop(1, '#021420');
+  srcCtx.fillStyle = bg;
+  srcCtx.fillRect(0, 0, w, h);
+
+  // Colorful concentric rings
+  for (let i = 0; i < 24; i++) {
+    const r = 12 + i * 25;
+    const hue = (i * 22 + 180) % 360;
+    srcCtx.beginPath();
+    srcCtx.arc(w/2, h/2, r, 0, Math.PI*2);
+    srcCtx.strokeStyle = `hsla(${hue},85%,60%,0.75)`;
+    srcCtx.lineWidth = i % 4 === 0 ? 10 : 5;
+    srcCtx.stroke();
+  }
+
+  // Radial petals
+  for (let petal = 0; petal < 12; petal++) {
+    const baseAngle = (petal / 12) * Math.PI * 2;
+    for (let step = 0; step < 6; step++) {
+      const dist = 40 + step * 52;
+      const cx = w/2 + Math.cos(baseAngle) * dist;
+      const cy = h/2 + Math.sin(baseAngle) * dist;
+      const hue = (petal * 30 + step * 18 + 20) % 360;
+      const grad = srcCtx.createRadialGradient(cx, cy, 0, cx, cy, 22);
+      grad.addColorStop(0, `hsla(${hue},100%,80%,0.95)`);
+      grad.addColorStop(1, `hsla(${hue},80%,40%,0)`);
+      srcCtx.beginPath();
+      srcCtx.arc(cx, cy, 22, 0, Math.PI*2);
+      srcCtx.fillStyle = grad;
+      srcCtx.fill();
+    }
+  }
+
+  // Corner accents
+  const corners = [[0,0],[w,0],[w,h],[0,h]];
+  corners.forEach(([cx,cy], i) => {
+    const hue = i * 90 + 40;
+    const cg = srcCtx.createRadialGradient(cx, cy, 0, cx, cy, 200);
+    cg.addColorStop(0, `hsla(${hue},90%,55%,0.35)`);
+    cg.addColorStop(1, 'transparent');
+    srcCtx.fillStyle = cg;
+    srcCtx.fillRect(0, 0, w, h);
+  });
+
+  hasImage = true;
+  dropzone.classList.add('hidden');
+  canvasWrap.style.display = 'block';
+  btnExport.disabled = false;
+  scheduleRender();
+}
+
+/* ═══════════════════════════════════════════════════════
+   COLOUR PROCESSING
+═══════════════════════════════════════════════════════ */
+function sampleRegion(x, y, w, h) {
+  x = Math.max(0, Math.round(x));
+  y = Math.max(0, Math.round(y));
+  w = Math.max(1, Math.min(Math.round(w), srcCanvas.width - x));
+  h = Math.max(1, Math.min(Math.round(h), srcCanvas.height - y));
+  if (w <= 0 || h <= 0) return [120, 120, 120];
+
+  const data = srcCtx.getImageData(x, y, w, h).data;
+  let r = 0, g = 0, b = 0;
+  const n = data.length / 4;
+  for (let i = 0; i < data.length; i += 4) {
+    r += data[i]; g += data[i+1]; b += data[i+2];
+  }
+  return [r/n, g/n, b/n];
+}
+
+function applyAdjustments(r, g, b) {
+  // Brightness
+  r += state.brightness; g += state.brightness; b += state.brightness;
+
+  // Contrast
+  const c = state.contrast;
+  r = (r - 128) * c + 128;
+  g = (g - 128) * c + 128;
+  b = (b - 128) * c + 128;
+
+  // Saturation
+  const l = 0.299*r + 0.587*g + 0.114*b;
+  r = l + (r - l) * state.saturation;
+  g = l + (g - l) * state.saturation;
+  b = l + (b - l) * state.saturation;
+
+  return [r, g, b];
+}
+
+function applyMode(r, g, b, mode) {
+  [r, g, b] = applyAdjustments(r, g, b);
+
+  let out;
+  switch (mode) {
+    case 'noir': {
+      const l = 0.299*r + 0.587*g + 0.114*b;
+      out = [l, l, l]; break;
+    }
+    case 'sepia': {
+      const l = 0.299*r + 0.587*g + 0.114*b;
+      out = [l*1.12 + 8, l*0.92, l*0.72]; break;
+    }
+    case 'vintage': {
+      out = [r*0.88 + 24, g*0.82 + 12, b*0.68 + 4]; break;
+    }
+    case 'vivid': {
+      const l = 0.299*r + 0.587*g + 0.114*b;
+      out = [l + (r-l)*2.2, l + (g-l)*2.2, l + (b-l)*2.2]; break;
+    }
+    case 'warm':  out = [r*1.18, g*0.96, b*0.72]; break;
+    case 'cool':  out = [r*0.78, g*0.96, b*1.22]; break;
+    case 'invert': out = [255-r, 255-g, 255-b]; break;
+    default: out = [r, g, b];
+  }
+
+  const cl = v => Math.min(255, Math.max(0, Math.round(v)));
+  return `rgb(${cl(out[0])},${cl(out[1])},${cl(out[2])})`;
+}
+
+/* ═══════════════════════════════════════════════════════
+   RENDER ENGINES
+═══════════════════════════════════════════════════════ */
+function drawRoundRect(ctx, x, y, w, h, r) {
+  r = Math.min(r, w/2, h/2);
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.lineTo(x + w - r, y);
+  ctx.arcTo(x + w, y, x + w, y + r, r);
+  ctx.lineTo(x + w, y + h - r);
+  ctx.arcTo(x + w, y + h, x + w - r, y + h, r);
+  ctx.lineTo(x + r, y + h);
+  ctx.arcTo(x, y + h, x, y + h - r, r);
+  ctx.lineTo(x, y + r);
+  ctx.arcTo(x, y, x + r, y, r);
+  ctx.closePath();
+}
+
+function renderSquare(ctx, sw, sh, ts, grout) {
+  const cols = Math.ceil(sw / ts);
+  const rows = Math.ceil(sh / ts);
+  const rr = state.round ? Math.max(1, Math.round(ts * 0.12)) : 0;
+
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      const [rv, gv, bv] = sampleRegion(c*ts, r*ts, ts, ts);
+      ctx.fillStyle = applyMode(rv, gv, bv, state.colorMode);
+
+      const x = c*ts + grout, y = r*ts + grout;
+      const tw = ts - grout*2, th = ts - grout*2;
+      if (tw <= 0 || th <= 0) continue;
+
+      if (rr > 0) { drawRoundRect(ctx, x, y, tw, th, rr); ctx.fill(); }
+      else ctx.fillRect(x, y, tw, th);
+    }
+  }
+  return cols * rows;
+}
+
+function renderHex(ctx, sw, sh, ts, grout) {
+  // Flat-top hexagon
+  const r = ts / 2;
+  const hexH = r * Math.sqrt(3);
+  const colStep = r * 1.5;
+  const cols = Math.ceil(sw / colStep) + 2;
+  const rows = Math.ceil(sh / hexH) + 2;
+  let count = 0;
+
+  for (let c = 0; c < cols; c++) {
+    for (let row = 0; row < rows; row++) {
+      const cx = c * colStep;
+      const cy = row * hexH + (c % 2 === 0 ? 0 : hexH/2);
+      if (cx - r > sw || cy - hexH/2 > sh) continue;
+
+      const [rv, gv, bv] = sampleRegion(cx - r, cy - hexH/2, ts, hexH);
+      ctx.fillStyle = applyMode(rv, gv, bv, state.colorMode);
+
+      const gr = Math.max(1, r - grout);
+      const gH = gr * Math.sqrt(3);
+      ctx.beginPath();
+      for (let i = 0; i < 6; i++) {
+        const angle = (Math.PI / 3) * i;
+        const px = cx + gr * Math.cos(angle);
+        const py = cy + gH/2 * Math.sin(angle) / (Math.sqrt(3)/2) * (Math.sqrt(3)/2);
+        // Correct hex: flat-top vertices at angle 0°,60°,120°,180°,240°,300°
+        const vx = cx + gr * Math.cos(angle);
+        const vy = cy + gr * Math.sin(angle);
+        i === 0 ? ctx.moveTo(vx, vy) : ctx.lineTo(vx, vy);
+      }
+      ctx.closePath();
+      ctx.fill();
+      count++;
+    }
+  }
+  return count;
+}
+
+function renderCircle(ctx, sw, sh, ts, grout) {
+  const cols = Math.ceil(sw / ts);
+  const rows = Math.ceil(sh / ts);
+  const cr = ts/2 - grout;
+
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      const cx = c*ts + ts/2, cy = r*ts + ts/2;
+      const [rv, gv, bv] = sampleRegion(c*ts, r*ts, ts, ts);
+      ctx.fillStyle = applyMode(rv, gv, bv, state.colorMode);
+      ctx.beginPath();
+      ctx.arc(cx, cy, Math.max(1, cr), 0, Math.PI*2);
+      ctx.fill();
+    }
+  }
+  return cols * rows;
+}
+
+function renderDiamond(ctx, sw, sh, ts, grout) {
+  const hs = ts / 2;
+  const cols = Math.ceil(sw / hs) + 2;
+  const rows = Math.ceil(sh / hs) + 2;
+  let count = 0;
+
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      if ((r + c) % 2 !== 0) continue;
+      const cx = c * hs, cy = r * hs;
+      const [rv, gv, bv] = sampleRegion(cx - hs, cy - hs, ts, ts);
+      ctx.fillStyle = applyMode(rv, gv, bv, state.colorMode);
+      const g = grout;
+      ctx.beginPath();
+      ctx.moveTo(cx,        cy - hs + g);
+      ctx.lineTo(cx + hs - g, cy);
+      ctx.lineTo(cx,        cy + hs - g);
+      ctx.lineTo(cx - hs + g, cy);
+      ctx.closePath();
+      ctx.fill();
+      count++;
+    }
+  }
+  return count;
+}
+
+function renderBrick(ctx, sw, sh, ts, grout) {
+  const bh = ts, bw = ts * 2;
+  const rows = Math.ceil(sh / bh) + 1;
+  let count = 0;
+
+  for (let r = 0; r < rows; r++) {
+    const offset = (r % 2 === 0) ? 0 : bw / 2;
+    const cols = Math.ceil((sw + bw) / bw) + 1;
+    for (let c = 0; c < cols; c++) {
+      const x = c * bw - offset;
+      const y = r * bh;
+      if (x > sw || y > sh) continue;
+      const [rv, gv, bv] = sampleRegion(x, y, bw, bh);
+      ctx.fillStyle = applyMode(rv, gv, bv, state.colorMode);
+      const rr = state.round ? Math.max(1, Math.round(bh * 0.18)) : 0;
+      const tx = x + grout, ty = y + grout;
+      const tw = bw - grout*2, th = bh - grout*2;
+      if (tw <= 0 || th <= 0) continue;
+      if (rr > 0) { drawRoundRect(ctx, tx, ty, tw, th, rr); ctx.fill(); }
+      else ctx.fillRect(tx, ty, tw, th);
+      count++;
+    }
+  }
+  return count;
+}
+
+/* ═══════════════════════════════════════════════════════
+   MAIN RENDER
+═══════════════════════════════════════════════════════ */
+function scheduleRender() {
+  clearTimeout(renderTimer);
+  renderTimer = setTimeout(doRender, 80);
+}
+
+function doRender(exportMode = false) {
+  if (!hasImage) return;
+
+  spinner.classList.add('show');
+
+  setTimeout(() => {
+    const sw = srcCanvas.width;
+    const sh = srcCanvas.height;
+    const ts = state.tileSize;
+    const grout = state.grout;
+
+    // Working canvas at source res (or 2× for export)
+    const scale = exportMode ? 2 : 1;
+    const cw = sw * scale, ch = sh * scale;
+
+    const workCanvas = exportMode ? document.createElement('canvas') : displayCanvas;
+    workCanvas.width = cw;
+    workCanvas.height = ch;
+    const ctx = workCanvas.getContext('2d');
+    if (exportMode) ctx.scale(scale, scale);
+
+    // Grout background
+    ctx.fillStyle = state.groutColor;
+    ctx.fillRect(0, 0, cw, ch);
+
+    // Shadow
+    if (state.shadow && !exportMode) {
+      ctx.shadowColor = 'rgba(0,0,0,0.5)';
+      ctx.shadowBlur = ts * 0.25;
+      ctx.shadowOffsetX = 1;
+      ctx.shadowOffsetY = 2;
+    }
+
+    // Soft sampling: blur source canvas
+    let renderSrc = srcCtx;
+    if (state.blur) {
+      const blurCanvas = document.createElement('canvas');
+      blurCanvas.width = sw; blurCanvas.height = sh;
+      const bCtx = blurCanvas.getContext('2d');
+      bCtx.filter = `blur(${Math.max(1, ts/4)}px)`;
+      bCtx.drawImage(srcCanvas, 0, 0);
+      bCtx.filter = 'none';
+      // swap srcCtx temporarily
+      const origCtx = srcCtx;
+      srcCtx = bCtx;
+      srcCanvas = blurCanvas;
+      renderTiles(ctx, sw, sh, ts, grout);
+      srcCtx = origCtx;
+      srcCanvas = document.createElement('canvas');
+      srcCanvas.width = sw; srcCanvas.height = sh;
+      srcCtx = srcCanvas.getContext('2d', { willReadFrequently: true });
+      srcCtx.drawImage(blurCanvas, 0, 0);
+      // Actually simpler: just use blurCanvas
+    }
+
+    const count = renderTiles(ctx, sw, sh, ts, grout);
+
+    ctx.shadowColor = 'transparent';
+    ctx.shadowBlur = 0;
+
+    if (exportMode) {
+      const link = document.createElement('a');
+      link.download = `mosaic-${state.shape}-${ts}px.png`;
+      link.href = workCanvas.toDataURL('image/png');
+      link.click();
+    }
+
+    // Update stats
+    document.getElementById('statTiles').textContent = count > 9999 ? (count/1000).toFixed(1)+'k' : count;
+    document.getElementById('statSize').textContent = ts;
+    document.getElementById('statRes').textContent = (sw*2/1000).toFixed(1)+'k';
+    badge.textContent = `${state.shape} · ${ts}px · ${state.colorMode}`;
+
+    spinner.classList.remove('show');
+  }, 10);
+}
+
+function renderTiles(ctx, sw, sh, ts, grout) {
+  switch (state.shape) {
+    case 'square':  return renderSquare(ctx, sw, sh, ts, grout);
+    case 'hex':     return renderHex(ctx, sw, sh, ts, grout);
+    case 'circle':  return renderCircle(ctx, sw, sh, ts, grout);
+    case 'diamond': return renderDiamond(ctx, sw, sh, ts, grout);
+    case 'brick':   return renderBrick(ctx, sw, sh, ts, grout);
+    default:        return renderSquare(ctx, sw, sh, ts, grout);
+  }
+}
+
+/* ═══════════════════════════════════════════════════════
+   UI BINDINGS
+═══════════════════════════════════════════════════════ */
+
+// Shape buttons
+document.querySelectorAll('.shape-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.shape-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    state.shape = btn.dataset.shape;
+    scheduleRender();
+  });
+});
+
+// Mode buttons
+document.querySelectorAll('.mode-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    state.colorMode = btn.dataset.mode;
+    scheduleRender();
+  });
+});
+
+// Slider helper
+function bindSlider(id, valId, fmt, stateKey, transform) {
+  const sl = document.getElementById(id);
+  const vl = document.getElementById(valId);
+  sl.addEventListener('input', () => {
+    const raw = parseFloat(sl.value);
+    state[stateKey] = transform ? transform(raw) : raw;
+    vl.textContent = fmt(raw);
+    updateSliderTrack(sl);
+    scheduleRender();
+  });
+  updateSliderTrack(sl);
+}
+
+function updateSliderTrack(sl) {
+  const pct = ((sl.value - sl.min) / (sl.max - sl.min)) * 100;
+  sl.style.setProperty('--pct', pct + '%');
+}
+
+bindSlider('slSize', 'valSize', v => v+'px', 'tileSize', v => Math.round(v));
+bindSlider('slGrout', 'valGrout', v => v+'px', 'grout', v => Math.round(v));
+bindSlider('slBright', 'valBright', v => (v > 0 ? '+' : '') + Math.round(v), 'brightness', v => parseFloat(v));
+bindSlider('slContrast', 'valContrast', v => (v/10).toFixed(1)+'×', 'contrast', v => v/10);
+bindSlider('slSat', 'valSat', v => (v/10).toFixed(1)+'×', 'saturation', v => v/10);
+
+// Grout swatches
+document.querySelectorAll('.grout-swatch').forEach(sw => {
+  sw.addEventListener('click', (e) => {
+    if (sw.title === 'Custom') return;
+    document.querySelectorAll('.grout-swatch').forEach(s => s.classList.remove('active'));
+    sw.classList.add('active');
+    state.groutColor = sw.dataset.color;
+    scheduleRender();
+  });
+});
+document.getElementById('customGrout').addEventListener('input', e => {
+  document.querySelectorAll('.grout-swatch').forEach(s => s.classList.remove('active'));
+  e.target.closest('.grout-swatch').classList.add('active');
+  state.groutColor = e.target.value;
+  scheduleRender();
+});
+
+// Toggles
+function bindToggle(id, stateKey) {
+  const t = document.getElementById(id);
+  t.addEventListener('click', () => {
+    t.classList.toggle('on');
+    state[stateKey] = t.classList.contains('on');
+    scheduleRender();
+  });
+  state[stateKey] = t.classList.contains('on');
+}
+bindToggle('toggleBlur', 'blur');
+bindToggle('toggleRound', 'round');
+bindToggle('toggleShadow', 'shadow');
+
+// File input
+fileInput.addEventListener('change', e => { if (e.target.files[0]) loadImageFile(e.target.files[0]); });
+document.getElementById('btnUpload').addEventListener('click', () => fileInput.click());
+document.getElementById('btnChange').addEventListener('click', () => { fileInput.click(); });
+document.getElementById('btnDemo').addEventListener('click', generateDemo);
+
+// Drag & drop
+const dropArea = document.getElementById('dropzone');
+dropArea.addEventListener('dragover', e => { e.preventDefault(); dropArea.classList.add('drag-over'); });
+dropArea.addEventListener('dragleave', () => dropArea.classList.remove('drag-over'));
+dropArea.addEventListener('drop', e => {
+  e.preventDefault();
+  dropArea.classList.remove('drag-over');
+  if (e.dataTransfer.files[0]) loadImageFile(e.dataTransfer.files[0]);
+});
+
+// Drag onto canvas area too
+document.getElementById('canvasArea').addEventListener('dragover', e => e.preventDefault());
+document.getElementById('canvasArea').addEventListener('drop', e => {
+  e.preventDefault();
+  if (e.dataTransfer.files[0]) loadImageFile(e.dataTransfer.files[0]);
+});
+
+// Export
+btnExport.addEventListener('click', () => doRender(true));
+
+// Init slider tracks
+document.querySelectorAll('input[type=range]').forEach(updateSliderTrack);
+</script>
+</body>
+</html>
