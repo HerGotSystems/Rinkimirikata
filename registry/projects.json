@@ -1,18 +1,19 @@
 {
-  "version": 1,
-  "updated": "2026-05-25",
+  "version": 2,
+  "updated": "2026-05-27",
   "note": "Public project directory for RINKIMIRIKATA. This lists repos, live tools and experiments that should be reachable from the main hub.",
   "owner": "HerGotSystems",
   "items": [
     {
       "id": "humanx",
       "title": "HumanX",
-      "type": "human experiment / social framework",
-      "status": "source available",
+      "type": "belief / claim pressure engine",
+      "status": "live",
       "repo": "https://github.com/HerGotSystems/HumanX",
-      "launch": "https://github.com/HerGotSystems/HumanX",
-      "description": "HumanX experimental system. Public repo available; runnable deployment can be connected when ready.",
-      "visibility": "public"
+      "launch": "https://humanx.rinkimirikata.com",
+      "description": "Live HumanX public claim engine. Submit claims, defend with evidence, attack with pressure points, vote belief/rejection, generate AIP packets, and pressure-test human belief without public AI credit burn.",
+      "visibility": "public",
+      "cta": "Open Claim Engine"
     },
     {
       "id": "25-100-engine",
