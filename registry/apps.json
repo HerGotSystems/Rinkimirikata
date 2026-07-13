@@ -1,8 +1,18 @@
 {
-  "version": 3,
-  "updated": "2026-05-26",
+  "version": 4,
+  "updated": "2026-07-13",
   "note": "Central app registry for RINKIMIRIKATA. Add new HTML tools here to make them visible in the hub loader.",
   "items": [
+    {
+      "id": "what-changed",
+      "title": "WHAT CHANGED?",
+      "type": "Omnunity crossing",
+      "status": "working v1",
+      "privacy": "browser-local mirror / aggregate-only counters",
+      "url": "/apps/what-changed/",
+      "description": "A night crossing through five human needs shown twice. It compares the visitor only with themselves and reveals where a changed label moved the answer.",
+      "tags": ["omnunity", "human", "belief", "mirror", "crossing"]
+    },
     {
       "id": "humanx-belief-engine",
       "title": "HumanX Belief Engine",
