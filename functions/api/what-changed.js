@@ -41,7 +41,7 @@ export async function onRequestGet(context) {
       totalCrossings: Number(totalRow?.value || 0),
       situations: (result.results || []).map(normalizeRow)
     });
-  } catch {
+  } catch (error) {
     return json({ ok: false, available: false, error: "aggregate-read-failed" }, 503);
   }
 }
@@ -53,7 +53,7 @@ export async function onRequestPost(context) {
   let body;
   try {
     const contentLength = Number(context.request.headers.get("content-length") || 0);
-    if (contentLength > 12000) return json({ ok: false, error: "payload-too-large" }, 413);
+    if (contentLength > 12_000) return json({ ok: false, error: "payload-too-large" }, 413);
     body = await context.request.json();
   } catch {
     return json({ ok: false, error: "invalid-json" }, 400);
@@ -121,13 +121,13 @@ export async function onRequestPost(context) {
   try {
     await db.batch(statements);
     return json({ ok: true, stored: "aggregate-counters-only" }, 201);
-  } catch {
+  } catch (error) {
     return json({ ok: false, error: "aggregate-write-failed" }, 503);
   }
 }
 
 export function onRequestOptions() {
-  return new Response(null, { status: 204, headers: { allow: "GET, POST, OPTIONS" } });
+  return new Response(null, { status: 204, headers: { "allow": "GET, POST, OPTIONS" } });
 }
 
 function validatePayload(body) {
