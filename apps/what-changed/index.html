@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#071015">
+  <meta name="color-scheme" content="dark">
+  <meta name="description" content="WHAT CHANGED? An Omnunity crossing through five human needs wearing different faces.">
+  <meta name="robots" content="noai, noimageai">
+  <meta name="ai-training" content="disallowed">
+  <meta property="og:title" content="WHAT CHANGED? — An Omnunity crossing">
+  <meta property="og:description" content="Five needs. Two faces each. See where your answer held — and where it moved.">
+  <meta property="og:type" content="website">
+  <title>WHAT CHANGED? — An Omnunity crossing</title>
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <canvas id="water" aria-hidden="true"></canvas>
+  <div class="grain" aria-hidden="true"></div>
+
+  <main id="app" class="app-shell">
+    <header class="topbar" aria-label="Crossing status">
+      <a class="wordmark" href="https://omnunity.com" aria-label="Omnunity home">OMNUNITY</a>
+      <div id="progress" class="progress" aria-label="Crossing progress"></div>
+      <button id="openInfo" class="icon-button" type="button" aria-label="About this crossing">?</button>
+    </header>
+
+    <section id="stage" class="stage" aria-live="polite" aria-atomic="true"></section>
+
+    <div id="status" class="sr-only" role="status" aria-live="polite"></div>
+  </main>
+
+  <dialog id="infoDialog" class="dialog">
+    <div class="dialog-inner">
+      <div class="dialog-head">
+        <p class="eyebrow">WHAT CHANGED?</p>
+        <button id="closeInfo" class="icon-button" type="button" aria-label="Close">×</button>
+      </div>
+      <h2>An Omnunity crossing</h2>
+      <p>This is not a personality test and it does not assign an ideology. It shows five human needs twice, with one identifying detail changed, then compares only your own answers.</p>
+      <p>Your personal mirror is calculated inside this browser. No account, name, email, advertising identifier, precise location, or third-party analytics are used.</p>
+      <p>After a completed crossing, anonymous totals may be updated. The database stores counters only, not a row containing your individual crossing.</p>
+      <p>The people and groups inside the crossing are fictional. They are constructed to expose how labels can affect judgement, not to describe real communities.</p>
+      <button id="closeInfoBottom" class="text-button" type="button">return to the water</button>
+    </div>
+  </dialog>
+
+  <noscript>
+    <div class="noscript">This crossing needs JavaScript because the personal mirror is calculated privately in your browser.</div>
+  </noscript>
+
+  <script src="./data.js" defer></script>
+  <script src="./app.js" defer></script>
+  <script src="./water.js" defer></script>
+</body>
+</html>
