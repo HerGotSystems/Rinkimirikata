@@ -6,5 +6,12 @@
   "assets": {
     "directory": "./",
     "binding": "ASSETS"
-  }
+  },
+  "d1_databases": [
+    {
+      "binding": "WHAT_CHANGED_DB",
+      "database_name": "what-changed-db",
+      "database_id": "f1702dc8-dd0b-4dae-98c7-bee703e918f7"
+    }
+  ]
 }
