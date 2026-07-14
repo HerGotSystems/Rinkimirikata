@@ -6,9 +6,6 @@ CREATE TABLE IF NOT EXISTS what_changed_meta (
   value INTEGER NOT NULL DEFAULT 0 CHECK (value >= 0)
 );
 
-INSERT OR IGNORE INTO what_changed_meta (key, value)
-VALUES ('total_crossings', 0);
-
 CREATE TABLE IF NOT EXISTS what_changed_situation_stats (
   situation_id TEXT PRIMARY KEY CHECK (situation_id IN ('healthcare', 'shelter', 'work', 'care', 'forgiveness')),
   total INTEGER NOT NULL DEFAULT 0 CHECK (total >= 0),
@@ -30,3 +27,18 @@ CREATE TABLE IF NOT EXISTS what_changed_reason_stats (
   count INTEGER NOT NULL DEFAULT 0 CHECK (count >= 0),
   PRIMARY KEY (situation_id, pass, reason_id)
 );
+
+-- Seed the total counter so GET has a real zero value before crossing #1.
+INSERT INTO what_changed_meta (key, value)
+VALUES ('total_crossings', 0)
+ON CONFLICT(key) DO NOTHING;
+
+-- Seed one row per situation so GET returns a stable five-row baseline
+-- before the first POST and all later writes can use ON CONFLICT upserts.
+INSERT INTO what_changed_situation_stats (situation_id) VALUES
+  ('healthcare'),
+  ('shelter'),
+  ('work'),
+  ('care'),
+  ('forgiveness')
+ON CONFLICT(situation_id) DO NOTHING;
