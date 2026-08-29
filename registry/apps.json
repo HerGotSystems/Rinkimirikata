@@ -1,7 +1,7 @@
 {
-  "version": 4,
-  "updated": "2026-07-13",
-  "note": "Central app registry for RINKIMIRIKATA. Add new HTML tools here to make them visible in the hub loader.",
+  "version": 5,
+  "updated": "2026-08-29",
+  "note": "Central app registry for RINKIMIRIKATA. Only add tools here that are intended to be publicly reachable from the hub.",
   "items": [
     {
       "id": "what-changed",
@@ -54,26 +54,6 @@
       "tags": ["signal", "visualizer", "audio", "engine"]
     },
     {
-      "id": "canvas-grid",
-      "title": "Canvas Grid",
-      "type": "generative art tool",
-      "status": "placeholder / upload target",
-      "privacy": "browser-local",
-      "url": "/apps/canvas-grid/",
-      "description": "Printable composition helpers and generative grid tools for artists who need a starting structure instead of a blank canvas.",
-      "tags": ["art", "print", "grid", "gumroad"]
-    },
-    {
-      "id": "strata",
-      "title": "STRATA",
-      "type": "generative art tool",
-      "status": "placeholder / upload target",
-      "privacy": "browser-local",
-      "url": "/apps/strata/",
-      "description": "Generative layered visual/art tool slot. Replace placeholder with strata.html when ready.",
-      "tags": ["art", "generator", "visual"]
-    },
-    {
       "id": "signal-ecology",
       "title": "Signal Ecology",
       "type": "signal visual system",
@@ -82,16 +62,6 @@
       "url": "/apps/signal-ecology/",
       "description": "Signal ecology system slot. Replace placeholder with signal-ecology.html when ready.",
       "tags": ["signal", "ecology", "visual"]
-    },
-    {
-      "id": "primordial",
-      "title": "PRIMORDIAL",
-      "type": "generative visual system",
-      "status": "placeholder / upload target",
-      "privacy": "browser-local",
-      "url": "/apps/primordial/",
-      "description": "PRIMORDIAL visual generator slot. Replace placeholder with PRIMORDIAL_v2.html when ready.",
-      "tags": ["generator", "visual", "art"]
     },
     {
       "id": "osp",
