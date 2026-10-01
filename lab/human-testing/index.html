@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Human Testing Lab — Rinkimirikata</title>
+  <meta name="description" content="Rinkimirikata Human Testing Lab: a public surface for people to test software for other people.">
+  <style>
+    :root{color-scheme:dark;background:#0b0d10;color:#f4f7fb;font-family:Inter,system-ui,sans-serif}
+    body{margin:0;min-height:100vh;background:radial-gradient(circle at top,#18202a 0,#0b0d10 46%)}
+    main{max-width:1040px;margin:auto;padding:48px 20px 80px}
+    .eyebrow{letter-spacing:.14em;text-transform:uppercase;color:#9fb0c3;font-size:.78rem}
+    h1{font-size:clamp(2.6rem,7vw,5.8rem);line-height:.92;margin:.18em 0}
+    .lead{font-size:1.18rem;max-width:760px;color:#c7d0da}
+    .status{display:inline-block;margin:18px 0 32px;padding:8px 12px;border:1px solid #566474;border-radius:999px;color:#d9e2ec}
+    .grid,.tests{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px}
+    .card,.test-card{border:1px solid #26313d;background:#11161c;padding:20px;border-radius:16px}
+    .card h2,.test-card h3{margin-top:0}.muted{color:#91a0b0}.flow{margin-top:34px;padding:22px;border-left:3px solid #8aa4bf;background:#0f1419}
+    .board{margin-top:42px}.board-head{display:flex;align-items:end;justify-content:space-between;gap:16px;flex-wrap:wrap}
+    .test-card p{color:#b9c4cf}.meta{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}.pill{font-size:.78rem;border:1px solid #3a4653;border-radius:999px;padding:5px 8px;color:#cdd7e2}
+    .actions{display:flex;gap:10px;align-items:center;margin-top:18px}.button{display:inline-block;border:1px solid #8aa4bf;border-radius:10px;padding:9px 12px;text-decoration:none;color:#e9f3ff;background:#17202a}
+    code{background:#171e26;padding:2px 6px;border-radius:5px}a{color:#cfe4ff}
+  </style>
+</head>
+<body>
+<main>
+  <div class="eyebrow">Rinkimirikata / Lab</div>
+  <h1>Human Testing Lab</h1>
+  <p class="lead">A public testing surface for builders who need real people, real devices and real confusion — not only automated checks.</p>
+  <div id="service-status" class="status">Checking Human Test Network connection…</div>
+
+  <section class="grid">
+    <article class="card"><h2>Test something</h2><p>Claim a bounded test, follow the requested tasks, record what actually happened and earn Test Minutes when the creator accepts useful evidence.</p></article>
+    <article class="card"><h2>Get tested</h2><p>Publish a test against your own project, reserve Test Minutes and specify exactly what testers may and may not do.</p></article>
+    <article class="card"><h2>Evidence, not praise</h2><p>Results are task outcomes, expected versus actual behaviour, notes and optional screenshots or recordings — not a popularity contest.</p></article>
+  </section>
+
+  <section class="board" aria-labelledby="open-tests-title">
+    <div class="board-head">
+      <div>
+        <div class="eyebrow">Live board</div>
+        <h2 id="open-tests-title">Open human tests</h2>
+      </div>
+      <p id="board-summary" class="muted">The HTN API is not configured on this branch yet.</p>
+    </div>
+    <div id="tests" class="tests"></div>
+  </section>
+
+  <section class="flow">
+    <strong>System boundary</strong>
+    <p><code>Rinkimirikata</code> is the public human-facing surface. <code>Human Test Network</code> owns tests, claims, evidence and Test Minutes. <code>Omniforge/M8</code> prepares structured tests and can consume resulting evidence for Stress Test/Reforge workflows.</p>
+  </section>
+
+  <p class="muted">If the HTN service is not configured or reachable, this page stays in prototype mode and shows no invented marketplace activity.</p>
+  <p><a href="/">← Back to Rinkimirikata</a></p>
+</main>
+<script src="./config.js"></script>
+<script src="./client.js"></script>
+</body>
+</html>
